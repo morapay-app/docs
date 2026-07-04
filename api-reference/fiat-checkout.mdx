@@ -9,7 +9,7 @@ Base URL: `https://api.morapay.io`
 
 ## Checkout config
 
-`GET /api/klyra/fiat/config`
+`GET /api/public/fiat/config`
 
 Returns enabled fiat methods for TEST or LIVE checkout.
 
@@ -22,7 +22,7 @@ Returns enabled fiat methods for TEST or LIVE checkout.
 <RequestExample>
 
 ```bash cURL
-curl -s "https://api.morapay.io/api/klyra/fiat/config?environment=LIVE"
+curl -s "https://api.morapay.io/api/public/fiat/config?environment=LIVE"
 ```
 
 </RequestExample>
@@ -63,14 +63,14 @@ curl -s "https://api.morapay.io/api/klyra/fiat/config?environment=LIVE"
 
 ## Initialize fiat payment
 
-`POST /api/klyra/fiat/payments/initialize`
+`POST /api/public/fiat/payments/initialize`
 
 Starts a MoMo, bank transfer, or card session for an existing transaction. Body includes `payment_method` (`mobile_money`, `bank_transfer`, or `card`) and `transaction_id`.
 
 <RequestExample>
 
 ```bash cURL
-curl -s -X POST "https://api.morapay.io/api/klyra/fiat/payments/initialize" \
+curl -s -X POST "https://api.morapay.io/api/public/fiat/payments/initialize" \
   -H "Content-Type: application/json" \
   -d '{
     "transaction_id": "txn_abc123",
@@ -84,13 +84,13 @@ curl -s -X POST "https://api.morapay.io/api/klyra/fiat/payments/initialize" \
 
 ## Verify fiat payment
 
-`GET /api/klyra/fiat/transactions/verify/:reference`
+`GET /api/public/fiat/transactions/verify/:reference`
 
 Poll payment status after the payer completes MoMo, bank, or card checkout.
 
 ## Fiat quote (commerce)
 
-`POST /api/klyra/commerce/checkout-fiat`
+`POST /api/public/commerce/fiat`
 
 Quote fiat checkout amounts for a payment link or product session. Used by hosted checkout and embed flows.
 
@@ -114,7 +114,7 @@ Kenya (KES): **M-PESA**, **Airtel Kenya**, **Telkom Kenya**
 Validate numbers before checkout:
 
 ```bash
-curl -s -X POST "https://api.morapay.io/api/moolre/validate/momo" \
+curl -s -X POST "https://api.morapay.io/api/public/validate/momo" \
   -H "Content-Type: application/json" \
   -d '{ "receiver": "233241234567", "provider": "MTN", "currency": "GHS" }'
 ```

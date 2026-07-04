@@ -3,10 +3,10 @@ title: "Countries & fiat"
 description: "Supported countries, settlement currencies, and fiat payment rails."
 ---
 
-Morapay supports international crypto checkout and regional fiat rails. Country availability is stored in the Morapay API catalog and exposed at `GET /api/countries` (via `GET /api/klyra/countries` on the public API host).
+Morapay supports international crypto checkout and regional fiat rails. Country availability is stored in the Morapay API catalog and exposed at `GET /api/public/catalog/countries`.
 
 <Note>
-  Country availability changes over time. Use `GET /api/klyra/countries?supported=any` for the authoritative list before shipping checkout or payout UI.
+  Country availability changes over time. Use `GET /api/public/catalog/countries?supported=any` for the authoritative list before shipping checkout or payout UI.
 </Note>
 
 ## Supported countries
@@ -56,7 +56,7 @@ Card checkout via Paystack is probed for these markets:
 Full REST documentation: [Catalog API](/api-reference/catalog#countries) · [Fiat checkout API](/api-reference/fiat-checkout)
 
 ```bash
-curl -s "https://api.morapay.io/api/klyra/countries?supported=any"
+curl -s "https://api.morapay.io/api/public/catalog/countries?supported=any"
 ```
 
 Filter with `?supported=fonbnk`, `paystack`, or `any`.

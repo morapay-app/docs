@@ -45,17 +45,14 @@ Moolre transfer channels map to:
 Fetch live lists from the Morapay API:
 
 ```bash
-# Paystack banks (withdrawal / resolve)
-curl -s "https://api.morapay.io/api/klyra/relay/paystack/banks?country=ghana"
-
-# Moolre banks (Ghana / Nigeria commerce)
-curl -s "https://api.morapay.io/api/moolre/banks?country=gha"
-
-# Merchant payout rails
-curl -s "https://api.morapay.io/api/v1/merchant/payout-rails/banks" \
+# Merchant payout rails (signed)
+curl -s "https://api.morapay.io/api/v1/merchant/rails/banks" \
   -H "Morapay-Key: pk_test_..." \
   -H "Morapay-Timestamp: ..." \
   -H "Morapay-Signature: v1=..."
+
+# Public bank list (checkout validation)
+curl -s "https://api.morapay.io/api/public/validate/banks?country=gha"
 ```
 
 ## Related

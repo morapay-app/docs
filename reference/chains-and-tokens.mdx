@@ -7,11 +7,11 @@ Crypto catalog for checkout, quotes, swaps, and offramp. **LIVE** merchants see 
 
 Public API:
 
-- `GET /api/klyra/chains`
-- `GET /api/klyra/tokens` (optional `?chain_id=`)
+- `GET /api/public/catalog/chains`
+- `GET /api/public/catalog/tokens` (optional `?chain_id=`)
 
 <Note>
-  This page lists **14 chains**, **28 checkout tokens**, and **43 Fonbnk assets**. Fetch the live catalog with `GET /api/klyra/chains` and `GET /api/klyra/tokens`.
+  This page lists **14 chains**, **28 checkout tokens**, and **43 Fonbnk assets**. Fetch the live catalog with `GET /api/public/catalog/chains` and `GET /api/public/catalog/tokens`.
 </Note>
 
 ## Chains (7 mainnet · 5 testnet · 2 offchain)
@@ -141,7 +141,7 @@ Direct Fonbnk quotes use these `NETWORK_ASSET` codes:
 
 ## API
 
-[Catalog API](/api-reference/catalog) — `GET /api/klyra/chains`, `GET /api/klyra/tokens`
+[Catalog API](/api-reference/catalog) — `GET /api/public/catalog/chains`, `GET /api/public/catalog/tokens`
 
 ## SDK example
 

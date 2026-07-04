@@ -9,7 +9,7 @@ Base URL: `https://api.morapay.io`
 
 ## Countries
 
-`GET /api/klyra/countries`
+`GET /api/public/catalog/countries`
 
 Returns supported countries with Fonbnk and Paystack flags.
 
@@ -22,7 +22,7 @@ Returns supported countries with Fonbnk and Paystack flags.
 <RequestExample>
 
 ```bash cURL
-curl -s "https://api.morapay.io/api/klyra/countries?supported=any"
+curl -s "https://api.morapay.io/api/public/catalog/countries?supported=any"
 ```
 
 </RequestExample>
@@ -61,7 +61,7 @@ See the full country list in [Countries & fiat](/reference/countries-and-fiat).
 
 ## Chains
 
-`GET /api/klyra/chains`
+`GET /api/public/catalog/chains`
 
 Returns supported chains for quotes, checkout, and disbursement validation.
 
@@ -74,7 +74,7 @@ Returns supported chains for quotes, checkout, and disbursement validation.
 <RequestExample>
 
 ```bash cURL
-curl -s "https://api.morapay.io/api/klyra/chains?environment=LIVE"
+curl -s "https://api.morapay.io/api/public/catalog/chains?environment=LIVE"
 ```
 
 </RequestExample>
@@ -110,7 +110,7 @@ curl -s "https://api.morapay.io/api/klyra/chains?environment=LIVE"
 
 ## Tokens
 
-`GET /api/klyra/tokens`
+`GET /api/public/catalog/tokens`
 
 Returns supported tokens with chain metadata.
 
@@ -124,7 +124,7 @@ Returns supported tokens with chain metadata.
 <RequestExample>
 
 ```bash cURL
-curl -s "https://api.morapay.io/api/klyra/tokens?chain_id=8453&environment=LIVE"
+curl -s "https://api.morapay.io/api/public/catalog/tokens?chain_id=8453&environment=LIVE"
 ```
 
 </RequestExample>
@@ -168,14 +168,14 @@ curl -s "https://api.morapay.io/api/klyra/tokens?chain_id=8453&environment=LIVE"
 
 ### Compact token list
 
-`GET /api/klyra/tokens/list` (relay) exposes a UI-oriented shape with `displaySymbol` and `logoUri`. Same query parameters as `/tokens`.
+`GET /api/public/tokens/list` (relay) exposes a UI-oriented shape with `displaySymbol` and `logoUri`. Same query parameters as `/tokens`.
 
 ## SDK equivalent
 
 ```typescript
 // Catalog is not wrapped in the SDK — call the API host directly or use
 // morapay.link.quote(linkId, { chainId: 8453 }) after picking a chain.
-const res = await fetch("https://api.morapay.io/api/klyra/tokens?chain_id=8453");
+const res = await fetch("https://api.morapay.io/api/public/catalog/tokens?chain_id=8453");
 const { data } = await res.json();
 ```
 

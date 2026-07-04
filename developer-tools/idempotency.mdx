@@ -48,7 +48,7 @@ When a resource changed since your last read, the API may return `resource.confl
 
 ## SDK note
 
-The high-level `morapay.payouts` resource exposes batch quote, list, and cancel helpers. Deposit/withdraw with explicit idempotency keys map to `/api/v1/merchant/disbursement/deposit` and `/disbursement/withdraw` — use your server's HTTP client or extend your integration layer when calling these directly.
+The high-level `morapay.disbursement` resource exposes batch quote, list, and cancel helpers. Deposit/withdraw with explicit idempotency keys map to `/api/v1/merchant/disbursement/deposit` and `/disbursement/withdraw` — use your server's HTTP client or extend your integration layer when calling these directly.
 
 ## Webhooks + idempotency
 

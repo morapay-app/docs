@@ -3,7 +3,7 @@ title: "Disbursement tokens"
 description: "Stablecoin rails for batch disbursements and treasury payouts."
 ---
 
-`morapay.payouts` batches debit merchant treasury liquidity on supported **pool tokens** and deliver fiat to MoMo / bank recipients.
+`morapay.disbursement` batches debit merchant treasury liquidity on supported **pool tokens** and deliver fiat to MoMo / bank recipients.
 
 ## LIVE (mainnet)
 
@@ -37,7 +37,7 @@ TEST batches must use testnet chains (e.g. **Base Sepolia** `84532`). Mainnet ch
 ## Quote before batching
 
 ```typescript
-const quote = await morapay.payouts.quote({
+const quote = await morapay.disbursement.quote({
   chainId: 8453,
   token: "USDC",
   payoutTotal: 250,

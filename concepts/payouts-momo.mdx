@@ -3,7 +3,7 @@ title: "Payouts & mobile money"
 description: "Disburse funds to MoMo wallets via batch payouts and treasury accounts."
 ---
 
-Morapay **disbursements** route merchant treasury liquidity to local mobile money (MoMo) wallets — MTN, Telecel, and other regional carriers. The Merchant API exposes this under `/api/v1/merchant/disbursement/*`; the SDK namespace is `morapay.payouts`.
+Morapay **disbursements** route merchant treasury liquidity to local mobile money (MoMo) wallets — MTN, Telecel, and other regional carriers. The Merchant API exposes this under `/api/v1/merchant/disbursement/*`; the SDK namespace is `morapay.disbursement`.
 
 ## Business value
 
@@ -13,10 +13,10 @@ Turn stablecoin or fiat treasury balance into **instant local payouts** without 
 
 ```mermaid
 flowchart LR
-  A["morapay.payouts.account()"]
-  Q["morapay.payouts.quote()"]
+  A["morapay.disbursement.account()"]
+  Q["morapay.disbursement.quote()"]
   B["Create batch\n(recipients, chain, token)"]
-  L["morapay.payouts.ledger()"]
+  L["morapay.disbursement.ledger()"]
   M["MoMo delivery"]
 
   A --> Q --> B --> M
@@ -26,21 +26,21 @@ flowchart LR
 ## SDK reference
 
 ```typescript
-const account = await morapay.payouts.account();
+const account = await morapay.disbursement.account();
 
-const quote = await morapay.payouts.quote({
+const quote = await morapay.disbursement.quote({
   chainId: 8453,
   token: "USDC",
   payoutTotal: 250,
   recipientCount: 10,
 });
 
-const { data: batches } = await morapay.payouts({ limit: 20 });
-const batch = await morapay.payouts("batch_xyz");
+const { data: batches } = await morapay.disbursement({ limit: 20 });
+const batch = await morapay.disbursement("batch_xyz");
 
-const { data: ledger } = await morapay.payouts.ledger({ page: 1, limit: 50 });
+const { data: ledger } = await morapay.disbursement.ledger({ page: 1, limit: 50 });
 
-await morapay.payouts.cancel("batch_xyz");
+await morapay.disbursement.cancel("batch_xyz");
 ```
 
 ### Batch creation (API)
@@ -62,7 +62,7 @@ Deposits and withdrawals on the disbursement account accept an **`idempotencyKey
 | Insufficient liquidity | `payouts.momo.insufficient_balance` |
 | Carrier downtime | `payouts.network.carrier_down` — queue and retry |
 
-Always call `morapay.payouts.account()` before large batches.
+Always call `morapay.disbursement.account()` before large batches.
 
 ## Webhook
 

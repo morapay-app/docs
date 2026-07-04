@@ -14,13 +14,13 @@ Morapay pricing is **quote-first**: every product exposes a quote or settlement 
 | Product | SDK | API |
 |---------|-----|-----|
 | Fiat checkout (payer total) | — | `POST /api/commerce/checkout-fiat` |
-| Merchant clearing (fiat link) | `morapay.link.quote(id, { invoice_major })` | `POST /api/v1/merchant/links/:id/settlement-quote` |
-| Disbursement batch | `morapay.payouts.quote({ ... })` | `POST /api/v1/merchant/disbursement/batches/quote` |
+| Merchant clearing (fiat link) | `morapay.link.quote(id, { invoice_major })` | `POST /api/v1/merchant/links/:id/quote` |
+| Disbursement batch | `morapay.disbursement.quote({ ... })` | `POST /api/v1/merchant/disbursement/batches/quote` |
 | Crypto ramp | `morapay.quotes.ramp.create({ ... })` | `POST /api/v1/merchant/quotes/ramp` |
 
 ```typescript
 // Disbursement — usdCharge is principal + all platform/network fees
-const quote = await morapay.payouts.quote({
+const quote = await morapay.disbursement.quote({
   chainId: 8453,
   token: "USDC",
   payoutTotal: 250,
@@ -97,12 +97,12 @@ Batch payouts debit your treasury account by `usdCharge` from the quote. The cha
 | **Chain transfer fee** | On-chain settlement cost for the selected `chainId` |
 
 ```typescript
-const { data: batches } = await morapay.payouts();
-const batch = await morapay.payouts("batch_xyz");
+const { data: batches } = await morapay.disbursement();
+const batch = await morapay.disbursement("batch_xyz");
 // batch metadata includes quoted usdCharge at creation time
 ```
 
-Always call `morapay.payouts.quote()` immediately before `POST /disbursement/batches` — submitted `usdCharge` must match the quote within tolerance.
+Always call `morapay.disbursement.quote()` immediately before `POST /disbursement/batches` — submitted `usdCharge` must match the quote within tolerance.
 
 ### Merchant withdrawals
 

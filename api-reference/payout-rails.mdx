@@ -3,20 +3,20 @@ title: "Payout rails API"
 description: "List banks, MoMo operators, and resolve account names for withdrawals."
 ---
 
-Merchant **payout rails** endpoints live under `/api/v1/merchant/payout-rails/*`. They require [signed requests](/getting-started/authentication).
+Merchant **payout rails** endpoints live under `/api/v1/merchant/rails/*`. They require [signed requests](/getting-started/authentication).
 
 Use these to build withdrawal forms: bank dropdowns, MoMo operator lists, and account-name preview before saving a payout method.
 
 ## Payout rails meta
 
-`GET /api/v1/merchant/payout-rails/meta`
+`GET /api/v1/merchant/rails/meta`
 
-Returns the business country, fiat currency, and whether Paystack/Moolre rails are available.
+Returns the business country, fiat currency, and whether local fiat rails are available.
 
 <RequestExample>
 
 ```bash cURL
-curl -s "https://api.morapay.io/api/v1/merchant/payout-rails/meta" \
+curl -s "https://api.morapay.io/api/v1/merchant/rails/meta" \
   -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
   -H "Morapay-Timestamp: $TIMESTAMP" \
   -H "Morapay-Signature: v1=$SIGNATURE"
@@ -32,7 +32,6 @@ curl -s "https://api.morapay.io/api/v1/merchant/payout-rails/meta" \
   "data": {
     "fiatRailsSupported": true,
     "payoutCurrencyFiat": "GHS",
-    "paystackCountrySlug": "ghana",
     "businessCountry": "GH"
   }
 }
@@ -42,9 +41,9 @@ curl -s "https://api.morapay.io/api/v1/merchant/payout-rails/meta" \
 
 ## List banks
 
-`GET /api/v1/merchant/payout-rails/banks`
+`GET /api/v1/merchant/rails/banks`
 
-Returns Paystack bank institutions for the merchant's country. Requires `fiatRailsSupported: true` from meta.
+Returns bank institutions for the merchant's country. Requires `fiatRailsSupported: true` from meta.
 
 <ResponseExample>
 
@@ -70,7 +69,7 @@ Returns Paystack bank institutions for the merchant's country. Requires `fiatRai
 
 ## List mobile money operators
 
-`GET /api/v1/merchant/payout-rails/mobile-providers`
+`GET /api/v1/merchant/rails/mobile-providers`
 
 Returns MoMo operators for the merchant's fiat currency (e.g. GHS, KES).
 
@@ -92,7 +91,7 @@ Returns MoMo operators for the merchant's fiat currency (e.g. GHS, KES).
 
 ## Resolve account name
 
-`GET /api/v1/merchant/payout-rails/resolve`
+`GET /api/v1/merchant/rails/resolve`
 
 Preview the account holder name before creating a payout method.
 
@@ -101,7 +100,7 @@ Preview the account holder name before creating a payout method.
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `type` | string | Yes | `BANK_ACCOUNT` or `MOBILE_MONEY` |
-| `bank_code` | string | Bank | Paystack/Moolre bank or provider code |
+| `bank_code` | string | Bank | Bank or provider code |
 | `account_number` | string | Bank | 6–20 digit account number |
 | `phone` | string | MoMo | Mobile number |
 | `provider_hint` | string | MoMo | e.g. `MTN`, `VOD`, `ATL` |
@@ -109,7 +108,7 @@ Preview the account holder name before creating a payout method.
 <RequestExample>
 
 ```bash cURL
-curl -s "https://api.morapay.io/api/v1/merchant/payout-rails/resolve?type=BANK_ACCOUNT&bank_code=030100&account_number=0123456789" \
+curl -s "https://api.morapay.io/api/v1/merchant/rails/resolve?type=BANK_ACCOUNT&bank_code=030100&account_number=0123456789" \
   -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
   -H "Morapay-Timestamp: $TIMESTAMP" \
   -H "Morapay-Signature: v1=$SIGNATURE"
@@ -130,26 +129,15 @@ curl -s "https://api.morapay.io/api/v1/merchant/payout-rails/resolve?type=BANK_A
 
 </ResponseExample>
 
-## Moolre bank list (commerce)
+## Public validation (checkout)
 
-`GET /api/moolre/banks?country=gha`
-
-Public list of Moolre bank `sublistid` codes for Ghana (`gha`) and Nigeria (`nga`). Used for bank validation and commerce payouts.
-
-<RequestExample>
-
-```bash cURL
-curl -s "https://api.morapay.io/api/moolre/banks?country=gha"
-```
-
-</RequestExample>
-
-## Moolre validation
+For payer-facing checkout flows, use the unsigned public validation endpoints:
 
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
-| `/api/moolre/validate/momo` | POST | Validate Ghana MoMo number |
-| `/api/moolre/validate/bank` | POST | Validate bank account via Moolre |
+| `/api/public/validate/momo` | POST | Validate MoMo number |
+| `/api/public/validate/bank` | POST | Validate bank account |
+| `GET /api/public/validate/banks?country=gha` | GET | Bank list for Ghana (`gha`) or Nigeria (`nga`) |
 
 Example MoMo validate body:
 
@@ -161,20 +149,9 @@ Example MoMo validate body:
 }
 ```
 
-## Paystack banks (relay)
-
-For BFF integrations, Paystack bank APIs are also available via relay:
-
-| Endpoint | Auth | Purpose |
-|----------|------|---------|
-| `GET /api/klyra/relay/paystack/banks?country=ghana` | Platform | Paginated bank list |
-| `GET /api/klyra/relay/paystack/banks/resolve` | Platform | Account name lookup |
-
-Merchant integrations should prefer **`/api/v1/merchant/payout-rails/*`** — credentials are scoped to your business.
-
 ## SDK equivalent
 
-The SDK does not yet wrap payout-rails helpers. Call the Merchant API from your server or extend your integration layer.
+The SDK does not yet wrap rails helpers. Call the Merchant API from your server or extend your integration layer.
 
 ## Related
 

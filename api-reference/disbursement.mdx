@@ -230,12 +230,12 @@ After dispatch starts, recipients typically receive funds within **~2 minutes pe
 
 | API | SDK |
 |-----|-----|
-| `GET /disbursement/account` | `morapay.payouts.account()` |
-| `POST /disbursement/batches/quote` | `morapay.payouts.quote({ ... })` |
-| `GET /disbursement/batches` | `morapay.payouts({ limit })` |
-| `GET /disbursement/batches/:id` | `morapay.payouts("batch_xyz")` |
-| `DELETE /disbursement/batches/:id` | `morapay.payouts.cancel("batch_xyz")` |
-| `GET /disbursement/ledger` | `morapay.payouts.ledger({ page, limit })` |
+| `GET /disbursement/account` | `morapay.disbursement.account()` |
+| `POST /disbursement/batches/quote` | `morapay.disbursement.quote({ ... })` |
+| `GET /disbursement/batches` | `morapay.disbursement({ limit })` |
+| `GET /disbursement/batches/:id` | `morapay.disbursement("batch_xyz")` |
+| `DELETE /disbursement/batches/:id` | `morapay.disbursement.cancel("batch_xyz")` |
+| `GET /disbursement/ledger` | `morapay.disbursement.ledger({ page, limit })` |
 
 Deposit/withdraw with `idempotencyKey` are API-only today — call the REST endpoints from your server.
 

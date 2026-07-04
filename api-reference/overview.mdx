@@ -14,8 +14,8 @@ The **Morapay API** is the public HTTP surface for merchant integrations. All pa
 | Family | Base path | Auth |
 |--------|-----------|------|
 | **Merchant API v1** | `/api/v1/merchant` | HMAC signed (`Morapay-Key`, `Morapay-Timestamp`, `Morapay-Signature`) |
-| **Catalog & checkout** | `/api/klyra` | Mostly public; some routes need platform relay credentials |
-| **Moolre validation** | `/api/moolre` | Public validation helpers |
+| **Catalog & checkout** | `/api/public` | Mostly public; some routes need platform relay credentials |
+| **Account validation** | `/api/public/validate` | Public validation helpers |
 
 <Note>
   Prefer the [`@morapay/sdk`](/getting-started/quickstart) on your server — it signs Merchant API requests automatically. Use raw HTTP when you cannot use Node/TypeScript.
