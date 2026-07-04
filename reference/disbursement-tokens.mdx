@@ -1,0 +1,51 @@
+---
+title: "Disbursement tokens"
+description: "Stablecoin rails for batch disbursements and treasury payouts."
+---
+
+`morapay.payouts` batches debit merchant treasury liquidity on supported **pool tokens** and deliver fiat to MoMo / bank recipients.
+
+## LIVE (mainnet)
+
+| Chain | Chain ID | Token | Fonbnk code |
+| --- | --- | --- | --- |
+| Base | 8453 | USDC | BASE_USDC |
+| Base | 8453 | ETH | BASE_NATIVE |
+| Ethereum | 1 | USDC | ETHEREUM_USDC |
+| Ethereum | 1 | ETH | ETHEREUM_NATIVE |
+
+Primary production rails:
+
+- **USDC on Base** (`8453`) — default disbursement rail
+- **USDC on Ethereum** (`1`)
+
+`ETH` on Base and Ethereum is also accepted for pool settlement when quoted.
+
+## TEST (testnet)
+
+| Chain | Chain ID | Token | Fonbnk code |
+| --- | --- | --- | --- |
+| Base Sepolia | 84532 | USDC | BASE_SEPOLIA_USDC |
+| Base Sepolia | 84532 | ETH | BASE_SEPOLIA_ETH |
+
+TEST batches must use testnet chains (e.g. **Base Sepolia** `84532`). Mainnet chain IDs are rejected in TEST mode.
+
+## API
+
+[Disbursement API](/api-reference/disbursement) — quote, create, list, and cancel batches.
+
+## Quote before batching
+
+```typescript
+const quote = await morapay.payouts.quote({
+  chainId: 8453,
+  token: "USDC",
+  payoutTotal: 250,
+  recipientCount: 10,
+});
+```
+
+## Related
+
+- [Payout timing & limits](/reference/payout-timing)
+- [Payouts & MoMo](/concepts/payouts-momo)

@@ -1,0 +1,199 @@
+{
+  "theme": "mint",
+  "name": "Morapay",
+  "description": "Morapay Merchant API, SDK, and integration guides for checkout and payouts.",
+  "colors": {
+    "primary": "#0F172A",
+    "light": "#F8FAFC",
+    "dark": "#020617"
+  },
+  "logo": {
+    "light": "/images/light.png",
+    "dark": "/logo/dark.png"
+  },
+  "favicon": {
+    "light": "/images/light.png",
+    "dark": "/logo/dark.png"
+  },
+  "appearance": {
+    "default": "system"
+  },
+  "background": {
+    "decoration": "gradient",
+    "color": {
+      "light": "#f6f5f4",
+      "dark": "#18171a"
+    }
+  },
+  "navbar": {
+    "links": [
+      {
+        "href": "https://business.morapay.io/signup",
+        "label": "Signup"
+      },
+      {
+        "href": "https://business.morapay.io",
+        "label": "Dashboard"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Get API keys",
+      "href": "https://dashboard.morapay.io/developers/api-keys"
+    }
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/morapay",
+      "github": "https://github.com/morapay"
+    }
+  },
+  "seo": {
+    "metatags": {
+      "og:title": "Morapay Developer Docs",
+      "og:description": "Merchant API, SDK, checkout widget, and business QR documentation.",
+      "og:url": "https://docs.morapay.io",
+      "og:type": "website"
+    }
+  },
+  "fonts": {
+    "family": "Inter"
+  },
+  "icons": {
+    "library": "fontawesome"
+  },
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/getting-started/quickstart"
+    }
+  ],
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "assistant",
+      "chatgpt",
+      "claude",
+      "cursor",
+      "vscode"
+    ],
+    "display": "header"
+  },
+  "$schema": "https://mintlify.com/docs.json",
+  "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "GitHub",
+          "icon": "github",
+          "href": "https://github.com/morapay"
+        },
+        {
+          "anchor": "Support",
+          "icon": "life-ring",
+          "href": "mailto:support@morapay.io"
+        }
+      ]
+    },
+    "tabs": [
+      {
+        "tab": "Guides",
+        "icon": "book-open",
+        "groups": [
+          {
+            "group": "Getting started",
+            "icon": "rocket",
+            "pages": [
+              "getting-started/quickstart",
+              "getting-started/authentication",
+              "getting-started/environments"
+            ]
+          },
+          {
+            "group": "Concepts",
+            "icon": "lightbulb",
+            "pages": [
+              "concepts/payment-links",
+              "concepts/subscriptions",
+              "concepts/payouts-momo"
+            ]
+          },
+          {
+            "group": "Frontend & UI",
+            "icon": "palette",
+            "pages": [
+              "frontend-ui/native-components",
+              "frontend-ui/react-hooks",
+              "frontend-ui/custom-styling"
+            ]
+          },
+          {
+            "group": "Developer tools",
+            "icon": "wrench",
+            "pages": [
+              "developer-tools/webhooks",
+              "developer-tools/idempotency"
+            ]
+          },
+          {
+            "group": "Errors",
+            "icon": "triangle-exclamation",
+            "pages": [
+              "errors/error-handling",
+              {
+                "group": "Error codes",
+                "pages": [
+                  "errors/codes/auth-keys-expired",
+                  "errors/codes/links-amount-below-minimum"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Support",
+            "icon": "life-ring",
+            "pages": [
+              "support/get-help"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API reference",
+        "icon": "code",
+        "groups": [
+          {
+            "group": "REST API",
+            "icon": "server",
+            "pages": [
+              "api-reference/overview",
+              "api-reference/catalog",
+              "api-reference/payout-rails",
+              "api-reference/disbursement",
+              "api-reference/fiat-checkout"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Coverage",
+        "icon": "table",
+        "groups": [
+          {
+            "group": "Supported rails",
+            "icon": "globe",
+            "root": "reference/coverage",
+            "pages": [
+              "reference/countries-and-fiat",
+              "reference/chains-and-tokens",
+              "reference/banks-and-momo",
+              "reference/disbursement-tokens",
+              "reference/payout-timing"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

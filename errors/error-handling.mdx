@@ -1,0 +1,111 @@
+---
+title: "Error handling"
+description: "Consultant-grade errors with safeMessage, displayMessage, uiHint, and requestId."
+---
+
+Morapay errors are designed as an **on-demand consultant** — not just a stack trace. Every failed Merchant API response includes enough context for developers, support engineers, and customer-facing UI.
+
+## Error envelope
+
+```json
+{
+  "success": false,
+  "error": "Invalid payload. amount failed platform minimum check.",
+  "code": "links.amount.below_minimum",
+  "safeMessage": "This amount is below the minimum allowed for mobile money checkout in this region.",
+  "displayMessage": "The transaction amount must be at least 1.00 GHS.",
+  "why": "Mobile network operators enforce a platform floor transaction limit.",
+  "howToFix": "Validate cart totals before calling morapay.link.create() or morapay.products.link().",
+  "docUrl": "https://docs.morapay.io/codes/links/amount/below-minimum",
+  "uiHint": {
+    "severity": "warning",
+    "placement": "inline",
+    "actionText": "Update amount"
+  },
+  "requestId": "req_1717483920_abc",
+  "details": {}
+}
+```
+
+## Field guide
+
+| Field | Audience | Use |
+|-------|----------|-----|
+| `error` / `err.message` | Developers | Server logs, Sentry — may include field paths |
+| `safeMessage` / `err.safeMessage` | Customer UI | Sanitized copy for any surface |
+| `displayMessage` / `err.displayMessage` | UI components | Intent-driven display text |
+| `uiHint` / `err.uiHint` | UI components | `{ severity, placement, actionText? }` |
+| `code` / `err.code` | Programmatic | Semantic namespace `domain.resource.reason` |
+| `requestId` / `err.requestId` | Support | Correlate with API logs (`Morapay-Request-Id` header) |
+| `docUrl` / `err.docUrl` | Self-serve | Deep link to error code documentation |
+| `details` / `err.details` | Validation | Field-level breakdown |
+
+## SDK usage
+
+```typescript
+import {
+  Morapay,
+  MorapayInvalidRequestError,
+  MorapayAuthenticationError,
+  MorapayUi,
+  isMorapayError,
+} from "@morapay/sdk";
+
+try {
+  await morapay.products.link("prod_123", { amount: 0.1, currency: "GHS" });
+} catch (err) {
+  if (err instanceof MorapayInvalidRequestError) {
+    // Customer UI — use displayMessage or safeMessage, never message
+    showInlineError(err.displayMessage);
+
+    // Developer terminal — consultant layout
+    console.error(err.format());
+  } else if (err instanceof MorapayAuthenticationError) {
+    alertOps(err.requestId);
+  } else if (isMorapayError(err) && err.code.startsWith("payouts.")) {
+    MorapayUi.toast(err);
+  }
+}
+```
+
+### Error subclasses
+
+| Class | Typical HTTP |
+|-------|-------------|
+| `MorapayAuthenticationError` | 401 |
+| `MorapayPermissionError` | 403 |
+| `MorapayNotFoundError` | 404 |
+| `MorapayConflictError` | 409 |
+| `MorapayInvalidRequestError` | 400, 422 |
+| `MorapayRateLimitError` | 429 |
+| `MorapayApiError` | 5xx |
+| `MorapayConnectionError` | Network / non-JSON |
+
+## Semantic codes
+
+Codes follow `domain.resource.reason`:
+
+```
+auth.signature.mismatch
+links.amount.below_minimum
+payouts.momo.insufficient_balance
+```
+
+## Catalog
+
+The canonical error dictionary is maintained in the Morapay error catalog. All `success: false` JSON responses from the API include enriched consultant fields (`safeMessage`, `displayMessage`, `uiHint`, `docUrl`, `requestId`).
+
+## Example code pages
+
+<CardGroup cols={2}>
+  <Card title="auth.keys.expired" icon="key" href="/errors/codes/auth-keys-expired">
+    Expired API key rotation.
+  </Card>
+  <Card title="links.amount.below_minimum" icon="coins" href="/errors/codes/links-amount-below-minimum">
+    Regional MoMo floor limits.
+  </Card>
+</CardGroup>
+
+## Next step
+
+[Get help](/support/get-help) — how to reach support with the right context.

@@ -1,0 +1,72 @@
+---
+title: "Authentication"
+description: "HMAC-signed requests with Morapay API keys."
+---
+
+Morapay Merchant API v1 uses **signed requests**. Raw secret keys (`sk_*`) are never sent in headers.
+
+## API key pairs
+
+| Key | Prefix | Where it lives |
+|-----|--------|----------------|
+| Public key | `pk_test_*` / `pk_live_*` | `Morapay-Key` header |
+| Secret key | `sk_test_*` / `sk_live_*` | Server env only — used to sign |
+
+Create pairs in **Dashboard → Developers → API keys**. Each key is pinned to **TEST** or **LIVE** at creation time. The SDK infers environment from the key — do not send `x-merchant-environment` with API keys.
+
+## Required headers
+
+| Header | Value |
+|--------|--------|
+| `Morapay-Key` | Your public key (`pk_*`) |
+| `Morapay-Timestamp` | Unix seconds |
+| `Morapay-Signature` | `v1=<hex>` HMAC-SHA256 digest |
+
+The Morapay API validates signatures on every request. The canonical payload is:
+
+```
+{timestamp}.{METHOD}.{pathWithQuery}.{sha256HexBody}
+```
+
+- **Timestamp window:** ±300 seconds (clock skew tolerance)
+- **Body hash:** SHA-256 of the raw JSON body (`{}` for GET/DELETE)
+
+## SDK (recommended)
+
+```typescript
+import { Morapay } from "@morapay/sdk";
+
+const morapay = new Morapay({
+  publicKey: process.env.MORAPAY_PUBLIC_KEY!,
+  secretKey: process.env.MORAPAY_SECRET_KEY!,
+});
+```
+
+Signing is automatic on every `morapay.*` call to `/api/v1/merchant/*`.
+
+## Manual signing (advanced)
+
+If you cannot use the SDK, implement the same algorithm:
+
+1. Hash the raw request body with SHA-256 (hex).
+2. Build the canonical string above.
+3. Derive signing key: `SHA-256(sk_*)` (32-byte digest).
+4. HMAC-SHA256 the canonical string; prefix with `v1=`.
+
+## Common auth errors
+
+| Code | HTTP | Meaning |
+|------|------|---------|
+| `auth.keys.invalid` | 401 | Public key not found |
+| `auth.keys.expired` | 401 | Key past expiration |
+| `auth.signature.mismatch` | 401 | HMAC does not match |
+| `auth.signature.timestamp_expired` | 401 | Timestamp outside ±300s |
+| `auth.keys.origin_not_allowed` | 403 | Request origin not on key allowlist |
+
+<Note>
+  Stuck on signature verification? Include your `requestId` (from the `Morapay-Request-Id` response header) when asking for help in the [Morapay Sandbox](https://sandbox.morapay.io).
+</Note>
+
+## Next step
+
+[Environments](/getting-started/environments) — TEST vs LIVE, base URLs, and checkout hosts.

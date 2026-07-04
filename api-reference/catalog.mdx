@@ -1,0 +1,185 @@
+---
+title: "Catalog API"
+description: "REST endpoints for countries, chains, and tokens."
+---
+
+Public catalog endpoints help you populate checkout UI and validate corridors **before** creating links or disbursement batches. No merchant signing required.
+
+Base URL: `https://api.morapay.io`
+
+## Countries
+
+`GET /api/klyra/countries`
+
+Returns supported countries with Fonbnk and Paystack flags.
+
+### Query parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `supported` | string | Filter: `fonbnk`, `paystack`, or `any` |
+
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/klyra/countries?supported=any"
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "countries": [
+      {
+        "id": "uuid",
+        "code": "GH",
+        "name": "Ghana",
+        "currency": "GHS",
+        "supportedFonbnk": true,
+        "supportedPaystack": true
+      },
+      {
+        "id": "uuid",
+        "code": "NG",
+        "name": "Nigeria",
+        "currency": "NGN",
+        "supportedFonbnk": true,
+        "supportedPaystack": true
+      }
+    ]
+  }
+}
+```
+
+</ResponseExample>
+
+See the full country list in [Countries & fiat](/reference/countries-and-fiat).
+
+## Chains
+
+`GET /api/klyra/chains`
+
+Returns supported chains for quotes, checkout, and disbursement validation.
+
+### Query parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `environment` | string | `TEST` or `LIVE` (default `LIVE`). TEST returns testnet + offchain; LIVE returns mainnet + offchain. |
+
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/klyra/chains?environment=LIVE"
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "environment": "LIVE",
+    "chains": [
+      {
+        "id": "uuid",
+        "chainId": "8453",
+        "name": "Base",
+        "networkType": "MAINNET",
+        "platformManaged": false
+      },
+      {
+        "id": "uuid",
+        "chainId": "1",
+        "name": "Ethereum",
+        "networkType": "MAINNET",
+        "platformManaged": false
+      }
+    ]
+  }
+}
+```
+
+</ResponseExample>
+
+## Tokens
+
+`GET /api/klyra/tokens`
+
+Returns supported tokens with chain metadata.
+
+### Query parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `chain_id` | number | Filter to one chain (e.g. `8453`) |
+| `environment` | string | `TEST` or `LIVE` (default `LIVE`) |
+
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/klyra/tokens?chain_id=8453&environment=LIVE"
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "environment": "LIVE",
+    "tokens": [
+      {
+        "id": "uuid",
+        "chainId": "8453",
+        "networkName": "Base",
+        "address": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "symbol": "USDC",
+        "decimals": 6,
+        "name": "USD Coin",
+        "fonbnkCode": "BASE_USDC",
+        "networkType": "MAINNET"
+      },
+      {
+        "id": "uuid",
+        "chainId": "8453",
+        "networkName": "Base",
+        "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        "symbol": "ETH",
+        "decimals": 18,
+        "name": "Ether",
+        "fonbnkCode": "BASE_NATIVE",
+        "networkType": "MAINNET"
+      }
+    ]
+  }
+}
+```
+
+</ResponseExample>
+
+### Compact token list
+
+`GET /api/klyra/tokens/list` (relay) exposes a UI-oriented shape with `displaySymbol` and `logoUri`. Same query parameters as `/tokens`.
+
+## SDK equivalent
+
+```typescript
+// Catalog is not wrapped in the SDK — call the API host directly or use
+// morapay.link.quote(linkId, { chainId: 8453 }) after picking a chain.
+const res = await fetch("https://api.morapay.io/api/klyra/tokens?chain_id=8453");
+const { data } = await res.json();
+```
+
+## Related
+
+- [Chains & tokens reference](/reference/chains-and-tokens)
+- [Disbursement API](/api-reference/disbursement)

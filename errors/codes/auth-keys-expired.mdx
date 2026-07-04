@@ -1,0 +1,64 @@
+---
+title: "auth.keys.expired"
+description: "The API key used for this request has passed its expiration date."
+---
+
+**Code:** `auth.keys.expired`  
+**HTTP:** `401 Unauthorized`
+
+## What happened
+
+The public key in `Morapay-Key` maps to an API key record whose `expiresAt` is in the past. The API rejects the request before route handlers run.
+
+## Safe message
+
+> We could not verify this request. Please try again later.
+
+Use `err.safeMessage` or `err.displayMessage` in customer UI — not `err.message`.
+
+## Why this happened
+
+The API key used for this request has passed its expiration date configured when the key was created or last rotated.
+
+## How to fix it
+
+1. Open **Dashboard → Developers → API keys**.
+2. Create a new **TEST** or **LIVE** key pair (matching your environment).
+3. Update server environment variables:
+   - `MORAPAY_PUBLIC_KEY`
+   - `MORAPAY_SECRET_KEY`
+4. Redeploy and revoke the expired key.
+
+```typescript
+const morapay = new Morapay({
+  publicKey: process.env.MORAPAY_PUBLIC_KEY!,
+  secretKey: process.env.MORAPAY_SECRET_KEY!,
+});
+```
+
+## UI hint
+
+| Field | Value |
+|-------|-------|
+| `severity` | `critical` |
+| `placement` | `toast` |
+
+Authentication failures should not be shown inline on checkout forms — alert operators via toast or monitoring.
+
+## Programmatic handling
+
+```typescript
+import { MorapayAuthenticationError } from "@morapay/sdk";
+
+catch (err) {
+  if (err instanceof MorapayAuthenticationError && err.code === "auth.keys.expired") {
+    await pagerDuty("Morapay API key expired", { requestId: err.requestId });
+  }
+}
+```
+
+## Related codes
+
+- [`auth.keys.invalid`](/errors/error-handling) — key not found
+- [`auth.keys.revoked`](/errors/error-handling) — key deactivated
+- [`auth.signature.mismatch`](/getting-started/authentication) — HMAC failure

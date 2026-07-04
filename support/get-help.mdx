@@ -1,0 +1,63 @@
+---
+title: "Get help"
+description: "How to reach Morapay support and get unblocked fast."
+---
+
+When you're stuck, we want you back to a **200 OK** as fast as possible. Format your question well and include the right identifiers.
+
+## Response times
+
+| Channel | Expected response | Best for |
+|---------|-------------------|----------|
+| **Morapay Sandbox** (community) | Hours (business days) | Integration questions, code snippets |
+| **support@morapay.io** | 1 business day | Account, LIVE incidents, security |
+| **Dashboard chat** | Varies by plan | Billing, KYB, key management |
+
+## Always include
+
+1. **`requestId`** — from the error body or `Morapay-Request-Id` response header. Every API request is logged with this ID.
+2. **Environment** — TEST or LIVE (from your key prefix).
+3. **Endpoint + SDK method** — e.g. `morapay.products.link()`, `POST /disbursement/batches`.
+4. **Timestamp (UTC)** — when the failure occurred.
+5. **Error `code`** — e.g. `links.amount.below_minimum`, not just HTTP 422.
+
+### Good support request
+
+```
+requestId: req_1717483920_x7k2
+env: TEST
+call: morapay.payouts.quote({ chainId: 8453, token: "USDC", payoutTotal: 250, recipientCount: 10 })
+code: payouts.momo.insufficient_balance
+time: 2026-03-15T14:32:00Z
+```
+
+### Avoid
+
+- Pasting `sk_*` secret keys (never share secrets)
+- Screenshots without `requestId`
+- Re-serialized webhook bodies for signature debugging (send raw body + signature header instead)
+
+## Self-serve resources
+
+<CardGroup cols={2}>
+  <Card title="Error catalog" icon="book" href="/errors/error-handling">
+    Consultant fields, subclasses, and UI hints.
+  </Card>
+  <Card title="Authentication" icon="lock" href="/getting-started/authentication">
+  HMAC signing reference.
+  </Card>
+  <Card title="SDK sample app" icon="code" href="https://github.com/morapay/morapay-web/tree/main/sdk/sample/nextjs">
+    Next.js integration lab.
+  </Card>
+  <Card title="Sandbox community" icon="comments" href="https://sandbox.morapay.io">
+    Ask engineers in the developer group.
+  </Card>
+</CardGroup>
+
+## Security issues
+
+Report vulnerabilities to **security@morapay.io**. Do not open public GitHub issues for security disclosures.
+
+<Note>
+  For signature verification help, post your canonical signing string construction (without `sk_*`) and the `requestId` of a failed call. Our team can trace the exact API log entry.
+</Note>

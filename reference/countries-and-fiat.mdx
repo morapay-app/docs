@@ -1,0 +1,68 @@
+---
+title: "Countries & fiat"
+description: "Supported countries, settlement currencies, and fiat payment rails."
+---
+
+Morapay supports international crypto checkout and regional fiat rails. Country availability is stored in the Morapay API catalog and exposed at `GET /api/countries` (via `GET /api/klyra/countries` on the public API host).
+
+<Note>
+  Country availability changes over time. Use `GET /api/klyra/countries?supported=any` for the authoritative list before shipping checkout or payout UI.
+</Note>
+
+## Supported countries
+
+| Code | Country | Currency | Fonbnk | Paystack | Checkout / payout rails |
+| --- | --- | --- | --- | --- | --- |
+| BF | Burkina Faso | XOF | Yes | — | Fonbnk on/offramp |
+| BJ | Benin | XOF | Yes | — | Fonbnk on/offramp |
+| BR | Brazil | BRL | Yes | — | Fonbnk on/offramp |
+| CG | Republic of the Congo | XAF | Yes | — | Fonbnk on/offramp |
+| CI | Ivory Coast | XOF | Yes | — | Fonbnk on/offramp |
+| CM | Cameroon | XAF | Yes | — | Fonbnk on/offramp |
+| GA | Gabon | XAF | Yes | — | Fonbnk on/offramp |
+| GH | Ghana | GHS | Yes | Yes | Fonbnk on/offramp, Paystack card, Moolre MoMo / bank checkout |
+| KE | Kenya | KES | Yes | Yes | Fonbnk on/offramp, Paystack card |
+| MW | Malawi | MWK | Yes | — | Fonbnk on/offramp |
+| NG | Nigeria | NGN | Yes | Yes | Fonbnk on/offramp, Paystack card, Moolre MoMo / bank checkout |
+| PH | Philippines | PHP | Yes | — | Fonbnk on/offramp |
+| RW | Rwanda | RWF | Yes | — | Fonbnk on/offramp |
+| SN | Senegal | XOF | Yes | — | Fonbnk on/offramp |
+| TZ | Tanzania | TZS | Yes | — | Fonbnk on/offramp |
+| UG | Uganda | UGX | Yes | — | Fonbnk on/offramp |
+| ZA | South Africa | ZAR | Yes | Yes | Fonbnk on/offramp, Paystack card |
+| ZM | Zambia | ZMW | Yes | — | Fonbnk on/offramp |
+
+## Fiat at checkout (Moolre)
+
+These fiat currencies accept **mobile money** and **virtual bank transfer** at checkout when Moolre is enabled for your environment:
+
+- **GHS**
+- **NGN**
+
+## Paystack card markets
+
+Card checkout via Paystack is probed for these markets:
+
+| Country | Code | Currency | Paystack slug |
+| --- | --- | --- | --- |
+| Nigeria | NG | NGN | nigeria |
+| Ghana | GH | GHS | ghana |
+| Kenya | KE | KES | kenya |
+| South Africa | ZA | ZAR | south_africa |
+| Côte d'Ivoire | CI | XOF | cote_d_ivoire |
+
+## API
+
+Full REST documentation: [Catalog API](/api-reference/catalog#countries) · [Fiat checkout API](/api-reference/fiat-checkout)
+
+```bash
+curl -s "https://api.morapay.io/api/klyra/countries?supported=any"
+```
+
+Filter with `?supported=fonbnk`, `paystack`, or `any`.
+
+## Related
+
+- [Chains & tokens](/reference/chains-and-tokens)
+- [Banks & MoMo withdrawal](/reference/banks-and-momo)
+- [Payout timing & limits](/reference/payout-timing)

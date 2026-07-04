@@ -1,0 +1,1582 @@
+{
+  "exportedAt": "2026-07-04T05:57:10.518Z",
+  "countries": {
+    "all": [
+      {
+        "code": "BF",
+        "name": "Burkina Faso",
+        "currency": "XOF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "BJ",
+        "name": "Benin",
+        "currency": "XOF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "BR",
+        "name": "Brazil",
+        "currency": "BRL",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "CG",
+        "name": "Republic of the Congo",
+        "currency": "XAF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "CI",
+        "name": "Ivory Coast",
+        "currency": "XOF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "CM",
+        "name": "Cameroon",
+        "currency": "XAF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "GA",
+        "name": "Gabon",
+        "currency": "XAF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "GH",
+        "name": "Ghana",
+        "currency": "GHS",
+        "supportedFonbnk": true,
+        "supportedPaystack": true
+      },
+      {
+        "code": "KE",
+        "name": "Kenya",
+        "currency": "KES",
+        "supportedFonbnk": true,
+        "supportedPaystack": true
+      },
+      {
+        "code": "MW",
+        "name": "Malawi",
+        "currency": "MWK",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "NG",
+        "name": "Nigeria",
+        "currency": "NGN",
+        "supportedFonbnk": true,
+        "supportedPaystack": true
+      },
+      {
+        "code": "PH",
+        "name": "Philippines",
+        "currency": "PHP",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "RW",
+        "name": "Rwanda",
+        "currency": "RWF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "SN",
+        "name": "Senegal",
+        "currency": "XOF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "TZ",
+        "name": "Tanzania",
+        "currency": "TZS",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "UG",
+        "name": "Uganda",
+        "currency": "UGX",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "ZA",
+        "name": "South Africa",
+        "currency": "ZAR",
+        "supportedFonbnk": true,
+        "supportedPaystack": true
+      },
+      {
+        "code": "ZM",
+        "name": "Zambia",
+        "currency": "ZMW",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      }
+    ],
+    "paymentEnabled": [
+      {
+        "code": "BF",
+        "name": "Burkina Faso",
+        "currency": "XOF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "BJ",
+        "name": "Benin",
+        "currency": "XOF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "BR",
+        "name": "Brazil",
+        "currency": "BRL",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "CG",
+        "name": "Republic of the Congo",
+        "currency": "XAF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "CI",
+        "name": "Ivory Coast",
+        "currency": "XOF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "CM",
+        "name": "Cameroon",
+        "currency": "XAF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "GA",
+        "name": "Gabon",
+        "currency": "XAF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "GH",
+        "name": "Ghana",
+        "currency": "GHS",
+        "supportedFonbnk": true,
+        "supportedPaystack": true
+      },
+      {
+        "code": "KE",
+        "name": "Kenya",
+        "currency": "KES",
+        "supportedFonbnk": true,
+        "supportedPaystack": true
+      },
+      {
+        "code": "MW",
+        "name": "Malawi",
+        "currency": "MWK",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "NG",
+        "name": "Nigeria",
+        "currency": "NGN",
+        "supportedFonbnk": true,
+        "supportedPaystack": true
+      },
+      {
+        "code": "PH",
+        "name": "Philippines",
+        "currency": "PHP",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "RW",
+        "name": "Rwanda",
+        "currency": "RWF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "SN",
+        "name": "Senegal",
+        "currency": "XOF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "TZ",
+        "name": "Tanzania",
+        "currency": "TZS",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "UG",
+        "name": "Uganda",
+        "currency": "UGX",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "ZA",
+        "name": "South Africa",
+        "currency": "ZAR",
+        "supportedFonbnk": true,
+        "supportedPaystack": true
+      },
+      {
+        "code": "ZM",
+        "name": "Zambia",
+        "currency": "ZMW",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      }
+    ],
+    "fonbnkOnly": [
+      {
+        "code": "BF",
+        "name": "Burkina Faso",
+        "currency": "XOF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "BJ",
+        "name": "Benin",
+        "currency": "XOF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "BR",
+        "name": "Brazil",
+        "currency": "BRL",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "CG",
+        "name": "Republic of the Congo",
+        "currency": "XAF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "CI",
+        "name": "Ivory Coast",
+        "currency": "XOF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "CM",
+        "name": "Cameroon",
+        "currency": "XAF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "GA",
+        "name": "Gabon",
+        "currency": "XAF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "MW",
+        "name": "Malawi",
+        "currency": "MWK",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "PH",
+        "name": "Philippines",
+        "currency": "PHP",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "RW",
+        "name": "Rwanda",
+        "currency": "RWF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "SN",
+        "name": "Senegal",
+        "currency": "XOF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "TZ",
+        "name": "Tanzania",
+        "currency": "TZS",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "UG",
+        "name": "Uganda",
+        "currency": "UGX",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      },
+      {
+        "code": "ZM",
+        "name": "Zambia",
+        "currency": "ZMW",
+        "supportedFonbnk": true,
+        "supportedPaystack": false
+      }
+    ],
+    "paystackOnly": [],
+    "both": [
+      {
+        "code": "GH",
+        "name": "Ghana",
+        "currency": "GHS",
+        "supportedFonbnk": true,
+        "supportedPaystack": true
+      },
+      {
+        "code": "KE",
+        "name": "Kenya",
+        "currency": "KES",
+        "supportedFonbnk": true,
+        "supportedPaystack": true
+      },
+      {
+        "code": "NG",
+        "name": "Nigeria",
+        "currency": "NGN",
+        "supportedFonbnk": true,
+        "supportedPaystack": true
+      },
+      {
+        "code": "ZA",
+        "name": "South Africa",
+        "currency": "ZAR",
+        "supportedFonbnk": true,
+        "supportedPaystack": true
+      }
+    ]
+  },
+  "chains": [
+    {
+      "chainId": 42161,
+      "name": "Arbitrum",
+      "networkType": "MAINNET",
+      "platformManaged": false,
+      "pricingReferenceChainId": null
+    },
+    {
+      "chainId": 8453,
+      "name": "Base",
+      "networkType": "MAINNET",
+      "platformManaged": false,
+      "pricingReferenceChainId": null
+    },
+    {
+      "chainId": 56,
+      "name": "BNB",
+      "networkType": "MAINNET",
+      "platformManaged": false,
+      "pricingReferenceChainId": null
+    },
+    {
+      "chainId": 1,
+      "name": "Ethereum",
+      "networkType": "MAINNET",
+      "platformManaged": false,
+      "pricingReferenceChainId": null
+    },
+    {
+      "chainId": 10,
+      "name": "Optimism",
+      "networkType": "MAINNET",
+      "platformManaged": false,
+      "pricingReferenceChainId": null
+    },
+    {
+      "chainId": 137,
+      "name": "Polygon",
+      "networkType": "MAINNET",
+      "platformManaged": false,
+      "pricingReferenceChainId": null
+    },
+    {
+      "chainId": 101,
+      "name": "SOLANA",
+      "networkType": "MAINNET",
+      "platformManaged": false,
+      "pricingReferenceChainId": null
+    },
+    {
+      "chainId": 421614,
+      "name": "Arbitrum Sepolia",
+      "networkType": "TESTNET",
+      "platformManaged": true,
+      "pricingReferenceChainId": 42161
+    },
+    {
+      "chainId": 84532,
+      "name": "Base Sepolia",
+      "networkType": "TESTNET",
+      "platformManaged": true,
+      "pricingReferenceChainId": 8453
+    },
+    {
+      "chainId": 11155111,
+      "name": "Ethereum Sepolia",
+      "networkType": "TESTNET",
+      "platformManaged": true,
+      "pricingReferenceChainId": 1
+    },
+    {
+      "chainId": 11155420,
+      "name": "Optimism Sepolia",
+      "networkType": "TESTNET",
+      "platformManaged": true,
+      "pricingReferenceChainId": 10
+    },
+    {
+      "chainId": 80002,
+      "name": "Polygon Amoy",
+      "networkType": "TESTNET",
+      "platformManaged": true,
+      "pricingReferenceChainId": 137
+    },
+    {
+      "chainId": 2,
+      "name": "BANK",
+      "networkType": "OFFCHAIN",
+      "platformManaged": false,
+      "pricingReferenceChainId": null
+    },
+    {
+      "chainId": 0,
+      "name": "MOMO",
+      "networkType": "OFFCHAIN",
+      "platformManaged": false,
+      "pricingReferenceChainId": null
+    }
+  ],
+  "tokens": [
+    {
+      "chainId": 0,
+      "chainName": "MOMO",
+      "symbol": "GHS",
+      "name": "Ghana Cedi",
+      "decimals": 2,
+      "address": "0x0000000000000000000000000000000000000000",
+      "fonbnkCode": "MOMO_GHS",
+      "displaySymbol": null,
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 0,
+      "chainName": "MOMO",
+      "symbol": "USD",
+      "name": "US Dollar",
+      "decimals": 2,
+      "address": "0x0000000000000000000000000000000000000001",
+      "fonbnkCode": "MOMO_USD",
+      "displaySymbol": null,
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 1,
+      "chainName": "Ethereum",
+      "symbol": "ETH",
+      "name": "Ether",
+      "decimals": 18,
+      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      "fonbnkCode": "ETHEREUM_NATIVE",
+      "displaySymbol": null,
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 1,
+      "chainName": "Ethereum",
+      "symbol": "MANA",
+      "name": "Decentraland MANA",
+      "decimals": 18,
+      "address": "0x0f5d2fb29fb7d3cfee444a200298f468908cc942",
+      "fonbnkCode": null,
+      "displaySymbol": "ETHEREUM MANA",
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 1,
+      "chainName": "Ethereum",
+      "symbol": "USDC",
+      "name": "USD Coin",
+      "decimals": 6,
+      "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      "fonbnkCode": "ETHEREUM_USDC",
+      "displaySymbol": null,
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 1,
+      "chainName": "Ethereum",
+      "symbol": "WXRP",
+      "name": "Wrapped XRP",
+      "decimals": 18,
+      "address": "0x39fBBABf11738317a448031930706cd3e612e1B9",
+      "fonbnkCode": null,
+      "displaySymbol": null,
+      "checkoutEnabled": true,
+      "checkoutFeatured": true
+    },
+    {
+      "chainId": 2,
+      "chainName": "BANK",
+      "symbol": "USD",
+      "name": "US Dollar",
+      "decimals": 2,
+      "address": "0x0000000000000000000000000000000000000000",
+      "fonbnkCode": "BANK_USD",
+      "displaySymbol": null,
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 10,
+      "chainName": "Optimism",
+      "symbol": "USDC",
+      "name": "USD Coin (Optimism)",
+      "decimals": 6,
+      "address": "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85",
+      "fonbnkCode": "OPTIMISM_USDC",
+      "displaySymbol": null,
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 56,
+      "chainName": "BNB",
+      "symbol": "BNB",
+      "name": "BNB",
+      "decimals": 18,
+      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      "fonbnkCode": "BNB_NATIVE",
+      "displaySymbol": null,
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 56,
+      "chainName": "BNB",
+      "symbol": "USDC",
+      "name": "USD Coin (BNB)",
+      "decimals": 18,
+      "address": "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+      "fonbnkCode": "BNB_USDC",
+      "displaySymbol": null,
+      "checkoutEnabled": true,
+      "checkoutFeatured": true
+    },
+    {
+      "chainId": 101,
+      "chainName": "SOLANA",
+      "symbol": "SOL",
+      "name": "Solana",
+      "decimals": 9,
+      "address": "So11111111111111111111111111111111111111112",
+      "fonbnkCode": "SOLANA_NATIVE",
+      "displaySymbol": null,
+      "checkoutEnabled": true,
+      "checkoutFeatured": true
+    },
+    {
+      "chainId": 101,
+      "chainName": "SOLANA",
+      "symbol": "USDC",
+      "name": "USD Coin (Solana)",
+      "decimals": 6,
+      "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      "fonbnkCode": "SOLANA_USDC",
+      "displaySymbol": null,
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 101,
+      "chainName": "SOLANA",
+      "symbol": "USDT",
+      "name": "Tether USD (Solana)",
+      "decimals": 6,
+      "address": "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+      "fonbnkCode": "SOLANA_USDT",
+      "displaySymbol": null,
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 137,
+      "chainName": "Polygon",
+      "symbol": "USDC",
+      "name": "USD Coin (Polygon)",
+      "decimals": 6,
+      "address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+      "fonbnkCode": "POLYGON_USDC",
+      "displaySymbol": null,
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 8453,
+      "chainName": "Base",
+      "symbol": "DAI",
+      "name": "Dai Stablecoin",
+      "decimals": 18,
+      "address": "0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb",
+      "fonbnkCode": null,
+      "displaySymbol": null,
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 8453,
+      "chainName": "Base",
+      "symbol": "ETH",
+      "name": "Ether",
+      "decimals": 18,
+      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      "fonbnkCode": "BASE_NATIVE",
+      "displaySymbol": null,
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 8453,
+      "chainName": "Base",
+      "symbol": "USDC",
+      "name": "USD Coin",
+      "decimals": 6,
+      "address": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "fonbnkCode": "BASE_USDC",
+      "displaySymbol": null,
+      "checkoutEnabled": true,
+      "checkoutFeatured": true
+    },
+    {
+      "chainId": 42161,
+      "chainName": "Arbitrum",
+      "symbol": "USDC",
+      "name": "USD Coin (Arbitrum)",
+      "decimals": 6,
+      "address": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+      "fonbnkCode": "ARBITRUM_USDC",
+      "displaySymbol": null,
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 80002,
+      "chainName": "Polygon Amoy",
+      "symbol": "POL",
+      "name": "Polygon (Amoy)",
+      "decimals": 18,
+      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      "fonbnkCode": null,
+      "displaySymbol": "POLYGON AMOY POL",
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 80002,
+      "chainName": "Polygon Amoy",
+      "symbol": "USDC",
+      "name": "USD Coin (Polygon Amoy)",
+      "decimals": 6,
+      "address": "0x41E94Eb019C0762f9Bff9f4851F9E9916a838b7",
+      "fonbnkCode": null,
+      "displaySymbol": "POLYGON AMOY USDC",
+      "checkoutEnabled": true,
+      "checkoutFeatured": true
+    },
+    {
+      "chainId": 84532,
+      "chainName": "Base Sepolia",
+      "symbol": "ETH",
+      "name": "Ether (Base Sepolia)",
+      "decimals": 18,
+      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      "fonbnkCode": null,
+      "displaySymbol": "BASE SEPOLIA ETH",
+      "checkoutEnabled": true,
+      "checkoutFeatured": true
+    },
+    {
+      "chainId": 84532,
+      "chainName": "Base Sepolia",
+      "symbol": "USDC",
+      "name": "USD Coin (Base Sepolia)",
+      "decimals": 6,
+      "address": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "fonbnkCode": null,
+      "displaySymbol": "BASE SEPOLIA USDC",
+      "checkoutEnabled": true,
+      "checkoutFeatured": true
+    },
+    {
+      "chainId": 421614,
+      "chainName": "Arbitrum Sepolia",
+      "symbol": "ETH",
+      "name": "Ether (Arbitrum Sepolia)",
+      "decimals": 18,
+      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      "fonbnkCode": null,
+      "displaySymbol": "ARBITRUM SEPOLIA ETH",
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 421614,
+      "chainName": "Arbitrum Sepolia",
+      "symbol": "USDC",
+      "name": "USD Coin (Arbitrum Sepolia)",
+      "decimals": 6,
+      "address": "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
+      "fonbnkCode": null,
+      "displaySymbol": "ARBITRUM SEPOLIA USDC",
+      "checkoutEnabled": true,
+      "checkoutFeatured": true
+    },
+    {
+      "chainId": 11155111,
+      "chainName": "Ethereum Sepolia",
+      "symbol": "ETH",
+      "name": "Ether (Sepolia)",
+      "decimals": 18,
+      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      "fonbnkCode": null,
+      "displaySymbol": "ETHEREUM SEPOLIA ETH",
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 11155111,
+      "chainName": "Ethereum Sepolia",
+      "symbol": "USDC",
+      "name": "USD Coin (Sepolia)",
+      "decimals": 6,
+      "address": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+      "fonbnkCode": null,
+      "displaySymbol": "ETHEREUM SEPOLIA USDC",
+      "checkoutEnabled": true,
+      "checkoutFeatured": true
+    },
+    {
+      "chainId": 11155420,
+      "chainName": "Optimism Sepolia",
+      "symbol": "ETH",
+      "name": "Ether (Optimism Sepolia)",
+      "decimals": 18,
+      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      "fonbnkCode": null,
+      "displaySymbol": "OPTIMISM SEPOLIA ETH",
+      "checkoutEnabled": true,
+      "checkoutFeatured": false
+    },
+    {
+      "chainId": 11155420,
+      "chainName": "Optimism Sepolia",
+      "symbol": "USDC",
+      "name": "USD Coin (Optimism Sepolia)",
+      "decimals": 6,
+      "address": "0x5fd84259d66Cd46123540766Be93DFE6D43130D7",
+      "fonbnkCode": null,
+      "displaySymbol": "OPTIMISM SEPOLIA USDC",
+      "checkoutEnabled": true,
+      "checkoutFeatured": true
+    }
+  ],
+  "tokensByNetworkType": {
+    "mainnet": [
+      {
+        "chainId": 1,
+        "chainName": "Ethereum",
+        "symbol": "ETH",
+        "name": "Ether",
+        "decimals": 18,
+        "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        "fonbnkCode": "ETHEREUM_NATIVE",
+        "displaySymbol": null,
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      },
+      {
+        "chainId": 1,
+        "chainName": "Ethereum",
+        "symbol": "MANA",
+        "name": "Decentraland MANA",
+        "decimals": 18,
+        "address": "0x0f5d2fb29fb7d3cfee444a200298f468908cc942",
+        "fonbnkCode": null,
+        "displaySymbol": "ETHEREUM MANA",
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      },
+      {
+        "chainId": 1,
+        "chainName": "Ethereum",
+        "symbol": "USDC",
+        "name": "USD Coin",
+        "decimals": 6,
+        "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "fonbnkCode": "ETHEREUM_USDC",
+        "displaySymbol": null,
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      },
+      {
+        "chainId": 1,
+        "chainName": "Ethereum",
+        "symbol": "WXRP",
+        "name": "Wrapped XRP",
+        "decimals": 18,
+        "address": "0x39fBBABf11738317a448031930706cd3e612e1B9",
+        "fonbnkCode": null,
+        "displaySymbol": null,
+        "checkoutEnabled": true,
+        "checkoutFeatured": true
+      },
+      {
+        "chainId": 10,
+        "chainName": "Optimism",
+        "symbol": "USDC",
+        "name": "USD Coin (Optimism)",
+        "decimals": 6,
+        "address": "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85",
+        "fonbnkCode": "OPTIMISM_USDC",
+        "displaySymbol": null,
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      },
+      {
+        "chainId": 56,
+        "chainName": "BNB",
+        "symbol": "BNB",
+        "name": "BNB",
+        "decimals": 18,
+        "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        "fonbnkCode": "BNB_NATIVE",
+        "displaySymbol": null,
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      },
+      {
+        "chainId": 56,
+        "chainName": "BNB",
+        "symbol": "USDC",
+        "name": "USD Coin (BNB)",
+        "decimals": 18,
+        "address": "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+        "fonbnkCode": "BNB_USDC",
+        "displaySymbol": null,
+        "checkoutEnabled": true,
+        "checkoutFeatured": true
+      },
+      {
+        "chainId": 101,
+        "chainName": "SOLANA",
+        "symbol": "SOL",
+        "name": "Solana",
+        "decimals": 9,
+        "address": "So11111111111111111111111111111111111111112",
+        "fonbnkCode": "SOLANA_NATIVE",
+        "displaySymbol": null,
+        "checkoutEnabled": true,
+        "checkoutFeatured": true
+      },
+      {
+        "chainId": 101,
+        "chainName": "SOLANA",
+        "symbol": "USDC",
+        "name": "USD Coin (Solana)",
+        "decimals": 6,
+        "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        "fonbnkCode": "SOLANA_USDC",
+        "displaySymbol": null,
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      },
+      {
+        "chainId": 101,
+        "chainName": "SOLANA",
+        "symbol": "USDT",
+        "name": "Tether USD (Solana)",
+        "decimals": 6,
+        "address": "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+        "fonbnkCode": "SOLANA_USDT",
+        "displaySymbol": null,
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      },
+      {
+        "chainId": 137,
+        "chainName": "Polygon",
+        "symbol": "USDC",
+        "name": "USD Coin (Polygon)",
+        "decimals": 6,
+        "address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "fonbnkCode": "POLYGON_USDC",
+        "displaySymbol": null,
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      },
+      {
+        "chainId": 8453,
+        "chainName": "Base",
+        "symbol": "DAI",
+        "name": "Dai Stablecoin",
+        "decimals": 18,
+        "address": "0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb",
+        "fonbnkCode": null,
+        "displaySymbol": null,
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      },
+      {
+        "chainId": 8453,
+        "chainName": "Base",
+        "symbol": "ETH",
+        "name": "Ether",
+        "decimals": 18,
+        "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        "fonbnkCode": "BASE_NATIVE",
+        "displaySymbol": null,
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      },
+      {
+        "chainId": 8453,
+        "chainName": "Base",
+        "symbol": "USDC",
+        "name": "USD Coin",
+        "decimals": 6,
+        "address": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "fonbnkCode": "BASE_USDC",
+        "displaySymbol": null,
+        "checkoutEnabled": true,
+        "checkoutFeatured": true
+      },
+      {
+        "chainId": 42161,
+        "chainName": "Arbitrum",
+        "symbol": "USDC",
+        "name": "USD Coin (Arbitrum)",
+        "decimals": 6,
+        "address": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+        "fonbnkCode": "ARBITRUM_USDC",
+        "displaySymbol": null,
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      }
+    ],
+    "testnet": [
+      {
+        "chainId": 80002,
+        "chainName": "Polygon Amoy",
+        "symbol": "POL",
+        "name": "Polygon (Amoy)",
+        "decimals": 18,
+        "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        "fonbnkCode": null,
+        "displaySymbol": "POLYGON AMOY POL",
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      },
+      {
+        "chainId": 80002,
+        "chainName": "Polygon Amoy",
+        "symbol": "USDC",
+        "name": "USD Coin (Polygon Amoy)",
+        "decimals": 6,
+        "address": "0x41E94Eb019C0762f9Bff9f4851F9E9916a838b7",
+        "fonbnkCode": null,
+        "displaySymbol": "POLYGON AMOY USDC",
+        "checkoutEnabled": true,
+        "checkoutFeatured": true
+      },
+      {
+        "chainId": 84532,
+        "chainName": "Base Sepolia",
+        "symbol": "ETH",
+        "name": "Ether (Base Sepolia)",
+        "decimals": 18,
+        "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        "fonbnkCode": null,
+        "displaySymbol": "BASE SEPOLIA ETH",
+        "checkoutEnabled": true,
+        "checkoutFeatured": true
+      },
+      {
+        "chainId": 84532,
+        "chainName": "Base Sepolia",
+        "symbol": "USDC",
+        "name": "USD Coin (Base Sepolia)",
+        "decimals": 6,
+        "address": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+        "fonbnkCode": null,
+        "displaySymbol": "BASE SEPOLIA USDC",
+        "checkoutEnabled": true,
+        "checkoutFeatured": true
+      },
+      {
+        "chainId": 421614,
+        "chainName": "Arbitrum Sepolia",
+        "symbol": "ETH",
+        "name": "Ether (Arbitrum Sepolia)",
+        "decimals": 18,
+        "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        "fonbnkCode": null,
+        "displaySymbol": "ARBITRUM SEPOLIA ETH",
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      },
+      {
+        "chainId": 421614,
+        "chainName": "Arbitrum Sepolia",
+        "symbol": "USDC",
+        "name": "USD Coin (Arbitrum Sepolia)",
+        "decimals": 6,
+        "address": "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
+        "fonbnkCode": null,
+        "displaySymbol": "ARBITRUM SEPOLIA USDC",
+        "checkoutEnabled": true,
+        "checkoutFeatured": true
+      },
+      {
+        "chainId": 11155111,
+        "chainName": "Ethereum Sepolia",
+        "symbol": "ETH",
+        "name": "Ether (Sepolia)",
+        "decimals": 18,
+        "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        "fonbnkCode": null,
+        "displaySymbol": "ETHEREUM SEPOLIA ETH",
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      },
+      {
+        "chainId": 11155111,
+        "chainName": "Ethereum Sepolia",
+        "symbol": "USDC",
+        "name": "USD Coin (Sepolia)",
+        "decimals": 6,
+        "address": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+        "fonbnkCode": null,
+        "displaySymbol": "ETHEREUM SEPOLIA USDC",
+        "checkoutEnabled": true,
+        "checkoutFeatured": true
+      },
+      {
+        "chainId": 11155420,
+        "chainName": "Optimism Sepolia",
+        "symbol": "ETH",
+        "name": "Ether (Optimism Sepolia)",
+        "decimals": 18,
+        "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        "fonbnkCode": null,
+        "displaySymbol": "OPTIMISM SEPOLIA ETH",
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      },
+      {
+        "chainId": 11155420,
+        "chainName": "Optimism Sepolia",
+        "symbol": "USDC",
+        "name": "USD Coin (Optimism Sepolia)",
+        "decimals": 6,
+        "address": "0x5fd84259d66Cd46123540766Be93DFE6D43130D7",
+        "fonbnkCode": null,
+        "displaySymbol": "OPTIMISM SEPOLIA USDC",
+        "checkoutEnabled": true,
+        "checkoutFeatured": true
+      }
+    ],
+    "offchain": [
+      {
+        "chainId": 0,
+        "chainName": "MOMO",
+        "symbol": "GHS",
+        "name": "Ghana Cedi",
+        "decimals": 2,
+        "address": "0x0000000000000000000000000000000000000000",
+        "fonbnkCode": "MOMO_GHS",
+        "displaySymbol": null,
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      },
+      {
+        "chainId": 0,
+        "chainName": "MOMO",
+        "symbol": "USD",
+        "name": "US Dollar",
+        "decimals": 2,
+        "address": "0x0000000000000000000000000000000000000001",
+        "fonbnkCode": "MOMO_USD",
+        "displaySymbol": null,
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      },
+      {
+        "chainId": 2,
+        "chainName": "BANK",
+        "symbol": "USD",
+        "name": "US Dollar",
+        "decimals": 2,
+        "address": "0x0000000000000000000000000000000000000000",
+        "fonbnkCode": "BANK_USD",
+        "displaySymbol": null,
+        "checkoutEnabled": true,
+        "checkoutFeatured": false
+      }
+    ]
+  },
+  "fonbnkAssets": [
+    {
+      "code": "ARBITRUM_NATIVE",
+      "network": "ARBITRUM",
+      "asset": "NATIVE",
+      "chainId": 42161
+    },
+    {
+      "code": "ARBITRUM_USDC",
+      "network": "ARBITRUM",
+      "asset": "USDC",
+      "chainId": 42161
+    },
+    {
+      "code": "ARBITRUM_USDT",
+      "network": "ARBITRUM",
+      "asset": "USDT",
+      "chainId": 42161
+    },
+    {
+      "code": "AVALANCHE_NATIVE",
+      "network": "AVALANCHE",
+      "asset": "NATIVE",
+      "chainId": 43114
+    },
+    {
+      "code": "AVALANCHE_USDC",
+      "network": "AVALANCHE",
+      "asset": "USDC",
+      "chainId": 43114
+    },
+    {
+      "code": "AVALANCHE_USDT",
+      "network": "AVALANCHE",
+      "asset": "USDT",
+      "chainId": 43114
+    },
+    {
+      "code": "BASE_NATIVE",
+      "network": "BASE",
+      "asset": "NATIVE",
+      "chainId": 8453
+    },
+    {
+      "code": "BASE_USDC",
+      "network": "BASE",
+      "asset": "USDC",
+      "chainId": 8453
+    },
+    {
+      "code": "BASE_XDUS",
+      "network": "BASE",
+      "asset": "XDUS",
+      "chainId": 8453
+    },
+    {
+      "code": "BNB_NATIVE",
+      "network": "BNB",
+      "asset": "NATIVE",
+      "chainId": 56
+    },
+    {
+      "code": "BNB_USDC",
+      "network": "BNB",
+      "asset": "USDC",
+      "chainId": 56
+    },
+    {
+      "code": "BNB_USDT",
+      "network": "BNB",
+      "asset": "USDT",
+      "chainId": 56
+    },
+    {
+      "code": "CELO_CGHS",
+      "network": "CELO",
+      "asset": "CGHS",
+      "chainId": 42220
+    },
+    {
+      "code": "CELO_CKES",
+      "network": "CELO",
+      "asset": "CKES",
+      "chainId": 42220
+    },
+    {
+      "code": "CELO_CUSD",
+      "network": "CELO",
+      "asset": "CUSD",
+      "chainId": 42220
+    },
+    {
+      "code": "CELO_NATIVE",
+      "network": "CELO",
+      "asset": "NATIVE",
+      "chainId": 42220
+    },
+    {
+      "code": "CELO_USDC",
+      "network": "CELO",
+      "asset": "USDC",
+      "chainId": 42220
+    },
+    {
+      "code": "CELO_USDT",
+      "network": "CELO",
+      "asset": "USDT",
+      "chainId": 42220
+    },
+    {
+      "code": "ETHEREUM_NATIVE",
+      "network": "ETHEREUM",
+      "asset": "NATIVE",
+      "chainId": 1
+    },
+    {
+      "code": "ETHEREUM_RLUSD",
+      "network": "ETHEREUM",
+      "asset": "RLUSD",
+      "chainId": 1
+    },
+    {
+      "code": "ETHEREUM_USDC",
+      "network": "ETHEREUM",
+      "asset": "USDC",
+      "chainId": 1
+    },
+    {
+      "code": "ETHEREUM_USDT",
+      "network": "ETHEREUM",
+      "asset": "USDT",
+      "chainId": 1
+    },
+    {
+      "code": "ETHEREUM_XDUS",
+      "network": "ETHEREUM",
+      "asset": "XDUS",
+      "chainId": 1
+    },
+    {
+      "code": "LISK_USDT",
+      "network": "LISK",
+      "asset": "USDT",
+      "chainId": 1135
+    },
+    {
+      "code": "OPTIMISM_NATIVE",
+      "network": "OPTIMISM",
+      "asset": "NATIVE",
+      "chainId": 10
+    },
+    {
+      "code": "OPTIMISM_USDC",
+      "network": "OPTIMISM",
+      "asset": "USDC",
+      "chainId": 10
+    },
+    {
+      "code": "OPTIMISM_USDT",
+      "network": "OPTIMISM",
+      "asset": "USDT",
+      "chainId": 10
+    },
+    {
+      "code": "POLYGON_NATIVE",
+      "network": "POLYGON",
+      "asset": "NATIVE",
+      "chainId": 137
+    },
+    {
+      "code": "POLYGON_USDC",
+      "network": "POLYGON",
+      "asset": "USDC",
+      "chainId": 137
+    },
+    {
+      "code": "POLYGON_USDT",
+      "network": "POLYGON",
+      "asset": "USDT",
+      "chainId": 137
+    },
+    {
+      "code": "POLYGON_XDUS",
+      "network": "POLYGON",
+      "asset": "XDUS",
+      "chainId": 137
+    },
+    {
+      "code": "SOLANA_NATIVE",
+      "network": "SOLANA",
+      "asset": "NATIVE",
+      "chainId": 101
+    },
+    {
+      "code": "SOLANA_USDC",
+      "network": "SOLANA",
+      "asset": "USDC",
+      "chainId": 101
+    },
+    {
+      "code": "SOLANA_USDT",
+      "network": "SOLANA",
+      "asset": "USDT",
+      "chainId": 101
+    },
+    {
+      "code": "STELLAR_USDC",
+      "network": "STELLAR",
+      "asset": "USDC",
+      "chainId": 148
+    },
+    {
+      "code": "TEMPO_PATHUSD",
+      "network": "TEMPO",
+      "asset": "PATHUSD",
+      "chainId": null
+    },
+    {
+      "code": "TEMPO_USDC_E",
+      "network": "TEMPO",
+      "asset": "USDC_E",
+      "chainId": null
+    },
+    {
+      "code": "TON_NATIVE",
+      "network": "TON",
+      "asset": "NATIVE",
+      "chainId": 607
+    },
+    {
+      "code": "TON_USDE",
+      "network": "TON",
+      "asset": "USDE",
+      "chainId": 607
+    },
+    {
+      "code": "TON_USDT",
+      "network": "TON",
+      "asset": "USDT",
+      "chainId": 607
+    },
+    {
+      "code": "TRON_NATIVE",
+      "network": "TRON",
+      "asset": "NATIVE",
+      "chainId": 728126428
+    },
+    {
+      "code": "TRON_USDT",
+      "network": "TRON",
+      "asset": "USDT",
+      "chainId": 728126428
+    },
+    {
+      "code": "XRP_RLUSD",
+      "network": "XRP",
+      "asset": "RLUSD",
+      "chainId": 1440002
+    }
+  ],
+  "fiatCheckout": {
+    "moolreCurrencies": [
+      "GHS",
+      "NGN"
+    ],
+    "paystackMarkets": [
+      {
+        "slug": "nigeria",
+        "code": "NG",
+        "name": "Nigeria",
+        "defaultCurrency": "NGN"
+      },
+      {
+        "slug": "ghana",
+        "code": "GH",
+        "name": "Ghana",
+        "defaultCurrency": "GHS"
+      },
+      {
+        "slug": "kenya",
+        "code": "KE",
+        "name": "Kenya",
+        "defaultCurrency": "KES"
+      },
+      {
+        "slug": "south_africa",
+        "code": "ZA",
+        "name": "South Africa",
+        "defaultCurrency": "ZAR"
+      },
+      {
+        "slug": "cote_d_ivoire",
+        "code": "CI",
+        "name": "Côte d'Ivoire",
+        "defaultCurrency": "XOF"
+      }
+    ]
+  },
+  "withdrawalRails": [
+    {
+      "id": "gh_mobile_money",
+      "countryCode": "GH",
+      "currency": "GHS",
+      "methodType": "MOBILE_MONEY",
+      "channel": 1,
+      "label": "Ghana mobile money",
+      "receiverLabel": "Mobile number",
+      "requiresBankCode": false
+    },
+    {
+      "id": "ng_bank_transfer",
+      "countryCode": "NG",
+      "currency": "NGN",
+      "methodType": "BANK_ACCOUNT",
+      "channel": 2,
+      "label": "Nigeria bank account",
+      "receiverLabel": "Account number",
+      "requiresBankCode": true
+    },
+    {
+      "id": "gh_bank_transfer",
+      "countryCode": "GH",
+      "currency": "GHS",
+      "methodType": "BANK_ACCOUNT",
+      "channel": 2,
+      "label": "Ghana bank account",
+      "receiverLabel": "Account number",
+      "requiresBankCode": true
+    }
+  ],
+  "disbursementTokens": [
+    {
+      "chainId": 8453,
+      "chainName": "Base",
+      "symbol": "USDC",
+      "address": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "fonbnkCode": "BASE_USDC",
+      "environment": "LIVE"
+    },
+    {
+      "chainId": 8453,
+      "chainName": "Base",
+      "symbol": "ETH",
+      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      "fonbnkCode": "BASE_NATIVE",
+      "environment": "LIVE"
+    },
+    {
+      "chainId": 1,
+      "chainName": "Ethereum",
+      "symbol": "USDC",
+      "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      "fonbnkCode": "ETHEREUM_USDC",
+      "environment": "LIVE"
+    },
+    {
+      "chainId": 1,
+      "chainName": "Ethereum",
+      "symbol": "ETH",
+      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      "fonbnkCode": "ETHEREUM_NATIVE",
+      "environment": "LIVE"
+    },
+    {
+      "chainId": 84532,
+      "chainName": "Base Sepolia",
+      "symbol": "USDC",
+      "address": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "fonbnkCode": "BASE_SEPOLIA_USDC",
+      "environment": "TEST"
+    },
+    {
+      "chainId": 84532,
+      "chainName": "Base Sepolia",
+      "symbol": "ETH",
+      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      "fonbnkCode": "BASE_SEPOLIA_ETH",
+      "environment": "TEST"
+    }
+  ],
+  "banks": {
+    "snapshotUpdatedAt": null,
+    "snapshotRowCount": 0,
+    "byMarket": {},
+    "marketsSummary": null
+  },
+  "mobileMoney": {
+    "snapshotUpdatedAt": null,
+    "byCurrency": {}
+  },
+  "fonbnkCorridors": {
+    "snapshotUpdatedAt": null,
+    "rowCount": 0,
+    "data": null
+  },
+  "platformMinimums": {
+    "fixedFee": 0,
+    "minPayoutUsd": 5,
+    "baseFeePercent": 1,
+    "lowBalanceAlert": 1000,
+    "minRecurringUsd": 5,
+    "minWithdrawalUsd": 5,
+    "minPaymentLinkUsd": 1,
+    "maxTransactionSize": 1000000,
+    "minSubscriptionUsd": 1,
+    "minTransactionSize": 0,
+    "minPlatformTransferUsd": 0.5
+  }
+}

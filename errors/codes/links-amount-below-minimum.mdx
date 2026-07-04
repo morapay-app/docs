@@ -1,0 +1,87 @@
+---
+title: "links.amount.below_minimum"
+description: "Transaction amount is below the regional mobile money platform floor."
+---
+
+**Code:** `links.amount.below_minimum`  
+**HTTP:** `422 Unprocessable Entity`
+
+## What happened
+
+The API rejected a payment link or product checkout link because the amount falls below the **platform or carrier minimum** for that corridor.
+
+## Display message
+
+> The transaction amount must be at least 1.00 GHS.
+
+Use `err.displayMessage` in UI components. Reserve `err.message` for server logs.
+
+## Why this happened
+
+Mobile network operators (MTN, Telecel, etc.) enforce a hard floor transaction limit. In Ghana, MoMo checkouts commonly require at least **1.00 GHS** even when the USD platform minimum is lower.
+
+## How to fix it
+
+Validate cart totals **before** calling the API:
+
+```typescript
+const MIN_GHS = 1.0;
+
+function validateAmount(amount: number, currency: string) {
+  if (currency === "GHS" && amount < MIN_GHS) {
+    throw new Error(`Amount must be at least ${MIN_GHS} GHS`);
+  }
+}
+
+validateAmount(cartTotal, "GHS");
+const link = await morapay.link.create({
+  title: "Order",
+  amount: cartTotal,
+  currency: "GHS",
+});
+```
+
+For catalog products:
+
+```typescript
+await morapay.products.link(productId, {
+  customerEmail: "alex@example.com",
+  amount: Math.max(cartTotal, MIN_GHS),
+});
+```
+
+## UI hint
+
+| Field | Value |
+|-------|-------|
+| `severity` | `warning` |
+| `placement` | `inline` |
+| `actionText` | `Update amount` |
+
+Render under the amount input — not as a blocking modal.
+
+```typescript
+import { MorapayUi } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err) && err.code === "links.amount.below_minimum") {
+    setFieldError("amount", err.displayMessage);
+    // or: MorapayUi.toast(err) for non-form contexts
+  }
+}
+```
+
+## Platform defaults
+
+| Kind | Default (USD equiv.) |
+|------|---------------------|
+| Payment link | $1 |
+| Subscription | $1 |
+| Disbursement / recurring | $5 |
+
+Regional MoMo floors may exceed these — always validate for your corridor.
+
+## Related
+
+- [Payment links](/concepts/payment-links)
+- [Error handling](/errors/error-handling)

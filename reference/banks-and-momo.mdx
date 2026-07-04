@@ -1,0 +1,64 @@
+---
+title: "Banks & MoMo withdrawal"
+description: "Supported withdrawal rails, mobile money operators, and bank catalogs."
+---
+
+Merchant **withdrawals** and **disbursement batch** recipients settle to local rails via Moolre (Ghana MoMo / bank, Nigeria bank) and Paystack (card markets, bank resolve).
+
+## Withdrawal rails
+
+| Rail | Country | Currency | Method | Bank code required |
+| --- | --- | --- | --- | --- |
+| Ghana mobile money | GH | GHS | MOBILE MONEY | — |
+| Nigeria bank account | NG | NGN | BANK ACCOUNT | Yes |
+| Ghana bank account | GH | GHS | BANK ACCOUNT | Yes |
+
+### Ghana mobile money carriers
+
+Moolre transfer channels map to:
+
+| Carrier | Channel |
+|---------|---------|
+| MTN | 1 |
+| Telecel | 6 |
+| AT (AirtelTigo) | 7 |
+
+## Mobile money operators (Paystack catalog)
+
+| Currency | Operator |
+| --- | --- |
+| GHS | MTN |
+| GHS | Telecel (Vodafone) |
+| GHS | AirtelTigo |
+| KES | M-PESA |
+| KES | Airtel Kenya |
+| KES | Telkom Kenya |
+
+<Note>Call the [payout rails API](/api-reference/payout-rails) for the live MoMo operator list in your environment.</Note>
+
+## Banks by market
+
+## API
+
+[Payout rails API](/api-reference/payout-rails) — signed Merchant API for banks, MoMo operators, and account resolve.
+
+Fetch live lists from the Morapay API:
+
+```bash
+# Paystack banks (withdrawal / resolve)
+curl -s "https://api.morapay.io/api/klyra/relay/paystack/banks?country=ghana"
+
+# Moolre banks (Ghana / Nigeria commerce)
+curl -s "https://api.morapay.io/api/moolre/banks?country=gha"
+
+# Merchant payout rails
+curl -s "https://api.morapay.io/api/v1/merchant/payout-rails/banks" \
+  -H "Morapay-Key: pk_test_..." \
+  -H "Morapay-Timestamp: ..." \
+  -H "Morapay-Signature: v1=..."
+```
+
+## Related
+
+- [Payout timing & limits](/reference/payout-timing)
+- [Payouts & MoMo](/concepts/payouts-momo)

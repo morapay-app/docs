@@ -1,0 +1,126 @@
+---
+title: "Fiat checkout API"
+description: "REST endpoints for MoMo, bank transfer, and card checkout configuration."
+---
+
+Fiat payment methods at checkout are configured per environment. Use these endpoints to discover which rails are enabled before initializing a payer session.
+
+Base URL: `https://api.morapay.io`
+
+## Checkout config
+
+`GET /api/klyra/fiat/config`
+
+Returns enabled fiat methods for TEST or LIVE checkout.
+
+### Query parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `environment` | string | `TEST` or `LIVE` (default `LIVE`) |
+
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/klyra/fiat/config?environment=LIVE"
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "environment": "LIVE",
+    "methods": [
+      {
+        "id": "mobile_money",
+        "provider": "moolre",
+        "enabled": true,
+        "currencies": ["GHS", "NGN"]
+      },
+      {
+        "id": "bank_transfer",
+        "provider": "moolre",
+        "enabled": true,
+        "currencies": ["GHS", "NGN"]
+      },
+      {
+        "id": "card",
+        "provider": "paystack",
+        "enabled": true,
+        "currencies": ["GHS", "NGN"],
+        "channels": ["card"]
+      }
+    ]
+  }
+}
+```
+
+</ResponseExample>
+
+## Initialize fiat payment
+
+`POST /api/klyra/fiat/payments/initialize`
+
+Starts a MoMo, bank transfer, or card session for an existing transaction. Body includes `payment_method` (`mobile_money`, `bank_transfer`, or `card`) and `transaction_id`.
+
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/klyra/fiat/payments/initialize" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "transaction_id": "txn_abc123",
+    "payment_method": "mobile_money",
+    "phone": "233241234567",
+    "provider": "MTN"
+  }'
+```
+
+</RequestExample>
+
+## Verify fiat payment
+
+`GET /api/klyra/fiat/transactions/verify/:reference`
+
+Poll payment status after the payer completes MoMo, bank, or card checkout.
+
+## Fiat quote (commerce)
+
+`POST /api/klyra/commerce/checkout-fiat`
+
+Quote fiat checkout amounts for a payment link or product session. Used by hosted checkout and embed flows.
+
+## Supported fiat currencies
+
+| Currency | MoMo | Virtual bank | Card (Paystack) |
+|----------|------|--------------|-----------------|
+| **GHS** | Yes | Yes | Yes |
+| **NGN** | Yes | Yes | Yes |
+| **KES** | Via Paystack operators | — | Yes |
+| **ZAR** | — | — | Yes |
+
+International on/offramp corridors use Fonbnk for additional countries — see [Countries & fiat](/reference/countries-and-fiat).
+
+## MoMo operators
+
+Ghana (GHS): **MTN**, **Telecel**, **AirtelTigo**
+
+Kenya (KES): **M-PESA**, **Airtel Kenya**, **Telkom Kenya**
+
+Validate numbers before checkout:
+
+```bash
+curl -s -X POST "https://api.morapay.io/api/moolre/validate/momo" \
+  -H "Content-Type: application/json" \
+  -d '{ "receiver": "233241234567", "provider": "MTN", "currency": "GHS" }'
+```
+
+## Related
+
+- [Catalog API](/api-reference/catalog)
+- [Countries & fiat reference](/reference/countries-and-fiat)
+- [Payment links](/concepts/payment-links)
