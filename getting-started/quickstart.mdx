@@ -51,17 +51,6 @@ const morapay = new Morapay({
 });
 ```
 
-For local development against the Morapay API:
-
-```typescript
-const morapay = new Morapay({
-  publicKey: process.env.MORAPAY_PUBLIC_KEY!,
-  secretKey: process.env.MORAPAY_SECRET_KEY!,
-  baseUrl: "http://localhost:4001",
-  checkoutBaseUrl: "http://localhost:3002",
-});
-```
-
   </Step>
 
   <Step title="Create a payment link">
