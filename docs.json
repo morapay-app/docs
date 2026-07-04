@@ -186,6 +186,7 @@
             "root": "reference/coverage",
             "pages": [
               "reference/countries-and-fiat",
+              "reference/fees-countries-taxes",
               "reference/chains-and-tokens",
               "reference/banks-and-momo",
               "reference/disbursement-tokens",

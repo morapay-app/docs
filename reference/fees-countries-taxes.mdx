@@ -1,0 +1,189 @@
+---
+title: "Fees, countries & taxes"
+description: "Platform fees by product, country-specific processing rates, and tax responsibilities for merchants."
+---
+
+Morapay pricing is **quote-first**: every product exposes a quote or settlement endpoint so you know the exact charge before creating a payment, batch, or subscription charge. Fees vary by **product**, **country**, and **payment rail**.
+
+<Note>
+  Rates on this page are representative. Your live account may differ by corridor, volume, or dashboard configuration. Always use the quote response at checkout time.
+</Note>
+
+## Quote before you commit
+
+| Product | SDK | API |
+|---------|-----|-----|
+| Fiat checkout (payer total) | — | `POST /api/commerce/checkout-fiat` |
+| Merchant clearing (fiat link) | `morapay.link.quote(id, { invoice_major })` | `POST /api/v1/merchant/links/:id/settlement-quote` |
+| Disbursement batch | `morapay.payouts.quote({ ... })` | `POST /api/v1/merchant/disbursement/batches/quote` |
+| Crypto ramp | `morapay.quotes.ramp.create({ ... })` | `POST /api/v1/merchant/quotes/ramp` |
+
+```typescript
+// Disbursement — usdCharge is principal + all platform/network fees
+const quote = await morapay.payouts.quote({
+  chainId: 8453,
+  token: "USDC",
+  payoutTotal: 250,
+  recipientCount: 10,
+});
+// quote.usdCharge → total debited from treasury
+
+// Fiat link — merchant USD clearing estimate
+const settlement = await morapay.link.quote("link_abc", { invoice_major: 100 });
+// settlement.merchantClearingUsd → expected USD credited after payer settles
+```
+
+## Fees by product
+
+### Payment links & checkout
+
+**Crypto checkout** — Morapay applies a platform fee on the transaction (percentage + FX spread at settlement). Use ramp quotes when building custom checkout UI:
+
+```typescript
+const ramp = await morapay.quotes.ramp.create({
+  action: "buy",
+  sourceAsset: "USDC",
+  targetAsset: "ETH",
+  targetChain: "1",
+  amount: 100,
+  amountType: "source",
+});
+```
+
+**Fiat checkout (MoMo, bank, card)** — Processing fees depend on your business country and the payer's payment method. Morapay supports two fee modes:
+
+| Mode | Who pays processing |
+|------|---------------------|
+| **Pass to customer** | Payer sees `payerTotalMajor` (invoice + processing) |
+| **Absorb by merchant** | Payer pays invoice amount; fees deducted from your clearing |
+
+Request a payer total before rendering checkout:
+
+```bash
+curl -s -X POST "https://api.morapay.io/api/commerce/checkout-fiat" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{
+    "payment_link_id": "link_uuid",
+    "payer_currency": "GHS",
+    "quote_tier": "mobile_money"
+  }'
+```
+
+The response includes `spotPayerMajor`, `payerTotalMajor`, `feeMode`, and a processing-fee breakdown you can display in your UI.
+
+Supported fiat checkout currencies: **GHS** and **NGN** (MoMo and bank transfer). Card checkout is available in select markets — see [Countries & fiat](/reference/countries-and-fiat).
+
+### Subscriptions
+
+Recurring charges may include:
+
+- **Payment processing** — percentage + flat fee on each successful charge (configurable in your dashboard).
+- **Billing fee** — platform fee on subscription volume above a threshold (when enabled).
+
+Processing and billing fees can be **passed to the subscriber** or **absorbed by your business**, depending on your dashboard settings. Subscription charges enforce the same platform minimums as payment links — see [Payout timing & limits](/reference/payout-timing).
+
+### Payouts & disbursements
+
+Batch payouts debit your treasury account by `usdCharge` from the quote. The charge includes:
+
+| Component | Description |
+|-----------|-------------|
+| **Payout principal** | USD value of tokens sent to recipients (includes FX for non-USD-pegged assets) |
+| **Batch platform fee** | Fixed fee per batch |
+| **Per-recipient network fee** | Multiplied by recipient count |
+| **Chain transfer fee** | On-chain settlement cost for the selected `chainId` |
+
+```typescript
+const { data: batches } = await morapay.payouts();
+const batch = await morapay.payouts("batch_xyz");
+// batch metadata includes quoted usdCharge at creation time
+```
+
+Always call `morapay.payouts.quote()` immediately before `POST /disbursement/batches` — submitted `usdCharge` must match the quote within tolerance.
+
+### Merchant withdrawals
+
+Settlement withdrawals from your Morapay balance to a linked MoMo or bank account carry **no additional Morapay platform fee** — the net amount received matches the gross amount requested, subject to carrier and FX rules on the rail.
+
+## Country-specific processing rates
+
+Fiat processing fees are keyed to your **business country** (ISO code). Cross-currency checkout (e.g. USD invoice, GHS payer) uses international card tiers by default.
+
+### Card & MoMo processing rates
+
+Representative processing fees by business country and payment method:
+
+| Country | Code | Card (local) | Card (international) | MoMo | Bank transfer |
+|---------|------|--------------|----------------------|------|---------------|
+| Ghana | GH | 1.95% | 1.95% | 1.95% | 1.95% |
+| Nigeria | NG | 1.5% + ₦100* | 3.9% + ₦100 | 1.5% | 1.5% |
+| Kenya | KE | 2.9% | 3.8% | 1.5% | 2.0% |
+| South Africa | ZA | 2.9% + R1 | 3.1% + R1 | 2.5% | 2.0% |
+| Côte d'Ivoire | CI | — | — | — | — |
+
+\* Nigeria flat fee is waived when the spot payer amount is below **₦2,500**.
+
+### On/offramp corridors
+
+Additional West and East African countries use crypto on/offramp pricing at quote time. See the full country list in [Countries & fiat](/reference/countries-and-fiat).
+
+### Regional minimums
+
+Some corridors enforce carrier floors that exceed USD platform minimums — for example **1.00 GHS** for Ghana MoMo. Below-minimum amounts return `links.amount.below_minimum`. See [error code docs](/errors/codes/links-amount-below-minimum).
+
+## Taxes
+
+Morapay is a **payments platform**, not a tax advisor. You are responsible for determining, collecting, and remitting taxes in the jurisdictions where you operate.
+
+### Subscription tax calculation
+
+When tax calculation is enabled for your business, Morapay can compute tax on subscription checkout based on your configuration. Tax amounts appear on the checkout session before the subscriber confirms payment.
+
+<Warning>
+  Enabling tax calculation does not register your business with tax authorities or file returns on your behalf. Consult a qualified tax professional for VAT, GST, sales tax, and withholding obligations.
+</Warning>
+
+### What Morapay does not do
+
+- File tax returns or issue tax invoices on your behalf
+- Determine your nexus or registration requirements
+- Provide legal advice on cross-border digital services tax
+
+For account-specific fee schedules or enterprise pricing, contact [support@morapay.io](mailto:support@morapay.io) with your business ID and expected monthly volume.
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="How do I show fees to my customers at checkout?">
+    Call `POST /api/commerce/checkout-fiat` with the payment link ID, payer currency, and `quote_tier` (`card_local`, `card_international`, `mobile_money`, or `bank_transfer`). Display `payerTotalMajor` when fees are passed to the customer, or `spotPayerMajor` when your business absorbs them (`feeMode` in the response).
+  </Accordion>
+  <Accordion title="Why does usdCharge differ from payoutTotal on disbursements?">
+    `payoutTotal` is what recipients receive. `usdCharge` adds platform batch fees, per-recipient network fees, chain transfer costs, and any FX spread on the settlement token. The quote endpoint returns both values.
+  </Accordion>
+  <Accordion title="Do fees change between TEST and LIVE?">
+    Fee **structure** is the same. TEST uses testnet chains and sandbox rails; LIVE uses production carriers and mainnet settlement. Always quote in the environment matching your API keys.
+  </Accordion>
+  <Accordion title="Which countries can my business operate in?">
+    See [Countries & fiat](/reference/countries-and-fiat) for supported countries, currencies, and rails. Your business country determines which processing rate table applies to card checkout.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Countries & fiat" icon="globe" href="/reference/countries-and-fiat">
+    Supported markets, currencies, and checkout rails.
+  </Card>
+  <Card title="Payout timing & limits" icon="clock" href="/reference/payout-timing">
+    Platform minimums and batch scheduling.
+  </Card>
+  <Card title="Disbursement API" icon="coins" href="/api-reference/disbursement">
+    Quote, create, and ledger endpoints.
+  </Card>
+  <Card title="Fiat checkout API" icon="credit-card" href="/api-reference/fiat-checkout">
+    MoMo, bank, and card session initialization.
+  </Card>
+</CardGroup>
