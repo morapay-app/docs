@@ -39,7 +39,7 @@
     "primary": {
       "type": "button",
       "label": "Get API keys",
-      "href": "https://dashboard.morapay.io/developers/api-keys"
+      "href": "https://businessg.morapay.io/developers/api-keys"
     }
   },
   "footer": {
