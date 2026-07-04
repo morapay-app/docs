@@ -1,1 +1,106 @@
-o
+---
+title: "API overview"
+description: "Morapay REST API base URL, authentication, and response envelope."
+---
+
+The **Morapay API** is the public HTTP surface for merchant integrations. All paths below are relative to your API host.
+
+| Environment | Base URL |
+|-------------|----------|
+| Production | `htgtps://api.morapay.io` |
+| Local | `http://localhost:4001` |
+
+## API families
+
+| Family | Base path | Auth |
+|--------|-----------|------|
+| **Merchant API v1** | `/api/v1/merchant` | HMAC signed (`Morapay-Key`, `Morapay-Timestamp`, `Morapay-Signature`) |
+| **Catalog & checkout** | `/api/klyra` | Mostly public; some routes need platform relay credentials |
+| **Moolre validation** | `/api/moolre` | Public validation helpers |
+
+<Note>
+  Prefer the [`@morapay/sdk`](/getting-started/quickstart) on your server — it signs Merchant API requests automatically. Use raw HTTP when you cannot use Node/TypeScript.
+</Note>
+
+## Discover Merchant API v1
+
+```bash
+curl -s https://api.morapay.io/api/v1/merchant
+```
+
+<ResponseExample>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "version": "v1",
+    "description": "Morapay merchant integration API",
+    "resources": {
+      "links": "/api/v1/merchant/links",
+      "products": "/api/v1/merchant/products",
+      "webhooks": "/api/v1/merchant/webhooks/endpoints",
+      "disbursement": "/api/v1/merchant/disbursement"
+    },
+    "auth": {
+      "headers": ["Morapay-Key", "Morapay-Timestamp", "Morapay-Signature"]
+    }
+  }
+}
+```
+
+</ResponseExample>
+
+## Signed requests (Merchant API)
+
+Every `POST`, `PATCH`, `PUT`, `GET`, and `DELETE` under `/api/v1/merchant/*` requires signed headers. See [Authentication](/getting-started/authentication).
+
+```bash
+curl -s -X GET "https://api.morapay.io/api/v1/merchant/links" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
+```
+
+| Header | Value |
+|--------|--------|
+| `Morapay-Key` | `pk_test_*` or `pk_live_*` |
+| `Morapay-Timestamp` | Unix seconds |
+| `Morapay-Signature` | `v1=<hex>` HMAC-SHA256 digest |
+
+TEST vs LIVE is determined by your key pair. Do not send `x-merchant-environment` with API keys.
+
+## Response envelope
+
+**Success**
+
+```json
+{ "success": true, "data": { ... }, "meta": { "page": 1, "limit": 20, "total": 42 } }
+```
+
+**Failure**
+
+```json
+{
+  "success": false,
+  "error": "Human-readable diagnostic",
+  "code": "links.amount.below_minimum",
+  "safeMessage": "Customer-safe copy",
+  "displayMessage": "UI-ready copy",
+  "requestId": "req_abc123",
+  "docUrl": "https://docs.morapay.io/errors/codes/links-amount-below-minimum"
+}
+```
+
+See [Error handling](/errors/error-handling).
+
+## Coverage API map
+
+| Topic | API doc | Data snapshot |
+|-------|---------|---------------|
+| Countries & fiat | [Catalog API](/api-reference/catalog#countries) | [Countries & fiat](/reference/countries-and-fiat) |
+| Chains & tokens | [Catalog API](/api-reference/catalog#chains) | [Chains & tokens](/reference/chains-and-tokens) |
+| Banks & MoMo | [Payout rails API](/api-reference/payout-rails) | [Banks & MoMo](/reference/banks-and-momo) |
+| Disbursement | [Disbursement API](/api-reference/disbursement) | [Disbursement tokens](/reference/disbursement-tokens) |
+| Timing & minimums | [Disbursement API](/api-reference/disbursement#constraints) | [Payout timing](/reference/payout-timing) |
+| Fiat checkout | [Fiat checkout API](/api-reference/fiat-checkout) | [Countries & fiat](/reference/countries-and-fiat) |
