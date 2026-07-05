@@ -1,0 +1,158 @@
+---
+title: "Public checkout"
+description: "Payer-facing endpoints for payment links, business pay, and subscriptions."
+---
+
+These routes power hosted checkout and embed flows. They are **unsigned** unless noted. Base path: `https://api.morapay.io/api/public`.
+
+Use them from your checkout BFF or browser when building custom payer UI. Merchant integrations usually prefer [Payment links](/api-reference/payment-links) plus hosted URLs from the SDK.
+
+## Payment links
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/payment-links/:lookup` | Link by slug or public code |
+| `POST` | `/payment-links/:slug/sessions` | Start checkout session |
+| `GET` | `/payment-links/gas-checkout/:publicCode` | Gas-sponsored checkout payload |
+
+### Get payment link
+
+`GET /api/public/payment-links/:lookup`
+
+Optional query: `wallet` for wallet-aware pricing.
+
+```typescript
+const link = await morapay.public.paymentLinks.get("invoice-42");
+const url = morapay.buildCheckoutUrl(link.publicCode);
+```
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "id": "link_uuid",
+    "title": "Invoice #42",
+    "amount": 100,
+    "currency": "USD",
+    "publicCode": "abc123xyz",
+    "isActive": true
+  }
+}
+```
+
+```json 404 Not Found
+{
+  "success": false,
+  "error": "Payment link not found.",
+  "code": "resource.not_found",
+  "requestId": "req_pl404"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
+
+## Business pay
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/checkout/:businessSlug` | Open-amount business checkout config |
+
+```typescript
+const payUrl = morapay.buildBusinessPayCheckoutUrl("acme");
+const embedUrl = morapay.buildBusinessPayEmbedUrl("acme", { amount: 50, currency: "USD" });
+```
+
+See [Business QR](/api-reference/business-qr) for merchant-side QR configuration.
+
+## Subscription checkout
+
+Public subscription routes live under `/api/public/subscription/*`. Subscribers never use merchant API keys.
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/subscription/:planId` | Plan details for checkout |
+| `POST` | `/subscription/:planId/quote` | Payer quote |
+| `POST` | `/subscription/:planId/session` | Create checkout session |
+| `GET` | `/subscription/session/:sessionId` | Session status |
+| `POST` | `/subscription/:planId/subscribe` | Complete enrollment |
+| `POST` | `/subscription/:planId/session/:sessionId/crypto/intent` | Crypto payment intent |
+| `POST` | `/subscription/:planId/session/:sessionId/card/pay` | Card payment |
+| `POST` | `/subscription/:planId/session/:sessionId/momo/charge` | MoMo charge |
+| `GET` | `/subscription/:planId/session/:sessionId/momo/poll` | MoMo status poll |
+
+Merchant plan management: [Subscriptions](/api-reference/subscriptions).
+
+<ResponseExample>
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": "Plan is not active.",
+  "code": "request.validation_failed",
+  "requestId": "req_sub_checkout422"
+}
+```
+
+</ResponseExample>
+
+## Checkout quotes
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/catalog/quotes/checkout` | Multi-row token quotes (checkout UI) |
+| `POST` | `/quotes/swap` | Swap quote for on-chain checkout |
+| `POST` | `/commerce/fiat` | Fiat payer total for link or product |
+
+Commerce fiat quote body (abbreviated):
+
+```json
+{
+  "payment_link_id": "link_uuid",
+  "payer_currency": "GHS",
+  "quote_tier": "mobile_money",
+  "invoice_major": 100
+}
+```
+
+SDK for merchant-signed checkout quotes:
+
+```typescript
+const rows = await morapay.quotes.checkout.create({
+  inputAmount: "100",
+  inputCurrency: "USD",
+  environment: "LIVE",
+});
+```
+
+See [Quotes](/api-reference/quotes) and [Fiat checkout](/api-reference/fiat-checkout).
+
+## Transaction status
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/transactions/:id` | Transaction by id |
+| `GET` | `/transactions/verify-by-hash` | Confirm on-chain payment |
+| `GET` | `/fiat/transactions/verify/:reference` | Fiat payment status |
+
+## Validation helpers
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/validate/momo` | Validate MoMo number |
+| `POST` | `/validate/bank` | Validate bank account |
+| `GET` | `/validate/banks?country=gha` | Bank list for checkout forms |
+
+Documented in [Fiat checkout](/api-reference/fiat-checkout) and [Payout rails](/api-reference/payout-rails).
+
+## Related
+
+- [Payment links](/api-reference/payment-links)
+- [Fiat checkout](/api-reference/fiat-checkout)
+- [Subscriptions](/api-reference/subscriptions)
+- [Conventions](/api-reference/conventions)

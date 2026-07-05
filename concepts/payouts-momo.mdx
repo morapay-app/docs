@@ -3,7 +3,7 @@ title: "Payouts & mobile money"
 description: "Disburse funds to MoMo wallets via batch payouts and treasury accounts."
 ---
 
-Morapay **disbursements** route merchant treasury liquidity to local mobile money (MoMo) wallets — MTN, Telecel, and other regional carriers. The Merchant API exposes this under `/api/v1/merchant/disbursement/*`; the SDK namespace is `morapay.disbursement`.
+Morapay **disbursements** route merchant treasury liquidity to local mobile money wallets: MTN, Telecel, and other regional carriers. The Merchant API exposes this under `/api/v1/merchant/disbursement/*`; the SDK namespace is `morapay.disbursement`.
 
 ## Business value
 
@@ -43,14 +43,14 @@ const { data: ledger } = await morapay.disbursement.ledger({ page: 1, limit: 50 
 await morapay.disbursement.cancel("batch_xyz");
 ```
 
-### Batch creation (API)
+### Batch creation
 
 Batches are created via `POST /disbursement/batches` with:
 
-- `chainId`, `token` — settlement rail (validated per environment)
-- `schedule` — `one_time` or `recurring`
-- `recipients[]` — name, contact, payer account, amounts
-- `usdCharge`, `payoutTotal`, `processingAt` — must match a prior quote
+- `chainId`, `token`: settlement rail (validated per environment)
+- `schedule`: `one_time` or `recurring`
+- `recipients[]`: name, contact, payer account, amounts
+- `usdCharge`, `payoutTotal`, `processingAt`: must match a prior quote
 
 Deposits and withdrawals on the disbursement account accept an **`idempotencyKey`** (8–200 chars) to prevent duplicate ledger movements.
 
@@ -60,7 +60,7 @@ Deposits and withdrawals on the disbursement account accept an **`idempotencyKey
 |-------|--------|
 | Platform minimum | Default **$5 USD** for recurring/disbursement (`minRecurringUsd`) |
 | Insufficient liquidity | `payouts.momo.insufficient_balance` |
-| Carrier downtime | `payouts.network.carrier_down` — queue and retry |
+| Carrier downtime | `payouts.network.carrier_down`; queue and retry |
 
 Always call `morapay.disbursement.account()` before large batches.
 
@@ -72,7 +72,7 @@ Always call `morapay.disbursement.account()` before large batches.
 
 <AccordionGroup>
   <Accordion title="What are the minimum MoMo settlement amounts?">
-    Platform USD minimums apply at quote time. Individual corridors (e.g. Ghana GHS) may enforce additional carrier floors — validate amounts client-side before submitting batches.
+    Platform USD minimums apply at quote time. Individual corridors such as Ghana GHS may enforce additional carrier floors; validate amounts client-side before submitting batches.
   </Accordion>
   <Accordion title="How do I handle network downtime?">
     Catch `payouts.network.carrier_down`, enqueue the batch for retry with backoff, and alert operations. Include `requestId` when contacting support.

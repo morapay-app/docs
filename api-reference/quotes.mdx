@@ -1,0 +1,108 @@
+---
+title: "Quotes"
+description: "Ramp, fiat, and checkout quotes before committing funds."
+---
+
+Quote endpoints return exact fees and settlement amounts before you create links, batches, or custom checkout UI.
+
+## Merchant quotes
+
+Base path: `/api/v1/merchant`
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/quotes/ramp` | Crypto onramp or offramp quote |
+| `POST` | `/quotes/fiat` | Fiat corridor quote |
+
+### Ramp quote
+
+`POST /api/v1/merchant/quotes/ramp`
+
+```typescript
+const ramp = await morapay.quotes.ramp.create({
+  action: "buy",
+  sourceAsset: "USDC",
+  targetAsset: "ETH",
+  targetChain: "1",
+  amount: 100,
+  amountType: "source",
+});
+```
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "quoteId": "quote_uuid",
+    "sourceAmount": "100",
+    "targetAmount": "0.042",
+    "expiresAt": "2026-03-01T12:05:00.000Z"
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": "Token ETH is not supported on chain 1 in TEST mode.",
+  "code": "crypto.unsupported_token",
+  "requestId": "req_ramp422"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
+
+### Fiat quote
+
+`POST /api/v1/merchant/quotes/fiat`
+
+Returns corridor pricing for fiat legs used in custom integrations.
+
+```typescript
+const fiat = await morapay.quotes.fiat.create({
+  /* corridor fields per API schema */
+});
+```
+
+## Commerce fiat quote
+
+`POST /api/commerce/checkout-fiat`
+
+Public signed route for hosted checkout payer totals. Used when rendering MoMo, bank, or card checkout.
+
+| Field | Description |
+|-------|-------------|
+| `payment_link_id` | Link uuid |
+| `payer_currency` | Payer fiat currency |
+| `quote_tier` | `mobile_money`, `bank_transfer`, `card_local`, `card_international` |
+| `invoice_major` | Optional invoice override |
+
+See [Fiat checkout API](/api-reference/fiat-checkout).
+
+## Link settlement quote
+
+`POST /api/v1/merchant/links/:id/settlement-quote`
+
+Merchant clearing estimate for fiat-denominated links.
+
+```typescript
+const settlement = await morapay.link.quote("link_uuid", { invoice_major: 100 });
+```
+
+## Checkout catalog quote
+
+`POST /api/v1/quotes/checkout`
+
+Returns token payout rows for custom checkout UIs. Proxied at `POST /api/public/catalog/quotes/checkout` on some hosts.
+
+## Related
+
+- [Payment links API](/api-reference/payment-links)
+- [Disbursement API](/api-reference/disbursement)
+- [Fiat checkout API](/api-reference/fiat-checkout)

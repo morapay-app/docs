@@ -171,10 +171,42 @@ curl -s "https://api.morapay.io/api/public/catalog/tokens?chain_id=8453&environm
 
 ## SDK equivalent
 
+Catalog routes are unsigned public `GET` endpoints. Use `fetch` from your server or checkout BFF:
+
 ```typescript
-const res = await fetch("https://api.morapay.io/api/public/catalog/tokens?chain_id=8453");
-const { data } = await res.json();
+const base = "https://api.morapay.io";
+const countries = await fetch(`${base}/api/public/catalog/countries`).then((r) => r.json());
+const tokens = await fetch(`${base}/api/public/catalog/tokens?chain_id=8453&environment=LIVE`).then((r) => r.json());
 ```
+
+For payer-facing **payment link** lookup (not the full catalog), the SDK exposes:
+
+```typescript
+const link = await morapay.public.paymentLinks.get("invoice-42");
+const checkoutUrl = morapay.buildCheckoutUrl(link.publicCode);
+```
+
+## Errors
+
+Catalog routes are public. Typical failures:
+
+| HTTP | Cause |
+|------|-------|
+| **400** | Invalid `environment` or `chain_id` query |
+| **503** | Temporary upstream outage |
+
+<ResponseExample>
+
+```json 400 Bad Request
+{
+  "success": false,
+  "error": "Invalid environment query.",
+  "code": "request.invalid",
+  "requestId": "req_cat400"
+}
+```
+
+</ResponseExample>
 
 ## Related
 

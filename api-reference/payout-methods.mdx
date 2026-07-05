@@ -1,0 +1,129 @@
+---
+title: "Payout methods"
+description: "Save and manage MoMo and bank accounts for withdrawals."
+---
+
+Payout methods are the saved destinations for clearing-balance withdrawals. Use [Payout rails](/api-reference/payout-rails) first to list banks, MoMo operators, and resolve account names.
+
+Base path: `/api/v1/merchant/methods`
+
+## Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/methods` | List active payout methods |
+| `POST` | `/methods` | Add MoMo or bank account |
+| `PATCH` | `/methods/:id` | Update label or primary flag |
+
+Portal users need **OWNER**, **ADMIN**, or **FINANCE** role for mutating routes. Merchant API keys have full access.
+
+## List methods
+
+`GET /api/v1/merchant/methods`
+
+<ResponseExample>
+
+```json 200 OK
+{
+  "success": true,
+  "data": [
+    {
+      "id": "pm_uuid",
+      "type": "MOBILE_MONEY",
+      "label": "MTN MoMo",
+      "isPrimary": true,
+      "currency": "GHS",
+      "details": {
+        "phone": "233241234567",
+        "provider": "MTN",
+        "accountName": "JOHN DOE"
+      }
+    }
+  ]
+}
+```
+
+</ResponseExample>
+
+## Create method
+
+`POST /api/v1/merchant/methods`
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `type` | string | Yes | `BANK_ACCOUNT` or `MOBILE_MONEY` |
+| `label` | string | No | Friendly name |
+| `isPrimary` | boolean | No | Set as default withdrawal destination |
+| `details` | object | Yes | Bank or MoMo fields from rails resolve |
+
+Example MoMo body:
+
+```json
+{
+  "type": "MOBILE_MONEY",
+  "label": "MTN MoMo",
+  "isPrimary": true,
+  "details": {
+    "phone": "233241234567",
+    "provider": "MTN",
+    "accountName": "JOHN DOE"
+  }
+}
+```
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 201 Created
+{
+  "success": true,
+  "data": {
+    "id": "pm_uuid",
+    "type": "MOBILE_MONEY",
+    "isPrimary": true
+  }
+}
+```
+
+```json 400 Bad Request
+{
+  "success": false,
+  "error": "Bank and Mobile Money payouts are not available for your region or Paystack is not configured.",
+  "code": "request.invalid",
+  "requestId": "req_methods_region"
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": "Account name could not be verified.",
+  "code": "payouts.momo.account_not_found",
+  "requestId": "req_methods422"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
+
+## Update method
+
+`PATCH /api/v1/merchant/methods/:id`
+
+Update `label`, `isPrimary`, or deactivate with `{ "isActive": false }`.
+
+## Withdraw to a method
+
+After saving a method, call `POST /api/v1/merchant/settlements/withdraw` with `payoutMethodId`. See [Transactions](/api-reference/transactions#settlements-and-withdrawals).
+
+## SDK note
+
+Payout methods are not in the SDK yet. Use signed REST calls from your backend.
+
+## Related
+
+- [Payout rails](/api-reference/payout-rails)
+- [Transactions](/api-reference/transactions)
+- [Banks & MoMo reference](/reference/banks-and-momo)

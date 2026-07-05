@@ -3,7 +3,7 @@ title: "Native components"
 description: "Intent-driven errors and checkout UI without nested iframe modals."
 ---
 
-Morapay is designed so merchants ship **native-feeling** checkout and error UI — components live in your DOM tree, inherit your typography, and avoid unpolished full-page iframe embeds.
+Morapay is designed so merchants ship **native-feeling** checkout and error UI: components live in your DOM tree, inherit your typography, and avoid unpolished full-page iframe embeds.
 
 ## Philosophy
 
@@ -11,10 +11,10 @@ Morapay is designed so merchants ship **native-feeling** checkout and error UI �
 |-------|----------------------|
 | **API** | Intent-driven error payloads (`displayMessage`, `uiHint`) |
 | **SDK** | `MorapayUi.toast()` for vanilla JS |
-| **Checkout widget** | Hybrid modal — native shell + secure canvas iframe for PCI/MoMo |
-| **`@morapay/react`** | Drop-in React components *(planned)* |
+| **Checkout widget** | Hybrid modal: native shell + secure canvas iframe for PCI/MoMo |
+| **`@morapay/react`** | Drop-in React components ** |
 
-## Error UI today (SDK)
+## Error UI today
 
 Every API error includes a rendering blueprint:
 
@@ -43,17 +43,17 @@ try {
 }
 ```
 
-`morapay.ui.toast(err)` is equivalent. Toasts are **browser-only** — they no-op when `document` is unavailable (server-side).
+`morapay.ui.toast(err)` is equivalent. Toasts are ****browser-only**; they no-op when `document` is unavailable (server-side).
 
 ### Placement hints
 
 | `uiHint.placement` | When to use |
 |--------------------|-------------|
-| `inline` | Form validation — render under the input |
+| `inline` | Form validation: render under the input |
 | `toast` | Transient network or rate-limit errors |
 | `modal` | Critical payout or permission failures |
 
-## Checkout widget (hybrid)
+## Checkout widget
 
 Load the widget from your checkout host:
 

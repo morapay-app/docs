@@ -127,7 +127,7 @@ Every response is JSON with a `success` flag. Signed requests include `Morapay-K
 
 The SDK unwraps `data` on success and throws a typed `MorapayError` subclass on failure.
 
-**Success** — `morapay.link.create()` resolves to the link object:
+**Success**. `morapay.link.create()` resolves to the link object:
 
 <ResponseExample>
 
@@ -145,7 +145,7 @@ The SDK unwraps `data` on success and throws a typed `MorapayError` subclass on 
 
 </ResponseExample>
 
-**Failure** — the same `422` body becomes a thrown error:
+**Failure:** the same `422` body becomes a thrown error:
 
 ```typescript
 import { MorapayInvalidRequestError, isMorapayError } from "@morapay/sdk";

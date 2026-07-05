@@ -1,13 +1,13 @@
 ---
 title: "React hooks & components"
-description: "Planned @morapay/react package — drop-in error and checkout UI."
+description: "@morapay/react package: drop-in error and checkout UI."
 ---
 
 <Warning>
   **`@morapay/react` is not published yet.** This page documents the planned API from `sdk/react/README.md`. Use `@morapay/sdk` + `MorapayUi.toast()` today.
 </Warning>
 
-## Installation (planned)
+## Installation
 
 ```bash
 pnpm add @morapay/react @morapay/sdk
@@ -55,7 +55,7 @@ export function CheckoutForm() {
 | `toast` | Delegates to `MorapayUi.toast` |
 | `modal` | `MorapayErrorModal` with focus trap |
 
-## `useMorapayError` (planned)
+## `useMorapayError`
 
 ```tsx
 const { error, setError, clearError, viewProps } = useMorapayError();
@@ -71,7 +71,7 @@ return <MorapayErrorView {...viewProps} />;
 
 ## Next.js App Router pattern
 
-Server Actions should return serializable error payloads — never throw raw `sk_*` errors to the client:
+Server Actions should return serializable error payloads; never throw raw `sk_*` errors to the client:
 
 ```typescript
 "use server";
@@ -109,4 +109,4 @@ export async function createLinkAction() {
 
 ## Next step
 
-[Custom styling](/frontend-ui/custom-styling) — CSS variables and Tailwind `className` slots.
+[Custom styling](/frontend-ui/custom-styling): CSS variables and Tailwind `className` slots.

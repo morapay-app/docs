@@ -7,9 +7,9 @@ Payment links are fixed-amount checkout URLs you share with customers. The Merch
 
 ## Why payment links
 
-- **No custom checkout code** — share a URL or embed the hybrid widget
-- **Per-customer links** — attach `customerEmail` and metadata from your CRM
-- **Payment tracking** — `paidAt`, `paidByWalletAddress` on the link record
+- **No custom checkout code:** share a URL or embed the hybrid widget
+- **Per-customer links:** attach `customerEmail` and metadata from your CRM
+- **Payment tracking**. `paidAt`, `paidByWalletAddress` on the link record
 
 ## Flow
 
@@ -28,14 +28,14 @@ sequenceDiagram
 
 ## SDK reference
 
-Callable pattern — list/get share one signature:
+Callable pattern: list/get share one signature:
 
 ```typescript
 const { data: links } = await morapay.link({ limit: 20 });
 const link = await morapay.link("link_abc123");
 
 const created = await morapay.link.create({
-  title: "Consulting — March",
+  title: "Consulting March",
   amount: 250,
   currency: "USD",
 });
@@ -70,7 +70,7 @@ const quote = await morapay.link.quote("link_abc123", { chainId: 8453 });
 
 ## Platform minimums
 
-The API enforces minimum amounts per feature kind. Mobile money corridors may have **higher regional floors** (e.g. 1.00 GHS). Below-minimum amounts return `links.amount.below_minimum` — see [error code docs](/errors/codes/links-amount-below-minimum).
+The API enforces minimum amounts per feature kind. Mobile money corridors may have **higher regional floors** such as 1.00 GHS. Below-minimum amounts return `links.amount.below_minimum`. See [error code docs](/errors/codes/links-amount-below-minimum).
 
 ## Checkout integration
 
@@ -102,4 +102,4 @@ When a link is paid, Morapay emits `payment_link.paid` to your configured endpoi
 
 ## Next step
 
-[Subscriptions](/concepts/subscriptions) — recurring billing on top of the same Merchant API.
+[Subscriptions](/concepts/subscriptions): recurring billing on top of the same Merchant API.

@@ -3,9 +3,22 @@ title: "Fiat checkout API"
 description: "REST endpoints for MoMo, bank transfer, and card checkout configuration."
 ---
 
-Fiat payment methods at checkout are configured per environment. Use these endpoints to discover which rails are enabled before initializing a payer session.
+Fiat payment methods at checkout are configured per environment. Use these endpoints to discover enabled rails, quote payer totals, initialize sessions, and verify status.
 
 Base URL: `https://api.morapay.io`
+
+## Endpoints
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| `GET` | `/api/public/fiat/config` | None | Enabled fiat methods |
+| `POST` | `/api/public/fiat/payments/initialize` | None | Start MoMo, bank, or card session |
+| `GET` | `/api/public/fiat/transactions/verify/:reference` | None | Poll payment status |
+| `POST` | `/api/public/fiat/payments/test-confirm` | None | TEST mode only: simulate success |
+| `POST` | `/api/public/commerce/fiat` | None | Quote payer fiat total |
+| `POST` | `/api/public/validate/momo` | None | Validate MoMo number |
+| `POST` | `/api/public/validate/bank` | None | Validate bank account |
+| `GET` | `/api/public/validate/banks` | None | Bank list for forms |
 
 ## Checkout config
 
@@ -28,6 +41,8 @@ curl -s "https://api.morapay.io/api/public/fiat/config?environment=LIVE"
 </RequestExample>
 
 <ResponseExample>
+
+<CodeGroup>
 
 ```json 200 OK
 {
@@ -59,13 +74,81 @@ curl -s "https://api.morapay.io/api/public/fiat/config?environment=LIVE"
 }
 ```
 
+```json 400 Bad Request
+{
+  "success": false,
+  "error": "Invalid environment query.",
+  "code": "request.invalid",
+  "requestId": "req_fiat_cfg400"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
+
+```typescript
+const res = await fetch("https://api.morapay.io/api/public/fiat/config?environment=LIVE");
+const { data } = await res.json();
+```
+
+## Commerce fiat quote
+
+`POST /api/public/commerce/fiat`
+
+Quote fiat checkout amounts for a payment link or product session. Used by hosted checkout and embed flows.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `payment_link_id` | uuid | One of | Link id |
+| `product_id` | uuid | One of | Product id |
+| `payer_currency` | string | Yes | e.g. `GHS`, `NGN` |
+| `quote_tier` | string | Yes | `mobile_money`, `bank_transfer`, `card_local`, `card_international` |
+| `invoice_major` | number | No | Override invoice amount |
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "payerCurrency": "GHS",
+    "payerAmountMajor": "1250.00",
+    "quoteTier": "mobile_money",
+    "expiresAt": "2026-03-01T12:05:00.000Z"
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": "Fiat rail is not enabled for this currency.",
+  "code": "request.validation_failed",
+  "requestId": "req_commerce422"
+}
+```
+
+</CodeGroup>
+
 </ResponseExample>
 
 ## Initialize fiat payment
 
 `POST /api/public/fiat/payments/initialize`
 
-Starts a MoMo, bank transfer, or card session for an existing transaction. Body includes `payment_method` (`mobile_money`, `bank_transfer`, or `card`) and `transaction_id`.
+Starts a MoMo, bank transfer, or card session for an existing transaction.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `transaction_id` | string | Yes | Morapay transaction id |
+| `payment_method` | string | Yes | `mobile_money`, `bank_transfer`, or `card` |
+| `phone` | string | MoMo | E.164 or local format |
+| `provider` | string | MoMo | e.g. `MTN`, `VOD` |
+| `bank_code` | string | Bank | Institution code |
+| `account_number` | string | Bank | Payer account |
 
 <RequestExample>
 
@@ -82,34 +165,83 @@ curl -s -X POST "https://api.morapay.io/api/public/fiat/payments/initialize" \
 
 </RequestExample>
 
+<ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "reference": "fiat_ref_xyz",
+    "status": "PENDING",
+    "authorizationUrl": null,
+    "ussdCode": "*170#"
+  }
+}
+```
+
+```json 400 Bad Request
+{
+  "success": false,
+  "error": "Transaction is not payable.",
+  "code": "request.invalid",
+  "requestId": "req_init400"
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": "Mobile money number could not be validated.",
+  "code": "payouts.momo.account_not_found",
+  "requestId": "req_init422"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
+
 ## Verify fiat payment
 
 `GET /api/public/fiat/transactions/verify/:reference`
 
 Poll payment status after the payer completes MoMo, bank, or card checkout.
 
-## Fiat quote (commerce)
+| Query | Description |
+|-------|-------------|
+| `payment_method` | Same method used at initialize |
 
-`POST /api/public/commerce/fiat`
+<ResponseExample>
 
-Quote fiat checkout amounts for a payment link or product session. Used by hosted checkout and embed flows.
+<CodeGroup>
 
-## Supported fiat currencies
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "reference": "fiat_ref_xyz",
+    "status": "COMPLETED",
+    "transactionId": "txn_abc123"
+  }
+}
+```
 
-| Currency | MoMo | Virtual bank | Card (Paystack) |
-|----------|------|--------------|-----------------|
-| **GHS** | Yes | Yes | Yes |
-| **NGN** | Yes | Yes | Yes |
-| **KES** | Via Paystack operators | — | Yes |
-| **ZAR** | — | — | Yes |
+```json 404 Not Found
+{
+  "success": false,
+  "error": "Payment reference not found.",
+  "code": "resource.not_found",
+  "requestId": "req_verify404"
+}
+```
 
-International on/offramp corridors use Fonbnk for additional countries — see [Countries & fiat](/reference/countries-and-fiat).
+</CodeGroup>
 
-## MoMo operators
+</ResponseExample>
 
-Ghana (GHS): **MTN**, **Telecel**, **AirtelTigo**
-
-Kenya (KES): **M-PESA**, **Airtel Kenya**, **Telkom Kenya**
+## MoMo and bank validation
 
 Validate numbers before checkout:
 
@@ -119,8 +251,70 @@ curl -s -X POST "https://api.morapay.io/api/public/validate/momo" \
   -d '{ "receiver": "233241234567", "provider": "MTN", "currency": "GHS" }'
 ```
 
+<ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "valid": true,
+    "accountName": "JOHN DOE"
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": "Could not resolve mobile money account.",
+  "code": "payouts.momo.account_not_found",
+  "requestId": "req_momo422"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
+
+Bank list for checkout forms: `GET /api/public/validate/banks?country=gha` (`gha` or `nga`).
+
+## Supported fiat currencies
+
+| Currency | MoMo | Virtual bank | Card |
+|----------|------|--------------|------|
+| **GHS** | Yes | Yes | Yes |
+| **NGN** | Yes | Yes | Yes |
+| **KES** | Yes | No | Yes |
+| **ZAR** | No | No | Yes |
+
+International on/offramp corridors use additional countries at quote time. See [Countries & fiat](/reference/countries-and-fiat).
+
+## MoMo operators
+
+Ghana GHS: **MTN**, **Telecel**, **AirtelTigo**
+
+Kenya KES: **M-PESA**, **Airtel Kenya**, **Telkom Kenya**
+
+## SDK note
+
+Fiat initialize and verify are payer-facing REST calls. Merchant treasury quotes use:
+
+```typescript
+const fiat = await morapay.quotes.fiat.create({
+  from: "USD",
+  to: "GHS",
+  amount: 100,
+  purpose: "spot",
+});
+```
+
+Checkout row quotes: `morapay.quotes.checkout.create(...)`. See [Quotes](/api-reference/quotes).
+
 ## Related
 
+- [Public checkout](/api-reference/public-checkout)
 - [Catalog API](/api-reference/catalog)
 - [Countries & fiat reference](/reference/countries-and-fiat)
 - [Payment links](/concepts/payment-links)

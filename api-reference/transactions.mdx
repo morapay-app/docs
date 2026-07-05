@@ -1,0 +1,147 @@
+---
+title: "Transactions"
+description: "List and inspect payments, settlements, and refunds."
+---
+
+Transactions represent completed and in-flight payments across crypto and fiat rails.
+
+Base path: `/api/v1/merchant`
+
+## Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/transactions` | List transactions |
+| `GET` | `/transactions/:id` | Transaction detail |
+| `POST` | `/transactions/:id/refunds` | Request refund |
+| `GET` | `/settlements` | List payouts to your balance |
+| `GET` | `/settlements/:id` | Settlement detail |
+| `GET` | `/settlements/:id/transfer-status` | MoMo or bank transfer status |
+| `POST` | `/settlements/withdraw` | Withdraw clearing balance |
+| `GET` | `/summary` | Dashboard KPIs |
+| `GET` | `/limits` | Platform limits for tenant |
+
+## List transactions
+
+`GET /api/v1/merchant/transactions`
+
+| Query | Description |
+|-------|-------------|
+| `page`, `limit` | Pagination |
+| `status` | Filter by status |
+| `type` | Transaction type |
+| `from`, `to` | ISO date range |
+
+<ResponseExample>
+
+```json 200 OK
+{
+  "success": true,
+  "data": [
+    {
+      "id": "txn_uuid",
+      "type": "PAYMENT",
+      "status": "COMPLETED",
+      "amount": "100.00",
+      "currency": "USD",
+      "createdAt": "2026-03-01T12:00:00.000Z"
+    }
+  ],
+  "meta": { "page": 1, "limit": 20, "total": 1 }
+}
+```
+
+</ResponseExample>
+
+## Get transaction
+
+`GET /api/v1/merchant/transactions/:id`
+
+Returns line items, fees, payer metadata, and linked payment link or subscription when present.
+
+<ResponseExample>
+
+```json 404 Not Found
+{
+  "success": false,
+  "error": "Transaction not found.",
+  "code": "resource.not_found",
+  "requestId": "req_txn404"
+}
+```
+
+</ResponseExample>
+
+## Refund
+
+`POST /api/v1/merchant/transactions/:id/refunds`
+
+Portal users need finance role. Merchant API keys have full tenant access.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `amount` | string / number | No | Partial refund; omit for full |
+| `reason` | string | No | Internal note |
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 201 Created
+{
+  "success": true,
+  "data": {
+    "id": "refund_uuid",
+    "transactionId": "txn_uuid",
+    "status": "PENDING",
+    "amount": "100.00"
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": "Transaction is not refundable.",
+  "code": "request.validation_failed",
+  "requestId": "req_refund422"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
+
+## Settlements and withdrawals
+
+| Method | Path | SDK |
+|--------|------|-----|
+| `GET /settlements` | List merchant payouts | Dashboard / REST |
+| `POST /settlements/withdraw` | Withdraw to linked MoMo or bank | REST |
+
+Withdraw body: `{ "amount", "currency", "payoutMethodId" }`.
+
+<ResponseExample>
+
+```json 400 Bad Request
+{
+  "success": false,
+  "error": "Insufficient clearing balance.",
+  "code": "payouts.momo.insufficient_balance",
+  "requestId": "req_withdraw400"
+}
+```
+
+</ResponseExample>
+
+## Summary KPIs
+
+`GET /api/v1/merchant/summary?days=30&seriesDays=7`
+
+Returns volume, fees, status breakdowns, and time series for the resolved TEST or LIVE environment.
+
+## Related
+
+- [Payment links API](/api-reference/payment-links)
+- [Payout rails API](/api-reference/payout-rails)
+- [Conventions](/api-reference/conventions)

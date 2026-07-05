@@ -7,7 +7,7 @@ Morapay delivers **outbound webhooks** when payments, payouts, and subscriptions
 
 ## Register an endpoint
 
-`morapay.webhooks.endpoints` uses the **callable resource** pattern — call with no arguments to list, then use attached methods for writes:
+`morapay.webhooks.endpoints` uses the ****callable resource** pattern: call with no arguments to list, then use attached methods for writes:
 
 ```typescript
 const endpoint = await morapay.webhooks.endpoints.create({
@@ -16,7 +16,7 @@ const endpoint = await morapay.webhooks.endpoints.create({
 });
 
 const secret = await morapay.webhooks.endpoints.revealSecret(endpoint.id);
-// Store secret securely — shown once per reveal call
+// Store secret securely; shown once per reveal call
 ```
 
 Manage endpoints:
@@ -42,7 +42,7 @@ API path: `/api/v1/merchant/webhooks/endpoints`.
 | `disbursement_batch.created` | Disbursement batch accepted |
 | `subscription.payment_received` | Subscription payment settled |
 
-Subscribe only to events you handle — unused events add noise and retry load.
+Subscribe only to events you handle; unused events add noise and retry load.
 
 ## Verify signatures
 
@@ -51,7 +51,7 @@ Morapay signs the **raw request body** with HMAC-SHA256. The `Morapay-Signature`
 - `sha256=<hex>`, or
 - raw hex digest
 
-Use `MorapayUtils.verifyWebhook` on your server — it is synchronous and does not require a `Morapay` client instance:
+Use `MorapayUtils.verifyWebhook` on your server; it is synchronous and does not require a `Morapay` client instance:
 
 ```typescript
 import { MorapayUtils } from "@morapay/sdk";
@@ -99,4 +99,4 @@ export async function POST(req: Request) {
 
 ## Next step
 
-[Idempotency](/developer-tools/idempotency) — safe retries for payouts and ledger operations.
+[Idempotency](/developer-tools/idempotency): safe retries for payouts and ledger operations.

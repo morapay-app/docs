@@ -50,7 +50,7 @@ Get fees and validate `chainId` + `token` before creating a batch.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `chainId` | number | Yes | e.g. `8453` (Base), `1` (Ethereum) |
+| `chainId` | number | Yes | e.g. `8453` Base chain ID 8453, Ethereum chain ID 1 |
 | `token` | string | Yes | e.g. `USDC` |
 | `payoutTotal` | number | Yes | Total USD to disburse |
 | `recipientCount` | number | Yes | Number of recipients |
@@ -225,22 +225,51 @@ After dispatch starts, recipients typically receive funds within **~2 minutes pe
 | `UNSUPPORTED_CHAIN` | 400 | Chain not valid for TEST/LIVE |
 | `UNSUPPORTED_TOKEN` | 400 | Token not on pool for disbursement |
 | `INSUFFICIENT_RECURRING` | 400 | Treasury balance too low |
+| `auth.signature.mismatch` | 401 | Invalid signed request |
+| `resource.not_found` | 404 | Unknown batch id |
+| `resource.conflict` | 409 | Batch already processing or canceled |
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 400 Bad Request
+{
+  "success": false,
+  "error": "Chain 8453 is not available in TEST mode.",
+  "code": "UNSUPPORTED_CHAIN",
+  "requestId": "req_batch_chain"
+}
+```
+
+```json 400 Bad Request
+{
+  "success": false,
+  "error": "Insufficient disbursement balance.",
+  "code": "INSUFFICIENT_RECURRING",
+  "requestId": "req_batch_bal"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
 
 ## SDK equivalent
 
 | API | SDK |
 |-----|-----|
 | `GET /disbursement/account` | `morapay.disbursement.account()` |
-| `POST /disbursement/batches/quote` | `morapay.disbursement.quote({ ... })` |
+| `POST /disbursement/batches/quote` | `morapay.disbursement.quote({ .. })` |
 | `GET /disbursement/batches` | `morapay.disbursement({ limit })` |
 | `GET /disbursement/batches/:id` | `morapay.disbursement("batch_xyz")` |
 | `DELETE /disbursement/batches/:id` | `morapay.disbursement.cancel("batch_xyz")` |
 | `GET /disbursement/ledger` | `morapay.disbursement.ledger({ page, limit })` |
 
-Deposit/withdraw with `idempotencyKey` are API-only today — call the REST endpoints from your server.
+Deposit/withdraw with `idempotencyKey` are API-only today; call the REST endpoints from your server.
 
 ## Related
 
 - [Payouts & MoMo concept](/concepts/payouts-momo)
 - [Payout rails API](/api-reference/payout-rails)
-- [Webhooks](/developer-tools/webhooks) — `disbursement_batch.created`, `payout.status_updated`
+- [Webhooks](/developer-tools/webhooks). `disbursement_batch.created`, `payout.status_updated`

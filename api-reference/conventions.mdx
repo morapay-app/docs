@@ -1,0 +1,202 @@
+---
+title: "Conventions"
+description: "HTTP methods, pagination, response envelope, and common errors for the Morapay API."
+---
+
+All Merchant API paths are relative to `https://api.morapay.io/api/v1/merchant` unless noted. Public catalog and checkout paths use `/api/public/*`.
+
+## HTTP methods
+
+| Method | Use |
+|--------|-----|
+| `GET` | Read a resource or list with query filters |
+| `POST` | Create a resource or run an action such as quote, deposit, or refund |
+| `PATCH` | Partial update on an existing resource |
+| `PUT` | Full replace where documented, for example business country |
+| `DELETE` | Remove or cancel where documented, for example webhook endpoint or scheduled batch |
+
+Signed headers are required on every Merchant API call. See [Authentication](/getting-started/authentication).
+
+## Pagination
+
+List endpoints accept:
+
+| Query | Default | Max |
+|-------|---------|-----|
+| `page` | `1` | — |
+| `limit` | `20` | `100` |
+
+Paginated success responses include `meta`:
+
+```json
+{
+  "success": true,
+  "data": [],
+  "meta": { "page": 1, "limit": 20, "total": 42 }
+}
+```
+
+## Success envelope
+
+```json
+{ "success": true, "data": { } }
+```
+
+Create endpoints return **201 Created** when a new row is inserted. Idempotent replays may return **200 OK** with the same body.
+
+## Error envelope
+
+Every failed JSON response uses the same shape:
+
+```json
+{
+  "success": false,
+  "error": "Human-readable diagnostic for developers",
+  "code": "links.amount.below_minimum",
+  "safeMessage": "Customer-safe copy",
+  "displayMessage": "UI-ready copy",
+  "why": "Why the API rejected the request",
+  "howToFix": "Actionable fix for integrators",
+  "docUrl": "https://docs.morapay.io/errors/codes/links-amount-below-minimum",
+  "requestId": "req_1717483920_abc",
+  "details": {}
+}
+```
+
+Always log `requestId` and include it when contacting support.
+
+## Common HTTP status codes
+
+| HTTP | Typical `code` | When you see it |
+|------|----------------|-----------------|
+| **400** | `request.invalid` | Malformed JSON or failed Zod validation |
+| **401** | `auth.keys.invalid`, `auth.signature.mismatch`, `auth.signature.timestamp_expired` | Missing or wrong API key or signature |
+| **403** | `kyb.forbidden`, `FORBIDDEN_MERCHANT_ROLE` | LIVE action blocked by KYB tier or portal role |
+| **404** | `resource.not_found` | Unknown id or wrong tenant |
+| **409** | `links.slug.duplicate`, `resource.conflict` | Duplicate slug or stale optimistic update |
+| **422** | `request.validation_failed`, `links.amount.below_minimum` | Business rule or field validation failure |
+| **429** | `api.rate_limited` | Too many requests; back off and retry |
+| **503** | `api.service_unavailable` | Temporary outage or dependency down |
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 401 Unauthorized
+{
+  "success": false,
+  "error": "Invalid request signature.",
+  "code": "auth.signature.mismatch",
+  "safeMessage": "We could not verify this request. Please try again later.",
+  "displayMessage": "Payment could not be started. Please refresh and try again.",
+  "requestId": "req_abc123"
+}
+```
+
+```json 403 Forbidden
+{
+  "success": false,
+  "error": "Complete KYB before creating LIVE payment links.",
+  "code": "kyb.forbidden",
+  "requestId": "req_def456"
+}
+```
+
+```json 404 Not Found
+{
+  "success": false,
+  "error": "Payment link not found.",
+  "code": "resource.not_found",
+  "requestId": "req_ghi789"
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": "Amount is below the minimum for this corridor.",
+  "code": "links.amount.below_minimum",
+  "displayMessage": "The transaction amount must be at least 1.00 GHS.",
+  "docUrl": "https://docs.morapay.io/errors/codes/links-amount-below-minimum",
+  "requestId": "req_jkl012"
+}
+```
+
+```json 429 Too Many Requests
+{
+  "success": false,
+  "error": "Rate limit exceeded.",
+  "code": "api.rate_limited",
+  "requestId": "req_mno345"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
+
+## SDK error handling
+
+The SDK throws typed errors that mirror the envelope:
+
+```typescript
+import {
+  Morapay,
+  MorapayAuthenticationError,
+  MorapayInvalidRequestError,
+  isMorapayError,
+} from "@morapay/sdk";
+
+const morapay = new Morapay({
+  publicKey: process.env.MORAPAY_PUBLIC_KEY!,
+  secretKey: process.env.MORAPAY_SECRET_KEY!,
+});
+
+try {
+  const link = await morapay.link.create({
+    title: "Invoice",
+    amount: 0.5,
+    currency: "GHS",
+  });
+} catch (err) {
+  if (err instanceof MorapayInvalidRequestError) {
+    console.error(err.code, err.displayMessage, err.requestId);
+  } else if (err instanceof MorapayAuthenticationError) {
+    console.error("Check keys and signing", err.requestId);
+  } else if (isMorapayError(err)) {
+    console.error(err.format());
+  }
+  throw err;
+}
+```
+
+## Callable SDK pattern
+
+Many resources use one function for list and get:
+
+| Pattern | REST | SDK |
+|---------|------|-----|
+| List | `GET /links?page=1` | `morapay.link()` or `morapay.link({ page: 1 })` |
+| Get one | `GET /links/:id` | `morapay.link("link_uuid")` |
+| Create | `POST /links` | `morapay.link.create({ ... })` |
+| Update | `PATCH /links/:id` | `morapay.link.update(id, { ... })` |
+
+## Portal RBAC
+
+Some mutating routes require a **BusinessMember** role when using portal JWT auth. Merchant API keys skip role checks.
+
+| Capability | Allowed roles |
+|------------|---------------|
+| `PATCH /business` | `OWNER`, `ADMIN` |
+| `POST /keys`, revoke keys | `OWNER`, `ADMIN`, `DEVELOPER` |
+| `POST /methods`, withdrawals | `OWNER`, `ADMIN`, `FINANCE` |
+| Webhook endpoint mutations | `OWNER`, `ADMIN`, `DEVELOPER` |
+| `POST /transactions/:id/refunds` | `OWNER`, `ADMIN`, `FINANCE` |
+
+On denial: **403** with `FORBIDDEN_MERCHANT_ROLE`.
+
+## Related
+
+- [Authentication](/getting-started/authentication)
+- [Error handling](/errors/error-handling)
+- [API overview](/api-reference/overview)

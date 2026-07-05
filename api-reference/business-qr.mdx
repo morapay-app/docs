@@ -1,0 +1,77 @@
+---
+title: "Business QR and pay pages"
+description: "Open-amount business checkout and QR configuration."
+---
+
+Business QR lets customers pay any amount at a stable `/pay/:businessSlug` URL.
+
+Base path: `/api/v1/merchant`
+
+## Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/qr` | Get QR and pay page config |
+| `POST` | `/qr` | Update QR branding and settings |
+| `GET` | `/payment-requests` | List legacy payment requests |
+| `POST` | `/payment-requests` | Create payment request |
+| `GET` | `/payment-requests/:id` | Get payment request |
+
+## Get QR config
+
+`GET /api/v1/merchant/qr`
+
+<ResponseExample>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "businessSlug": "acme-coffee",
+    "enabled": true,
+    "defaultCurrency": "GHS",
+    "checkoutUrl": "https://checkout.morapay.io/pay/acme-coffee"
+  }
+}
+```
+
+</ResponseExample>
+
+```typescript
+const qr = await morapay.qr.get();
+const payUrl = morapay.buildBusinessPayCheckoutUrl(qr.businessSlug);
+const widgetUrl = morapay.buildBusinessPayWidgetUrl(qr.businessSlug);
+```
+
+## Update QR config
+
+`POST /api/v1/merchant/qr`
+
+Update slug visibility, default currency, and display options per your dashboard schema.
+
+```typescript
+await morapay.qr.update({ enabled: true, defaultCurrency: "GHS" });
+```
+
+## Payment requests
+
+Legacy REQUEST-type flows for ad hoc invoices.
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/payment-requests` | List |
+| `POST` | `/payment-requests` | Create |
+| `GET` | `/payment-requests/:id` | Detail |
+
+## Common errors
+
+| Code | HTTP | Cause |
+|------|------|-------|
+| `resource.not_found` | 404 | Unknown request id |
+| `links.slug.duplicate` | 409 | Business slug conflict |
+| `request.invalid` | 400 | Invalid body |
+
+## Related
+
+- [Payment links API](/api-reference/payment-links)
+- [Products API](/api-reference/products)

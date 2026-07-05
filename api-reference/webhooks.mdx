@@ -1,0 +1,132 @@
+---
+title: "Webhooks"
+description: "Register endpoints, reveal secrets, and inspect deliveries."
+---
+
+Webhooks notify your server when payments complete, batches dispatch, subscriptions change, and other lifecycle events occur.
+
+Base path: `/api/v1/merchant/webhooks`
+
+## Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/webhooks/endpoints` | List endpoints |
+| `POST` | `/webhooks/endpoints` | Create endpoint |
+| `PATCH` | `/webhooks/endpoints/:id` | Update URL or events |
+| `DELETE` | `/webhooks/endpoints/:id` | Delete endpoint |
+| `POST` | `/webhooks/endpoints/:id/reveal-secret` | Reveal signing secret |
+| `GET` | `/webhooks/endpoints/:id/summary` | Delivery stats |
+| `GET` | `/webhooks/deliveries` | List delivery attempts |
+| `POST` | `/webhooks/deliveries/:id/retry` | Retry failed delivery |
+
+## List endpoints
+
+`GET /api/v1/merchant/webhooks/endpoints`
+
+```typescript
+const endpoints = await morapay.webhooks.endpoints();
+```
+
+## Create endpoint
+
+`POST /api/v1/merchant/webhooks/endpoints`
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `url` | string | Yes | HTTPS callback URL |
+| `events` | string[] | Yes | Event types to subscribe |
+| `displayName` | string | No | Dashboard label |
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 201 Created
+{
+  "success": true,
+  "data": {
+    "id": "wh_ep_uuid",
+    "url": "https://api.example.com/webhooks/morapay",
+    "events": ["payment_link.paid", "payout.status_updated"],
+    "secretHint": "whsec_...abcd"
+  }
+}
+```
+
+```json 400 Bad Request
+{
+  "success": false,
+  "error": "url must be a valid HTTPS URL.",
+  "code": "request.invalid",
+  "requestId": "req_wh_url"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
+
+```typescript
+const endpoint = await morapay.webhooks.endpoints.create({
+  url: "https://api.example.com/webhooks/morapay",
+  events: ["payment_link.paid"],
+});
+```
+
+## Update and delete
+
+```typescript
+await morapay.webhooks.endpoints.update("wh_ep_uuid", {
+  url: "https://api.example.com/v2/morapay",
+});
+
+await morapay.webhooks.endpoints.delete("wh_ep_uuid");
+```
+
+## Reveal secret
+
+`POST /api/v1/merchant/webhooks/endpoints/:id/reveal-secret`
+
+Returns the signing secret once per call. Store it securely.
+
+```typescript
+const { secret } = await morapay.webhooks.endpoints.revealSecret("wh_ep_uuid");
+```
+
+Verify inbound webhooks with `morapay.utils.verifyWebhook({ payload, signature, secret })`.
+
+## Deliveries
+
+`GET /api/v1/merchant/webhooks/deliveries?endpointId=&from=&to=`
+
+`POST /api/v1/merchant/webhooks/deliveries/:id/retry`
+
+<ResponseExample>
+
+```json 404 Not Found
+{
+  "success": false,
+  "error": "Webhook endpoint not found.",
+  "code": "resource.not_found",
+  "requestId": "req_wh404"
+}
+```
+
+</ResponseExample>
+
+## Common event types
+
+| Event | When |
+|-------|------|
+| `payment_link.paid` | Payer completes checkout on a link |
+| `payout.status_updated` | Disbursement recipient status changes |
+| `disbursement_batch.created` | Batch scheduled or created |
+| `subscription.charge.succeeded` | Recurring charge succeeds |
+
+Full list: [Webhooks guide](/developer-tools/webhooks).
+
+## Related
+
+- [Webhooks guide](/developer-tools/webhooks)
+- [Conventions](/api-reference/conventions)

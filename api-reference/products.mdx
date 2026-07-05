@@ -1,0 +1,133 @@
+---
+title: "Products"
+description: "Catalog products and product-scoped payment links."
+---
+
+Products group reusable catalog items. Each product can spawn payment links with shared branding and metadata.
+
+Base path: `/api/v1/merchant/products`
+
+## Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/products` | List products |
+| `GET` | `/products/:id` | Get product |
+| `POST` | `/products` | Create product |
+| `PATCH` | `/products/:id` | Update product |
+| `GET` | `/products/:id/links` | List links for product |
+| `POST` | `/products/:id/links` | Create link under product |
+| `POST` | `/products/image` | Upload product image |
+
+## List products
+
+`GET /api/v1/merchant/products`
+
+| Query | Description |
+|-------|-------------|
+| `page`, `limit` | Pagination |
+| `q` | Search name or SKU |
+| `status` | Filter by status |
+| `type` | Product type filter |
+| `includeArchived` | `1` to include archived |
+
+```typescript
+const { data: products } = await morapay.products({ page: 1 });
+```
+
+## Get product
+
+`GET /api/v1/merchant/products/:id`
+
+```typescript
+const product = await morapay.products("product_uuid");
+```
+
+## Create product
+
+`POST /api/v1/merchant/products`
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | string | Yes | Product name |
+| `description` | string | No | Long description |
+| `price` | number | No | Default price |
+| `currency` | string | No | Default currency |
+| `type` | string | No | Product type |
+| `metadata` | object | No | Custom fields |
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 201 Created
+{
+  "success": true,
+  "data": {
+    "id": "product_uuid",
+    "name": "Pro plan",
+    "currency": "USD",
+    "price": 49,
+    "isArchived": false
+  }
+}
+```
+
+```json 400 Bad Request
+{
+  "success": false,
+  "error": "Validation failed",
+  "code": "request.invalid",
+  "details": { "fieldErrors": { "name": ["Required"] } },
+  "requestId": "req_prod_val"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
+
+```typescript
+const product = await morapay.products.create({
+  name: "Pro plan",
+  price: 49,
+  currency: "USD",
+});
+```
+
+## Update product
+
+`PATCH /api/v1/merchant/products/:id`
+
+```typescript
+await morapay.products.update("product_uuid", { name: "Pro plan v2" });
+```
+
+## Product payment links
+
+`POST /api/v1/merchant/products/:id/links`
+
+Creates a payment link attached to the product. Optional `customerEmail`, `customerName`, `customerExternalId`, and `metadata`.
+
+```typescript
+const link = await morapay.products.link("product_uuid", {
+  amount: 49,
+  currency: "USD",
+  customerEmail: "buyer@example.com",
+});
+
+const { data: links } = await morapay.products.links("product_uuid");
+```
+
+## Common errors
+
+| Code | HTTP | Cause |
+|------|------|-------|
+| `resource.not_found` | 404 | Unknown product id |
+| `request.invalid` | 400 | Invalid body |
+| `kyb.forbidden` | 403 | LIVE mutation blocked by KYB |
+
+## Related
+
+- [Payment links API](/api-reference/payment-links)
+- [Subscriptions API](/api-reference/subscriptions)

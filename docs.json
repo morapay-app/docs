@@ -39,7 +39,7 @@
     "primary": {
       "type": "button",
       "label": "Get API keys",
-      "href": "https://businessg.morapay.io/developers/api-keys"
+      "href": "https://business.morapay.io/developers/api-keys"
     }
   },
   "footer": {
@@ -164,14 +164,61 @@
         "icon": "code",
         "groups": [
           {
-            "group": "REST API",
-            "icon": "server",
+            "group": "Getting started",
+            "icon": "book",
             "pages": [
               "api-reference/overview",
-              "api-reference/catalog",
-              "api-reference/payout-rails",
-              "api-reference/disbursement",
+              "api-reference/conventions"
+            ]
+          },
+          {
+            "group": "Payments",
+            "icon": "credit-card",
+            "pages": [
+              "api-reference/payment-links",
+              "api-reference/products",
+              "api-reference/business-qr",
+              "api-reference/quotes",
               "api-reference/fiat-checkout"
+            ]
+          },
+          {
+            "group": "Money movement",
+            "icon": "coins",
+            "pages": [
+              "api-reference/transactions",
+              "api-reference/payout-methods",
+              "api-reference/disbursement",
+              "api-reference/payout-rails"
+            ]
+          },
+          {
+            "group": "Account",
+            "icon": "building",
+            "pages": [
+              "api-reference/business-and-keys"
+            ]
+          },
+          {
+            "group": "Recurring and events",
+            "icon": "rotate",
+            "pages": [
+              "api-reference/subscriptions",
+              "api-reference/webhooks"
+            ]
+          },
+          {
+            "group": "Public checkout",
+            "icon": "cart-shopping",
+            "pages": [
+              "api-reference/public-checkout"
+            ]
+          },
+          {
+            "group": "Catalog",
+            "icon": "database",
+            "pages": [
+              "api-reference/catalog"
             ]
           }
         ]

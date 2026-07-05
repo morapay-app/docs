@@ -7,6 +7,15 @@ Merchant **payout rails** endpoints live under `/api/v1/merchant/rails/*`. They 
 
 Use these to build withdrawal forms: bank dropdowns, MoMo operator lists, and account-name preview before saving a payout method.
 
+## Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/rails/meta` | Business country and fiat rail availability |
+| `GET` | `/rails/banks` | Bank institutions for merchant country |
+| `GET` | `/rails/mobile-providers` | MoMo operators for merchant currency |
+| `GET` | `/rails/resolve` | Preview account holder name |
+
 ## Payout rails meta
 
 `GET /api/v1/merchant/rails/meta`
@@ -71,7 +80,7 @@ Returns bank institutions for the merchant's country. Requires `fiatRailsSupport
 
 `GET /api/v1/merchant/rails/mobile-providers`
 
-Returns MoMo operators for the merchant's fiat currency (e.g. GHS, KES).
+Returns MoMo operators for the merchant's fiat currency such as GHS, KES.
 
 <ResponseExample>
 
@@ -129,7 +138,7 @@ curl -s "https://api.morapay.io/api/v1/merchant/rails/resolve?type=BANK_ACCOUNT&
 
 </ResponseExample>
 
-## Public validation (checkout)
+## Public validation for checkout
 
 For payer-facing checkout flows, use the unsigned public validation endpoints:
 
@@ -152,6 +161,50 @@ Example MoMo validate body:
 ## SDK equivalent
 
 The SDK does not yet wrap rails helpers. Call the Merchant API from your server or extend your integration layer.
+
+## Errors
+
+| HTTP | Typical cause |
+|------|----------------|
+| **401** | Missing or invalid signed headers |
+| **403** | LIVE action blocked by KYB tier |
+| **404** | Unknown bank code or unresolved account |
+| **422** | Invalid phone, account number, or provider hint |
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 401 Unauthorized
+{
+  "success": false,
+  "error": "Invalid API key or signature.",
+  "code": "auth.keys.invalid",
+  "requestId": "req_rails401"
+}
+```
+
+```json 400 Bad Request
+{
+  "success": false,
+  "error": "Fiat payout rails are not available for this business.",
+  "code": "request.invalid",
+  "requestId": "req_rails400"
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": "Account name could not be resolved.",
+  "code": "payouts.momo.account_not_found",
+  "requestId": "req_resolve422"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
 
 ## Related
 

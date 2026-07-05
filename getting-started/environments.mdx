@@ -20,7 +20,7 @@ Use TEST keys for integration development. Rotate to LIVE only after checkout, w
 
 | Service | Production default | Local dev |
 |---------|-------------------|-----------|
-| **Morapay API** (Merchant API) | `https://api.morapay.io`
+| **Morapay API** | `https://api.morapay.io`
 | **Checkout** (hosted + widget) | `https://checkout.morapay.io` | `http://localhost:3002` |
 
 SDK options:
@@ -58,8 +58,8 @@ All Morapay API JSON responses follow:
 { "success": true, "data": { ... }, "meta": { "page": 1, "limit": 20, "total": 42 } }
 ```
 
-Errors include consultant fields — see [Error handling](/errors/error-handling).
+Errors include consultant fields. See [Error handling](/errors/error-handling).
 
 ## Next step
 
-[Payment links](/concepts/payment-links) — your first revenue primitive.
+[Payment links](/concepts/payment-links): your first revenue primitive.

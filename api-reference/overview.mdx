@@ -1,24 +1,20 @@
 ---
 title: "API overview"
-description: "Morapay REST API base URL, authentication, and response envelope."
+description: "Morapay REST API base URL, authentication, endpoint index, and response envelope."
 ---
 
-The **Morapay API** is the public HTTP surface for merchant integrations. All paths below are relative to your API host.
-
-| Environment | Base URL |
-|-------------|----------|
-| Production | `https://api.morapay.io` |
+The **Morapay API** is the public HTTP surface for merchant integrations. Production base URL: `https://api.morapay.io`.
 
 ## API families
 
 | Family | Base path | Auth |
 |--------|-----------|------|
-| **Merchant API v1** | `/api/v1/merchant` | HMAC signed (`Morapay-Key`, `Morapay-Timestamp`, `Morapay-Signature`) |
-| **Catalog & checkout** | `/api/public` | Mostly public; some routes need platform relay credentials |
-| **Account validation** | `/api/public/validate` | Public validation helpers |
+| **Merchant API v1** | `/api/v1/merchant` | HMAC signed headers |
+| **Public catalog and checkout** | `/api/public` | Mostly unsigned |
+| **V1 quotes** | `/api/v1/quotes` | Varies by route |
 
 <Note>
-  Prefer the [`@morapay/sdk`](/getting-started/quickstart) on your server — it signs Merchant API requests automatically. Use raw HTTP when you cannot use Node/TypeScript.
+  Prefer the [`@morapay/sdk`](/getting-started/quickstart) on your server. It signs Merchant API requests and maps resources to typed methods.
 </Note>
 
 ## Discover Merchant API v1
@@ -40,9 +36,6 @@ curl -s https://api.morapay.io/api/v1/merchant
       "products": "/api/v1/merchant/products",
       "webhooks": "/api/v1/merchant/webhooks/endpoints",
       "disbursement": "/api/v1/merchant/disbursement"
-    },
-    "auth": {
-      "headers": ["Morapay-Key", "Morapay-Timestamp", "Morapay-Signature"]
     }
   }
 }
@@ -50,9 +43,71 @@ curl -s https://api.morapay.io/api/v1/merchant
 
 </ResponseExample>
 
-## Signed requests (Merchant API)
+## Endpoint index
 
-Every `POST`, `PATCH`, `PUT`, `GET`, and `DELETE` under `/api/v1/merchant/*` requires signed headers. See [Authentication](/getting-started/authentication).
+### Payments and catalog
+
+| Resource | Methods | Doc |
+|----------|---------|-----|
+| Payment links | `GET`, `POST`, `PATCH` | [Payment links](/api-reference/payment-links) |
+| Products | `GET`, `POST`, `PATCH` | [Products](/api-reference/products) |
+| Business QR / pay | `GET`, `POST` | [Business QR](/api-reference/business-qr) |
+| Quotes | `POST` | [Quotes](/api-reference/quotes) |
+
+### Money movement
+
+| Resource | Methods | Doc |
+|----------|---------|-----|
+| Transactions | `GET` | [Transactions](/api-reference/transactions) |
+| Refunds | `POST` | [Transactions](/api-reference/transactions#refund) |
+| Settlements / withdraw | `GET`, `POST` | [Transactions](/api-reference/transactions) |
+| Payout methods | `GET`, `POST`, `PATCH` | [Payout methods](/api-reference/payout-methods) |
+| Disbursement batches | `GET`, `POST`, `DELETE` | [Disbursement](/api-reference/disbursement) |
+| Payout rails | `GET` | [Payout rails](/api-reference/payout-rails) |
+
+### Account and keys
+
+| Resource | Methods | Doc |
+|----------|---------|-----|
+| Business profile | `GET`, `PATCH` | [Business and keys](/api-reference/business-and-keys) |
+| API keys | `GET`, `POST`, `PATCH`, `DELETE` | [Business and keys](/api-reference/business-and-keys) |
+| Summary KPIs | `GET` | [Business and keys](/api-reference/business-and-keys) |
+
+### Recurring and events
+
+| Resource | Methods | Doc |
+|----------|---------|-----|
+| Subscription plans | `GET`, `POST`, `PATCH` | [Subscriptions](/api-reference/subscriptions) |
+| Enrollments | `GET`, `POST`, pause, cancel | [Subscriptions](/api-reference/subscriptions) |
+| Webhook endpoints | `GET`, `POST`, `PATCH`, `DELETE` | [Webhooks](/api-reference/webhooks) |
+| Webhook deliveries | `GET`, retry | [Webhooks](/api-reference/webhooks) |
+
+### Public catalog and checkout
+
+| Resource | Methods | Doc |
+|----------|---------|-----|
+| Countries | `GET` | [Catalog](/api-reference/catalog) |
+| Chains and tokens | `GET` | [Catalog](/api-reference/catalog) |
+| Payment link lookup | `GET` | [Public checkout](/api-reference/public-checkout) |
+| Subscription checkout | `GET`, `POST` | [Public checkout](/api-reference/public-checkout) |
+| Fiat config | `GET` | [Fiat checkout](/api-reference/fiat-checkout) |
+| Fiat initialize / verify | `POST`, `GET` | [Fiat checkout](/api-reference/fiat-checkout) |
+| Commerce fiat quote | `POST` | [Fiat checkout](/api-reference/fiat-checkout) |
+
+### Portal-only (dashboard JWT)
+
+| Resource | Methods | Notes |
+|----------|---------|-------|
+| Team | `GET`, `POST`, `PATCH`, `DELETE` | `/team/*` |
+| CRM customers | `GET`, `POST`, `PATCH` | `/crm/customers` |
+| KYC / KYB | `GET`, `POST` | Portal verification flows |
+| CSV exports | `GET` | `/exports/*.csv` |
+
+Full internal reference: `core/docs/merchant-v1-api.md` in the repository.
+
+## Authentication
+
+Every Merchant API call requires signed headers. See [Authentication](/getting-started/authentication) and [Conventions](/api-reference/conventions).
 
 ```bash
 curl -s -X GET "https://api.morapay.io/api/v1/merchant/links" \
@@ -61,46 +116,40 @@ curl -s -X GET "https://api.morapay.io/api/v1/merchant/links" \
   -H "Morapay-Signature: v1=$SIGNATURE"
 ```
 
-| Header | Value |
-|--------|--------|
-| `Morapay-Key` | `pk_test_*` or `pk_live_*` |
-| `Morapay-Timestamp` | Unix seconds |
-| `Morapay-Signature` | `v1=<hex>` HMAC-SHA256 digest |
-
 TEST vs LIVE is determined by your key pair. Do not send `x-merchant-environment` with API keys.
 
-## Response envelope
+## Responses and errors
 
-**Success**
-
-```json
-{ "success": true, "data": { ... }, "meta": { "page": 1, "limit": 20, "total": 42 } }
-```
-
-**Failure**
+Success:
 
 ```json
-{
-  "success": false,
-  "error": "Human-readable diagnostic",
-  "code": "links.amount.below_minimum",
-  "safeMessage": "Customer-safe copy",
-  "displayMessage": "UI-ready copy",
-  "requestId": "req_abc123",
-  "docUrl": "https://docs.morapay.io/errors/codes/links-amount-below-minimum"
-}
+{ "success": true, "data": { }, "meta": { "page": 1, "limit": 20, "total": 42 } }
 ```
 
-See [Error handling](/errors/error-handling).
+Failure responses include `code`, `displayMessage`, and `requestId`. You will commonly see **401** auth errors, **422** validation errors, and **404** missing resources during day-to-day integration.
 
-## Coverage API map
+See [Conventions](/api-reference/conventions) for status code tables and SDK error handling examples.
 
-| Topic | API doc | Data snapshot |
-|-------|---------|---------------|
-| Countries & fiat | [Catalog API](/api-reference/catalog#countries) | [Countries & fiat](/reference/countries-and-fiat) |
-| Chains & tokens | [Catalog API](/api-reference/catalog#chains) | [Chains & tokens](/reference/chains-and-tokens) |
-| Banks & MoMo | [Payout rails API](/api-reference/payout-rails) | [Banks & MoMo](/reference/banks-and-momo) |
-| Disbursement | [Disbursement API](/api-reference/disbursement) | [Disbursement tokens](/reference/disbursement-tokens) |
-| Timing & minimums | [Disbursement API](/api-reference/disbursement#constraints) | [Payout timing](/reference/payout-timing) |
-| Fees & taxes | [Disbursement API](/api-reference/disbursement) | [Fees, countries & taxes](/reference/fees-countries-taxes) |
-| Fiat checkout | [Fiat checkout API](/api-reference/fiat-checkout) | [Countries & fiat](/reference/countries-and-fiat) |
+## SDK resource map
+
+| SDK | REST base |
+|-----|-----------|
+| `morapay.link` | `/links` |
+| `morapay.products` | `/products` |
+| `morapay.disbursement` | `/disbursement` |
+| `morapay.subscriptions` | `/subscriptions` |
+| `morapay.webhooks.endpoints` | `/webhooks/endpoints` |
+| `morapay.quotes.ramp` | `/quotes/ramp` |
+| `morapay.qr` | `/qr` |
+| `morapay.public.paymentLinks` | `/api/public/payment-links/*` |
+| `morapay.quotes.checkout` | `/api/v1/quotes/checkout` |
+
+## Coverage cross-reference
+
+| Topic | API doc | Reference data |
+|-------|---------|----------------|
+| Countries and fiat | [Catalog](/api-reference/catalog) | [Countries](/reference/countries-and-fiat) |
+| Chains and tokens | [Catalog](/api-reference/catalog) | [Chains](/reference/chains-and-tokens) |
+| Banks and MoMo | [Payout rails](/api-reference/payout-rails) | [Banks](/reference/banks-and-momo) |
+| Disbursement tokens | [Disbursement](/api-reference/disbursement) | [Tokens](/reference/disbursement-tokens) |
+| Fees | [Quotes](/api-reference/quotes) | [Fees](/reference/fees-countries-taxes) |

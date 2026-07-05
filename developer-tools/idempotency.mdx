@@ -7,7 +7,7 @@ Idempotency ensures that **retrying the same logical operation** does not double
 
 ## Where Morapay uses idempotency
 
-### Disbursement account transfers (Merchant API)
+### Disbursement account transfers
 
 `POST /api/v1/merchant/disbursement/deposit` and `/withdraw` require an `idempotencyKey` (8–200 characters):
 
@@ -26,7 +26,7 @@ Replaying the same key returns the original result instead of creating a second 
 
 ### Automated settlement flows
 
-Subscription charges and other platform-initiated settlements use Morapay-managed idempotency. You do not supply keys for those events — design your webhook handlers to be idempotent instead.
+Subscription charges and other platform-initiated settlements use Morapay-managed idempotency. You do not supply keys for those events; design your webhook handlers to be idempotent instead.
 
 ### Conflict retries
 
@@ -48,7 +48,7 @@ When a resource changed since your last read, the API may return `resource.confl
 
 ## SDK note
 
-The high-level `morapay.disbursement` resource exposes batch quote, list, and cancel helpers. Deposit/withdraw with explicit idempotency keys map to `/api/v1/merchant/disbursement/deposit` and `/disbursement/withdraw` — use your server's HTTP client or extend your integration layer when calling these directly.
+The high-level `morapay.disbursement` resource exposes batch quote, list, and cancel helpers. Deposit/withdraw with explicit idempotency keys map to `/api/v1/merchant/disbursement/deposit` and `/disbursement/withdraw`; use your server's HTTP client or extend your integration layer when calling these directly.
 
 ## Webhooks + idempotency
 
@@ -56,4 +56,4 @@ Webhook handlers should be idempotent by `event.id` or a composite of `(event.ty
 
 ## Next step
 
-[Error handling](/errors/error-handling) — structured errors with `requestId` for support correlation.
+[Error handling](/errors/error-handling): structured errors with `requestId` for support correlation.

@@ -1,0 +1,149 @@
+---
+title: "Subscriptions"
+description: "Plans, enrollments, billing settings, and subscription checkout."
+---
+
+Subscriptions cover recurring billing: plans, subscriber enrollments, imports, and account balances.
+
+Base path: `/api/v1/merchant/subscriptions`
+
+## Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/subscriptions/plans` | List plans |
+| `POST` | `/subscriptions/plans` | Create plan |
+| `GET` | `/subscriptions/plans/:id` | Get plan |
+| `PATCH` | `/subscriptions/plans/:id` | Update plan |
+| `GET` | `/subscriptions` | List enrollments |
+| `POST` | `/subscriptions` | Create enrollment |
+| `GET` | `/subscriptions/:id` | Get enrollment |
+| `POST` | `/subscriptions/:id/pause` | Pause billing |
+| `POST` | `/subscriptions/:id/cancel` | Cancel subscription |
+| `GET` | `/subscriptions/settings` | Billing settings |
+| `PATCH` | `/subscriptions/settings` | Update billing settings |
+| `GET` | `/subscriptions/account` | Subscription treasury account |
+| `GET` | `/subscriptions/stats` | Subscription metrics |
+
+Public checkout for subscribers uses the checkout host at `/subscription/:planId` without merchant keys.
+
+## Plans
+
+### List plans
+
+`GET /api/v1/merchant/subscriptions/plans`
+
+```typescript
+const { data: plans } = await morapay.subscriptions.plans();
+```
+
+### Create plan
+
+`POST /api/v1/merchant/subscriptions/plans`
+
+Typical body fields: `name`, `amount`, `currency`, `interval`, `intervalCount`, `trialDays`, `metadata`.
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 201 Created
+{
+  "success": true,
+  "data": {
+    "id": "plan_uuid",
+    "name": "Pro monthly",
+    "amount": 29,
+    "currency": "USD",
+    "interval": "month",
+    "isActive": true
+  }
+}
+```
+
+```json 400 Bad Request
+{
+  "success": false,
+  "error": "Amount is below the platform minimum.",
+  "code": "links.amount.below_minimum",
+  "requestId": "req_sub_min"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
+
+```typescript
+const plan = await morapay.subscriptions.plans.create({
+  name: "Pro monthly",
+  amount: 29,
+  currency: "USD",
+  interval: "month",
+});
+```
+
+### Update plan
+
+`PATCH /api/v1/merchant/subscriptions/plans/:id`
+
+```typescript
+await morapay.subscriptions.plans.update("plan_uuid", { isActive: false });
+```
+
+## Enrollments
+
+### List
+
+`GET /api/v1/merchant/subscriptions`
+
+```typescript
+const { data } = await morapay.subscriptions({ status: "ACTIVE" });
+```
+
+### Get
+
+```typescript
+const sub = await morapay.subscriptions("sub_uuid");
+```
+
+### Lifecycle
+
+| Action | REST | SDK |
+|--------|------|-----|
+| Pause | `POST /subscriptions/:id/pause` | `morapay.subscriptions.pause(id)` |
+| Cancel | `POST /subscriptions/:id/cancel` | `morapay.subscriptions.cancel(id)` |
+
+<ResponseExample>
+
+```json 409 Conflict
+{
+  "success": false,
+  "error": "Subscription is already canceled.",
+  "code": "resource.conflict",
+  "requestId": "req_sub409"
+}
+```
+
+</ResponseExample>
+
+## Settings and account
+
+`GET` and `PATCH /subscriptions/settings` control fee pass-through, tax calculation flags, and billing behavior.
+
+`GET /subscriptions/account` returns balances for subscription treasury operations.
+
+## Common errors
+
+| Code | HTTP | Cause |
+|------|------|-------|
+| `links.amount.below_minimum` | 400 | Plan amount too low |
+| `resource.not_found` | 404 | Unknown plan or enrollment |
+| `resource.conflict` | 409 | Invalid state transition |
+| `kyb.forbidden` | 403 | LIVE blocked by KYB |
+
+## Related
+
+- [Subscriptions concept](/concepts/subscriptions)
+- [Webhooks API](/api-reference/webhooks)
+- [Fees reference](/reference/fees-countries-taxes)

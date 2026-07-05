@@ -3,7 +3,7 @@ title: "Error handling"
 description: "Consultant-grade errors with safeMessage, displayMessage, uiHint, and requestId."
 ---
 
-Morapay errors are designed as an **on-demand consultant** — not just a stack trace. Every failed Merchant API response includes enough context for developers, support engineers, and customer-facing UI.
+Morapay errors are designed as an **on-demand consultant**, not just a stack trace. Every failed Merchant API response includes enough context for developers, support engineers, and customer-facing UI.
 
 ## Error envelope
 
@@ -31,7 +31,7 @@ Morapay errors are designed as an **on-demand consultant** — not just a stack 
 
 | Field | Audience | Use |
 |-------|----------|-----|
-| `error` / `err.message` | Developers | Server logs, Sentry — may include field paths |
+| `error` / `err.message` | Developers | Server logs, Sentry; may include field paths |
 | `safeMessage` / `err.safeMessage` | Customer UI | Sanitized copy for any surface |
 | `displayMessage` / `err.displayMessage` | UI components | Intent-driven display text |
 | `uiHint` / `err.uiHint` | UI components | `{ severity, placement, actionText? }` |
@@ -55,10 +55,10 @@ try {
   await morapay.products.link("prod_123", { amount: 0.1, currency: "GHS" });
 } catch (err) {
   if (err instanceof MorapayInvalidRequestError) {
-    // Customer UI — use displayMessage or safeMessage, never message
+    // Customer UI: use displayMessage or safeMessage, never message
     showInlineError(err.displayMessage);
 
-    // Developer terminal — consultant layout
+    // Developer terminal: consultant layout
     console.error(err.format());
   } else if (err instanceof MorapayAuthenticationError) {
     alertOps(err.requestId);
@@ -108,4 +108,4 @@ The canonical error dictionary is maintained in the Morapay error catalog. All `
 
 ## Next step
 
-[Get help](/support/get-help) — how to reach support with the right context.
+[Get help](/support/get-help): how to reach support with the right context.

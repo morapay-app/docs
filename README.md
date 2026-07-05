@@ -49,7 +49,7 @@ docs/
 └── support/
 ```
 
-Navigation uses **tabs** at the root (`Guides`, `API reference`, `Coverage`) — required for the Mint theme sidebar and top tab bar.
+Navigation uses **tabs** at the root (`Guides`, `API reference`, `Coverage`): required for the Mint theme sidebar and top tab bar.
 
 ## Publishing
 

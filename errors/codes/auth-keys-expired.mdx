@@ -14,7 +14,7 @@ The public key in `Morapay-Key` maps to an API key record whose `expiresAt` is i
 
 > We could not verify this request. Please try again later.
 
-Use `err.safeMessage` or `err.displayMessage` in customer UI — not `err.message`.
+Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
 
 ## Why this happened
 
@@ -43,7 +43,7 @@ const morapay = new Morapay({
 | `severity` | `critical` |
 | `placement` | `toast` |
 
-Authentication failures should not be shown inline on checkout forms — alert operators via toast or monitoring.
+Authentication failures should not be shown inline on checkout forms; alert operators via toast or monitoring.
 
 ## Programmatic handling
 
@@ -59,6 +59,6 @@ catch (err) {
 
 ## Related codes
 
-- [`auth.keys.invalid`](/errors/error-handling) — key not found
-- [`auth.keys.revoked`](/errors/error-handling) — key deactivated
-- [`auth.signature.mismatch`](/getting-started/authentication) — HMAC failure
+- [`auth.keys.invalid`](/errors/error-handling): key not found
+- [`auth.keys.revoked`](/errors/error-handling): key deactivated
+- [`auth.signature.mismatch`](/getting-started/authentication). HMAC failure

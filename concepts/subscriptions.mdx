@@ -3,7 +3,7 @@ title: "Subscriptions"
 description: "Plans, enrolled subscribers, and recurring payment events."
 ---
 
-Subscriptions let merchants sell recurring access — SaaS seats, memberships, or installment plans — through the Merchant API (`/api/v1/merchant/subscriptions`).
+Subscriptions let merchants sell recurring access: SaaS seats, memberships, or installment plans through the Merchant API (`/api/v1/merchant/subscriptions`).
 
 ## Overview
 
@@ -76,13 +76,13 @@ Subscription charges enforce `minSubscriptionUsd` (default **$1 USD** equivalent
     Bulk import endpoints under `/subscriptions/imports` support dashboard-driven migrations. Contact support for large CSV imports.
   </Accordion>
   <Accordion title="What statuses can a subscription have?">
-    Use the `status` filter on `morapay.subscriptions()` — values include `ACTIVE`, `PAUSED`, and terminal states returned by the API.
+    Use the `status` filter on `morapay.subscriptions()`; values include `ACTIVE`, `PAUSED`, and terminal states returned by the API.
   </Accordion>
   <Accordion title="Do subscriptions use idempotency keys?">
-    Merchant-initiated deposits to the subscription account accept an `idempotencyKey` in the request body — see [Idempotency](/developer-tools/idempotency).
+    Merchant-initiated deposits to the subscription account accept an `idempotencyKey` in the request body. See [Idempotency](/developer-tools/idempotency).
   </Accordion>
 </AccordionGroup>
 
 ## Next step
 
-[Payouts & MoMo](/concepts/payouts-momo) — disburse stablecoin liquidity to mobile money wallets.
+[Payouts & MoMo](/concepts/payouts-momo): disburse stablecoin liquidity to mobile money wallets.

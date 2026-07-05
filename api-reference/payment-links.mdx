@@ -1,0 +1,215 @@
+---
+title: "Payment links"
+description: "Create, list, update, and quote payment links via REST and the SDK."
+---
+
+Payment links are fixed or open-amount checkout URLs scoped to your business and TEST or LIVE environment.
+
+Base path: `/api/v1/merchant/links`
+
+## Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/links` | List links with filters |
+| `GET` | `/links/:id` | Get one link |
+| `POST` | `/links` | Create link |
+| `PATCH` | `/links/:id` | Update link |
+| `GET` | `/links/:id/checkout-sessions` | Checkout sessions and payments |
+| `POST` | `/links/:id/settlement-quote` | Fiat clearing quote for a link |
+
+## List links
+
+`GET /api/v1/merchant/links`
+
+| Query | Type | Description |
+|-------|------|-------------|
+| `page`, `limit` | number | Pagination |
+| `q` | string | Search title or slug |
+| `productId` | uuid | Filter by product |
+| `active` | boolean | `true` or `false` |
+| `amountType` | string | `fixed` or `open` |
+
+<ResponseExample>
+
+```json 200 OK
+{
+  "success": true,
+  "data": [
+    {
+      "id": "link_uuid",
+      "title": "Invoice #42",
+      "amount": 100,
+      "currency": "USD",
+      "publicCode": "abc123xyz",
+      "slug": "invoice-42",
+      "isActive": true,
+      "isOneTime": false,
+      "paidAt": null
+    }
+  ],
+  "meta": { "page": 1, "limit": 20, "total": 1 }
+}
+```
+
+</ResponseExample>
+
+```typescript
+const { data, meta } = await morapay.link({ page: 1, limit: 20, active: true });
+```
+
+## Get link
+
+`GET /api/v1/merchant/links/:id`
+
+```typescript
+const link = await morapay.link("link_uuid");
+const paid = morapay.utils.isPaid(link);
+```
+
+<ResponseExample>
+
+```json 404 Not Found
+{
+  "success": false,
+  "error": "Payment link not found.",
+  "code": "resource.not_found",
+  "requestId": "req_link404"
+}
+```
+
+</ResponseExample>
+
+## Create link
+
+`POST /api/v1/merchant/links`
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `title` | string | Yes | Display title |
+| `amount` | number | No | Fixed amount; omit for open amount |
+| `currency` | string | No | Default `USD` |
+| `description` | string | No | Optional subtitle |
+| `slug` | string | No | Custom URL slug; must be unique |
+| `productId` | uuid | No | Attach catalog product |
+| `isOneTime` | boolean | No | Deactivate after first payment |
+| `isActive` | boolean | No | Default `true` |
+| `gasSponsorshipEnabled` | boolean | No | Sponsor payer gas when supported |
+| `metadata` | object | No | Arbitrary key-value metadata |
+
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/links" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{
+    "title": "Invoice #42",
+    "amount": 100,
+    "currency": "USD",
+    "isOneTime": false
+  }'
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 201 Created
+{
+  "success": true,
+  "data": {
+    "id": "link_uuid",
+    "title": "Invoice #42",
+    "amount": 100,
+    "currency": "USD",
+    "publicCode": "abc123xyz",
+    "checkoutUrl": "https://checkout.morapay.io/abc123xyz"
+  }
+}
+```
+
+```json 400 Bad Request
+{
+  "success": false,
+  "error": "Amount is below the platform minimum.",
+  "code": "links.amount.below_minimum",
+  "displayMessage": "The transaction amount must be at least $1.00.",
+  "requestId": "req_min"
+}
+```
+
+```json 409 Conflict
+{
+  "success": false,
+  "error": "Slug already in use.",
+  "code": "links.slug.duplicate",
+  "requestId": "req_slug"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
+
+```typescript
+const link = await morapay.link.create({
+  title: "Invoice #42",
+  amount: 100,
+  currency: "USD",
+});
+
+const checkoutUrl = morapay.buildCheckoutUrl(link.publicCode);
+const embedUrl = morapay.buildPaymentLinkEmbedUrl(link.publicCode);
+```
+
+## Update link
+
+`PATCH /api/v1/merchant/links/:id`
+
+Send only fields to change: `title`, `description`, `amount`, `currency`, `isActive`, `isOneTime`, `metadata`, and others supported by the API.
+
+```typescript
+await morapay.link.update("link_uuid", { isActive: false });
+```
+
+## Settlement quote
+
+`POST /api/v1/merchant/links/:id/settlement-quote`
+
+Body optional: `{ "invoice_major": 100 }` for fiat invoice amount in major units.
+
+```typescript
+const quote = await morapay.link.quote("link_uuid", { invoice_major: 100 });
+// quote.merchantClearingUsd
+```
+
+## Checkout sessions
+
+`GET /api/v1/merchant/links/:id/checkout-sessions?limit=20`
+
+```typescript
+const { items } = await morapay.link.sessions("link_uuid", { limit: 20 });
+```
+
+## Common errors
+
+| Code | HTTP | Cause |
+|------|------|-------|
+| `links.amount.below_minimum` | 400 / 422 | Amount under platform or corridor floor |
+| `links.slug.duplicate` | 409 | Custom slug taken |
+| `kyb.forbidden` | 403 | LIVE create blocked until KYB approved |
+| `auth.signature.mismatch` | 401 | Signing mistake |
+| `resource.not_found` | 404 | Wrong link id |
+
+See [Conventions](/api-reference/conventions) for the full error envelope.
+
+## Related
+
+- [Products API](/api-reference/products)
+- [Fiat checkout API](/api-reference/fiat-checkout)
+- [Payment links concept](/concepts/payment-links)
