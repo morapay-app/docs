@@ -1,0 +1,54 @@
+---
+title: "auth.business_access_denied"
+description: "You do not have permission to perform this action."
+---
+
+**Code:** `auth.business_access_denied`  
+**HTTP:** `400 Bad Request`
+
+## What happened
+
+The API rejected the request during authentication before your route handler ran.
+
+## Safe message
+
+> You do not have permission to perform this action.
+
+Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
+
+## Why this happened
+
+The authenticated user is not an active member of the requested business.
+
+## How to fix it
+
+Confirm you have been invited to this business or switch to a business where you have access.
+
+## UI hint
+
+| Field | Value |
+|-------|-------|
+| `severity` | `critical` |
+| `placement` | `toast` |
+
+
+## Programmatic handling
+
+```typescript
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthBusinessAccessDenied) {
+    console.error(err.format());
+    // Customer UI: err.displayMessage ?? err.safeMessage
+    // Support: err.requestId
+  }
+}
+```
+
+## Related codes
+
+- [`auth.unauthorized`](/errors/codes/auth-unauthorized)
+- [`auth.credentials_missing`](/errors/codes/auth-credentials-missing)
+- [`auth.session_invalid`](/errors/codes/auth-session-invalid)
+- [`auth.business_context_required`](/errors/codes/auth-business-context-required)

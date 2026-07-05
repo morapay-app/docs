@@ -1,0 +1,54 @@
+---
+title: "auth.business_context_required"
+description: "We could not complete this request. Please try again."
+---
+
+**Code:** `auth.business_context_required`  
+**HTTP:** `400 Bad Request`
+
+## What happened
+
+The API rejected the request during authentication before your route handler ran.
+
+## Safe message
+
+> We could not complete this request. Please try again.
+
+Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
+
+## Why this happened
+
+The request did not include a valid business context for this merchant resource.
+
+## How to fix it
+
+Ensure your integration targets the correct business for multi-tenant merchant routes.
+
+## UI hint
+
+| Field | Value |
+|-------|-------|
+| `severity` | `critical` |
+| `placement` | `toast` |
+
+
+## Programmatic handling
+
+```typescript
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthBusinessContextRequired) {
+    console.error(err.format());
+    // Customer UI: err.displayMessage ?? err.safeMessage
+    // Support: err.requestId
+  }
+}
+```
+
+## Related codes
+
+- [`auth.unauthorized`](/errors/codes/auth-unauthorized)
+- [`auth.credentials_missing`](/errors/codes/auth-credentials-missing)
+- [`auth.session_invalid`](/errors/codes/auth-session-invalid)
+- [`auth.business_access_denied`](/errors/codes/auth-business-access-denied)

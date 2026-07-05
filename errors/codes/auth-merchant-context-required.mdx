@@ -1,0 +1,54 @@
+---
+title: "auth.merchant_context_required"
+description: "You do not have permission to perform this action."
+---
+
+**Code:** `auth.merchant_context_required`  
+**HTTP:** `400 Bad Request`
+
+## What happened
+
+The API rejected the request during authentication before your route handler ran.
+
+## Safe message
+
+> You do not have permission to perform this action.
+
+Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
+
+## Why this happened
+
+This merchant endpoint requires business API credentials or an active merchant session.
+
+## How to fix it
+
+Call merchant routes with a Morapay API key or sign in to the business portal.
+
+## UI hint
+
+| Field | Value |
+|-------|-------|
+| `severity` | `critical` |
+| `placement` | `toast` |
+
+
+## Programmatic handling
+
+```typescript
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthMerchantContextRequired) {
+    console.error(err.format());
+    // Customer UI: err.displayMessage ?? err.safeMessage
+    // Support: err.requestId
+  }
+}
+```
+
+## Related codes
+
+- [`auth.unauthorized`](/errors/codes/auth-unauthorized)
+- [`auth.credentials_missing`](/errors/codes/auth-credentials-missing)
+- [`auth.session_invalid`](/errors/codes/auth-session-invalid)
+- [`auth.business_context_required`](/errors/codes/auth-business-context-required)

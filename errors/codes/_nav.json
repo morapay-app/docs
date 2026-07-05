@@ -9,6 +9,10 @@
     "api-proxy-signing-unconfigured",
     "api-rate-limited",
     "api-service-unavailable",
+    "auth-business-access-denied",
+    "auth-business-context-required",
+    "auth-business-id-mismatch",
+    "auth-credentials-missing",
     "auth-forbidden",
     "auth-keys-expired",
     "auth-keys-invalid",
@@ -16,6 +20,8 @@
     "auth-keys-origin-not-allowed",
     "auth-keys-revoked",
     "auth-keys-secret-in-header",
+    "auth-merchant-context-required",
+    "auth-session-invalid",
     "auth-signature-incomplete",
     "auth-signature-invalid-format",
     "auth-signature-invalid-timestamp",
@@ -41,6 +47,10 @@
     {
       "group": "Authentication",
       "pages": [
+        "auth-business-access-denied",
+        "auth-business-context-required",
+        "auth-business-id-mismatch",
+        "auth-credentials-missing",
         "auth-forbidden",
         "auth-keys-expired",
         "auth-keys-invalid",
@@ -48,6 +58,8 @@
         "auth-keys-origin-not-allowed",
         "auth-keys-revoked",
         "auth-keys-secret-in-header",
+        "auth-merchant-context-required",
+        "auth-session-invalid",
         "auth-signature-incomplete",
         "auth-signature-invalid-format",
         "auth-signature-invalid-timestamp",
@@ -110,5 +122,5 @@
       ]
     }
   ],
-  "generatedAt": "2026-07-05T22:42:21.928Z"
+  "generatedAt": "2026-07-05T22:48:10.595Z"
 }

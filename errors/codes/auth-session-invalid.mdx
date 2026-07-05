@@ -1,0 +1,60 @@
+---
+title: "auth.session_invalid"
+description: "We could not verify this request. Please try again later."
+---
+
+**Code:** `auth.session_invalid`  
+**HTTP:** `400 Bad Request`
+
+## What happened
+
+The API rejected the request during authentication before your route handler ran.
+
+## Safe message
+
+> We could not verify this request. Please try again later.
+
+Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
+
+## Display message
+
+> Your session has expired. Please sign in again.
+
+Use `err.displayMessage` in UI components. Reserve `err.message` for server logs.
+
+## Why this happened
+
+The session token is missing, invalid, or expired.
+
+## How to fix it
+
+Sign in again to obtain a fresh session token.
+
+## UI hint
+
+| Field | Value |
+|-------|-------|
+| `severity` | `critical` |
+| `placement` | `toast` |
+
+
+## Programmatic handling
+
+```typescript
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthSessionInvalid) {
+    console.error(err.format());
+    // Customer UI: err.displayMessage ?? err.safeMessage
+    // Support: err.requestId
+  }
+}
+```
+
+## Related codes
+
+- [`auth.unauthorized`](/errors/codes/auth-unauthorized)
+- [`auth.credentials_missing`](/errors/codes/auth-credentials-missing)
+- [`auth.business_context_required`](/errors/codes/auth-business-context-required)
+- [`auth.business_access_denied`](/errors/codes/auth-business-access-denied)

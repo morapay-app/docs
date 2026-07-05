@@ -1,0 +1,54 @@
+---
+title: "auth.business_id_mismatch"
+description: "You do not have permission to perform this action."
+---
+
+**Code:** `auth.business_id_mismatch`  
+**HTTP:** `400 Bad Request`
+
+## What happened
+
+The API rejected the request during authentication before your route handler ran.
+
+## Safe message
+
+> You do not have permission to perform this action.
+
+Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
+
+## Why this happened
+
+The business identifier in the request does not match the authenticated API key.
+
+## How to fix it
+
+Use the business tied to your API key or remove the conflicting business header.
+
+## UI hint
+
+| Field | Value |
+|-------|-------|
+| `severity` | `critical` |
+| `placement` | `toast` |
+
+
+## Programmatic handling
+
+```typescript
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthBusinessIdMismatch) {
+    console.error(err.format());
+    // Customer UI: err.displayMessage ?? err.safeMessage
+    // Support: err.requestId
+  }
+}
+```
+
+## Related codes
+
+- [`auth.unauthorized`](/errors/codes/auth-unauthorized)
+- [`auth.credentials_missing`](/errors/codes/auth-credentials-missing)
+- [`auth.session_invalid`](/errors/codes/auth-session-invalid)
+- [`auth.business_context_required`](/errors/codes/auth-business-context-required)
