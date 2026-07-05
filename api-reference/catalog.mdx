@@ -11,18 +11,21 @@ Base URL: `https://api.morapay.io`
 
 `GET /api/public/catalog/countries`
 
-Returns supported countries with Fonbnk and Paystack flags.
+Returns **enabled** countries only. Provider flags are not exposed on the public catalog.
 
-### Query parameters
+### Response fields
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `supported` | string | Filter: `fonbnk`, `paystack`, or `any` |
+| Field | Type | Description |
+|-------|------|-------------|
+| `code` | string | ISO 3166-1 alpha-2 |
+| `name` | string | Country name |
+| `currency` | string | ISO 4217 settlement currency |
+| `enabled` | boolean | Always `true` on the public catalog |
 
 <RequestExample>
 
 ```bash cURL
-curl -s "https://api.morapay.io/api/public/catalog/countries?supported=any"
+curl -s "https://api.morapay.io/api/public/catalog/countries"
 ```
 
 </RequestExample>
@@ -39,16 +42,14 @@ curl -s "https://api.morapay.io/api/public/catalog/countries?supported=any"
         "code": "GH",
         "name": "Ghana",
         "currency": "GHS",
-        "supportedFonbnk": true,
-        "supportedPaystack": true
+        "enabled": true
       },
       {
         "id": "uuid",
         "code": "NG",
         "name": "Nigeria",
         "currency": "NGN",
-        "supportedFonbnk": true,
-        "supportedPaystack": true
+        "enabled": true
       }
     ]
   }
@@ -69,7 +70,7 @@ Returns supported chains for quotes, checkout, and disbursement validation.
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `environment` | string | `TEST` or `LIVE` (default `LIVE`). TEST returns testnet + offchain; LIVE returns mainnet + offchain. |
+| `environment` | string | `TEST` or `LIVE` default `LIVE`. TEST returns testnet and offchain; LIVE returns mainnet and offchain. |
 
 <RequestExample>
 
@@ -112,14 +113,14 @@ curl -s "https://api.morapay.io/api/public/catalog/chains?environment=LIVE"
 
 `GET /api/public/catalog/tokens`
 
-Returns supported tokens with chain metadata.
+Returns **crypto checkout tokens** only. Offchain fiat sentinel tokens are excluded. Fiat checkout methods are configured separately via the fiat checkout API.
 
 ### Query parameters
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `chain_id` | number | Filter to one chain (e.g. `8453`) |
-| `environment` | string | `TEST` or `LIVE` (default `LIVE`) |
+| `chain_id` | number | Filter to one chain, e.g. `8453` |
+| `environment` | string | `TEST` or `LIVE` default `LIVE` |
 
 <RequestExample>
 
@@ -145,7 +146,6 @@ curl -s "https://api.morapay.io/api/public/catalog/tokens?chain_id=8453&environm
         "symbol": "USDC",
         "decimals": 6,
         "name": "USD Coin",
-        "fonbnkCode": "BASE_USDC",
         "networkType": "MAINNET"
       },
       {
@@ -156,7 +156,6 @@ curl -s "https://api.morapay.io/api/public/catalog/tokens?chain_id=8453&environm
         "symbol": "ETH",
         "decimals": 18,
         "name": "Ether",
-        "fonbnkCode": "BASE_NATIVE",
         "networkType": "MAINNET"
       }
     ]
@@ -168,13 +167,11 @@ curl -s "https://api.morapay.io/api/public/catalog/tokens?chain_id=8453&environm
 
 ### Compact token list
 
-`GET /api/public/tokens/list` (relay) exposes a UI-oriented shape with `displaySymbol` and `logoUri`. Same query parameters as `/tokens`.
+`GET /api/public/tokens/list` exposes a UI-oriented shape with `displaySymbol` and `logoUri`. Same query parameters as `/tokens`.
 
 ## SDK equivalent
 
 ```typescript
-// Catalog is not wrapped in the SDK — call the API host directly or use
-// morapay.link.quote(linkId, { chainId: 8453 }) after picking a chain.
 const res = await fetch("https://api.morapay.io/api/public/catalog/tokens?chain_id=8453");
 const { data } = await res.json();
 ```

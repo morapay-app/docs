@@ -1,152 +1,87 @@
 ---
 title: "Chains & tokens"
-description: "Web3 chains, checkout tokens, and Fonbnk payout assets."
+description: "Web3 chains and crypto checkout tokens."
 ---
 
-Crypto catalog for checkout, quotes, swaps, and offramp. **LIVE** merchants see `MAINNET` + `OFFCHAIN` chains; **TEST** merchants see `TESTNET` + `OFFCHAIN`.
+Crypto catalog for checkout, quotes, and swaps. **Live** merchants use mainnet chains; **Test** merchants use testnet chains. Fiat checkout methods are listed separately on [Countries & fiat](/reference/countries-and-fiat).
 
 Public API:
 
 - `GET /api/public/catalog/chains`
-- `GET /api/public/catalog/tokens` (optional `?chain_id=`)
+- `GET /api/public/catalog/tokens` optional `?chain_id=`
 
 <Note>
-  This page lists **14 chains**, **28 checkout tokens**, and **43 Fonbnk assets**. Fetch the live catalog with `GET /api/public/catalog/chains` and `GET /api/public/catalog/tokens`.
+  Catalog last exported **2026-07-05** · 7 live chains · 5 test chains · 25 crypto checkout tokens.
 </Note>
 
-## Chains (7 mainnet · 5 testnet · 2 offchain)
+## Live chains
 
-| Chain ID | Name | Network | Platform managed |
-| --- | --- | --- | --- |
-| 42161 | Arbitrum | MAINNET | — |
-| 8453 | Base | MAINNET | — |
-| 56 | BNB | MAINNET | — |
-| 1 | Ethereum | MAINNET | — |
-| 10 | Optimism | MAINNET | — |
-| 137 | Polygon | MAINNET | — |
-| 101 | SOLANA | MAINNET | — |
-| 421614 | Arbitrum Sepolia | TESTNET | Yes |
-| 84532 | Base Sepolia | TESTNET | Yes |
-| 11155111 | Ethereum Sepolia | TESTNET | Yes |
-| 11155420 | Optimism Sepolia | TESTNET | Yes |
-| 80002 | Polygon Amoy | TESTNET | Yes |
-| 2 | BANK | OFFCHAIN | — |
-| 0 | MOMO | OFFCHAIN | — |
+Use with `?environment=LIVE` or the default catalog response.
 
-### Mainnet (LIVE checkout)
-
-- **Arbitrum** (`42161`)
-- **Base** (`8453`)
-- **BNB** (`56`)
-- **Ethereum** (`1`)
-- **Optimism** (`10`)
-- **Polygon** (`137`)
-- **SOLANA** (`101`)
-
-### Testnet (TEST checkout)
-
-- **Arbitrum Sepolia** (`421614`)
-- **Base Sepolia** (`84532`)
-- **Ethereum Sepolia** (`11155111`)
-- **Optimism Sepolia** (`11155420`)
-- **Polygon Amoy** (`80002`)
-
-### Offchain (fiat rails)
-
-- **BANK** (`2`) — MoMo / bank sentinel chains for fiat quotes
-- **MOMO** (`0`) — MoMo / bank sentinel chains for fiat quotes
-
-## Checkout tokens
-
-| Chain | Chain ID | Symbol | Name | Decimals | Fonbnk code | Checkout |
-| --- | --- | --- | --- | --- | --- | --- |
-| MOMO | 0 | GHS | Ghana Cedi | 2 | MOMO_GHS | — |
-| MOMO | 0 | USD | US Dollar | 2 | MOMO_USD | — |
-| Ethereum | 1 | ETH | Ether | 18 | ETHEREUM_NATIVE | — |
-| Ethereum | 1 | MANA | Decentraland MANA | 18 | — | — |
-| Ethereum | 1 | USDC | USD Coin | 6 | ETHEREUM_USDC | — |
-| Ethereum | 1 | WXRP | Wrapped XRP | 18 | — | Featured |
-| BANK | 2 | USD | US Dollar | 2 | BANK_USD | — |
-| Optimism | 10 | USDC | USD Coin (Optimism) | 6 | OPTIMISM_USDC | — |
-| BNB | 56 | BNB | BNB | 18 | BNB_NATIVE | — |
-| BNB | 56 | USDC | USD Coin (BNB) | 18 | BNB_USDC | Featured |
-| SOLANA | 101 | SOL | Solana | 9 | SOLANA_NATIVE | Featured |
-| SOLANA | 101 | USDC | USD Coin (Solana) | 6 | SOLANA_USDC | — |
-| SOLANA | 101 | USDT | Tether USD (Solana) | 6 | SOLANA_USDT | — |
-| Polygon | 137 | USDC | USD Coin (Polygon) | 6 | POLYGON_USDC | — |
-| Base | 8453 | DAI | Dai Stablecoin | 18 | — | — |
-| Base | 8453 | ETH | Ether | 18 | BASE_NATIVE | — |
-| Base | 8453 | USDC | USD Coin | 6 | BASE_USDC | Featured |
-| Arbitrum | 42161 | USDC | USD Coin (Arbitrum) | 6 | ARBITRUM_USDC | — |
-| Polygon Amoy | 80002 | POL | Polygon (Amoy) | 18 | — | — |
-| Polygon Amoy | 80002 | USDC | USD Coin (Polygon Amoy) | 6 | — | Featured |
-| Base Sepolia | 84532 | ETH | Ether (Base Sepolia) | 18 | — | Featured |
-| Base Sepolia | 84532 | USDC | USD Coin (Base Sepolia) | 6 | — | Featured |
-| Arbitrum Sepolia | 421614 | ETH | Ether (Arbitrum Sepolia) | 18 | — | — |
-| Arbitrum Sepolia | 421614 | USDC | USD Coin (Arbitrum Sepolia) | 6 | — | Featured |
-| Ethereum Sepolia | 11155111 | ETH | Ether (Sepolia) | 18 | — | — |
-| Ethereum Sepolia | 11155111 | USDC | USD Coin (Sepolia) | 6 | — | Featured |
-| Optimism Sepolia | 11155420 | ETH | Ether (Optimism Sepolia) | 18 | — | — |
-| Optimism Sepolia | 11155420 | USDC | USD Coin (Optimism Sepolia) | 6 | — | Featured |
-
-## Fonbnk network assets
-
-Direct Fonbnk quotes use these `NETWORK_ASSET` codes:
-
-| Code | Network | Asset |
+| Chain ID | Name | Platform managed |
 | --- | --- | --- |
-| ARBITRUM_NATIVE | ARBITRUM | NATIVE |
-| ARBITRUM_USDC | ARBITRUM | USDC |
-| ARBITRUM_USDT | ARBITRUM | USDT |
-| AVALANCHE_NATIVE | AVALANCHE | NATIVE |
-| AVALANCHE_USDC | AVALANCHE | USDC |
-| AVALANCHE_USDT | AVALANCHE | USDT |
-| BASE_NATIVE | BASE | NATIVE |
-| BASE_USDC | BASE | USDC |
-| BASE_XDUS | BASE | XDUS |
-| BNB_NATIVE | BNB | NATIVE |
-| BNB_USDC | BNB | USDC |
-| BNB_USDT | BNB | USDT |
-| CELO_CGHS | CELO | CGHS |
-| CELO_CKES | CELO | CKES |
-| CELO_CUSD | CELO | CUSD |
-| CELO_NATIVE | CELO | NATIVE |
-| CELO_USDC | CELO | USDC |
-| CELO_USDT | CELO | USDT |
-| ETHEREUM_NATIVE | ETHEREUM | NATIVE |
-| ETHEREUM_RLUSD | ETHEREUM | RLUSD |
-| ETHEREUM_USDC | ETHEREUM | USDC |
-| ETHEREUM_USDT | ETHEREUM | USDT |
-| ETHEREUM_XDUS | ETHEREUM | XDUS |
-| LISK_USDT | LISK | USDT |
-| OPTIMISM_NATIVE | OPTIMISM | NATIVE |
-| OPTIMISM_USDC | OPTIMISM | USDC |
-| OPTIMISM_USDT | OPTIMISM | USDT |
-| POLYGON_NATIVE | POLYGON | NATIVE |
-| POLYGON_USDC | POLYGON | USDC |
-| POLYGON_USDT | POLYGON | USDT |
-| POLYGON_XDUS | POLYGON | XDUS |
-| SOLANA_NATIVE | SOLANA | NATIVE |
-| SOLANA_USDC | SOLANA | USDC |
-| SOLANA_USDT | SOLANA | USDT |
-| STELLAR_USDC | STELLAR | USDC |
-| TEMPO_PATHUSD | TEMPO | PATHUSD |
-| TEMPO_USDC_E | TEMPO | USDC_E |
-| TON_NATIVE | TON | NATIVE |
-| TON_USDE | TON | USDE |
-| TON_USDT | TON | USDT |
-| TRON_NATIVE | TRON | NATIVE |
-| TRON_USDT | TRON | USDT |
-| XRP_RLUSD | XRP | RLUSD |
+| 42161 | Arbitrum | No |
+| 8453 | Base | No |
+| 56 | BNB | No |
+| 1 | Ethereum | No |
+| 10 | Optimism | No |
+| 137 | Polygon | No |
+| 101 | SOLANA | No |
 
-## API
+## Test chains
 
-[Catalog API](/api-reference/catalog) — `GET /api/public/catalog/chains`, `GET /api/public/catalog/tokens`
+Use with `?environment=TEST`.
+
+| Chain ID | Name | Platform managed |
+| --- | --- | --- |
+| 421614 | Arbitrum Sepolia | Yes |
+| 84532 | Base Sepolia | Yes |
+| 11155111 | Ethereum Sepolia | Yes |
+| 11155420 | Optimism Sepolia | Yes |
+| 80002 | Polygon Amoy | Yes |
+
+## Offchain rails
+
+Internal sentinel chains for fiat quote routing: BANK chain ID 2, MOMO chain ID 0. These are not crypto checkout tokens.
+
+## Live checkout tokens
+
+| Chain | Chain ID | Symbol | Name | Decimals | Checkout |
+| --- | --- | --- | --- | --- | --- |
+| Ethereum | 1 | ETH | Ether | 18 |  |
+| Ethereum | 1 | MANA | Decentraland MANA | 18 |  |
+| Ethereum | 1 | USDC | USD Coin | 6 |  |
+| Ethereum | 1 | WXRP | Wrapped XRP | 18 | Featured |
+| Optimism | 10 | USDC | USD Coin | 6 |  |
+| BNB | 56 | BNB | BNB | 18 |  |
+| BNB | 56 | USDC | USD Coin | 18 | Featured |
+| SOLANA | 101 | SOL | Solana | 9 | Featured |
+| SOLANA | 101 | USDC | USD Coin | 6 |  |
+| SOLANA | 101 | USDT | Tether USD | 6 |  |
+| Polygon | 137 | USDC | USD Coin | 6 |  |
+| Base | 8453 | DAI | Dai Stablecoin | 18 |  |
+| Base | 8453 | ETH | Ether | 18 |  |
+| Base | 8453 | USDC | USD Coin | 6 | Featured |
+| Arbitrum | 42161 | USDC | USD Coin | 6 |  |
+
+## Test checkout tokens
+
+| Chain | Chain ID | Symbol | Name | Decimals | Checkout |
+| --- | --- | --- | --- | --- | --- |
+| Polygon Amoy | 80002 | POL | Polygon | 18 |  |
+| Polygon Amoy | 80002 | USDC | USD Coin | 6 | Featured |
+| Base Sepolia | 84532 | ETH | Ether | 18 | Featured |
+| Base Sepolia | 84532 | USDC | USD Coin | 6 | Featured |
+| Arbitrum Sepolia | 421614 | ETH | Ether | 18 |  |
+| Arbitrum Sepolia | 421614 | USDC | USD Coin | 6 | Featured |
+| Ethereum Sepolia | 11155111 | ETH | Ether | 18 |  |
+| Ethereum Sepolia | 11155111 | USDC | USD Coin | 6 | Featured |
+| Optimism Sepolia | 11155420 | ETH | Ether | 18 |  |
+| Optimism Sepolia | 11155420 | USDC | USD Coin | 6 | Featured |
 
 ## SDK example
 
 ```typescript
-const { data: links } = await morapay.link();
 const quote = await morapay.link.quote("link_abc", { chainId: 8453 });
 ```
 

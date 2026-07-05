@@ -1,65 +1,61 @@
 ---
 title: "Countries & fiat"
-description: "Supported countries, settlement currencies, and fiat payment rails."
+description: "Supported countries, settlement currencies, and fiat payment methods."
 ---
 
 Morapay supports international crypto checkout and regional fiat rails. Country availability is stored in the Morapay API catalog and exposed at `GET /api/public/catalog/countries`.
 
 <Note>
-  Country availability changes over time. Use `GET /api/public/catalog/countries?supported=any` for the authoritative list before shipping checkout or payout UI.
+  Catalog last exported **2026-07-05**. Regenerate with `pnpm exec tsx scripts/export-docs-coverage.ts` in `core/`.
 </Note>
 
 ## Supported countries
 
-| Code | Country | Currency | Fonbnk | Paystack | Checkout / payout rails |
-| --- | --- | --- | --- | --- | --- |
-| BF | Burkina Faso | XOF | Yes | — | Fonbnk on/offramp |
-| BJ | Benin | XOF | Yes | — | Fonbnk on/offramp |
-| BR | Brazil | BRL | Yes | — | Fonbnk on/offramp |
-| CG | Republic of the Congo | XAF | Yes | — | Fonbnk on/offramp |
-| CI | Ivory Coast | XOF | Yes | — | Fonbnk on/offramp |
-| CM | Cameroon | XAF | Yes | — | Fonbnk on/offramp |
-| GA | Gabon | XAF | Yes | — | Fonbnk on/offramp |
-| GH | Ghana | GHS | Yes | Yes | Fonbnk on/offramp, Paystack card, Moolre MoMo / bank checkout |
-| KE | Kenya | KES | Yes | Yes | Fonbnk on/offramp, Paystack card |
-| MW | Malawi | MWK | Yes | — | Fonbnk on/offramp |
-| NG | Nigeria | NGN | Yes | Yes | Fonbnk on/offramp, Paystack card, Moolre MoMo / bank checkout |
-| PH | Philippines | PHP | Yes | — | Fonbnk on/offramp |
-| RW | Rwanda | RWF | Yes | — | Fonbnk on/offramp |
-| SN | Senegal | XOF | Yes | — | Fonbnk on/offramp |
-| TZ | Tanzania | TZS | Yes | — | Fonbnk on/offramp |
-| UG | Uganda | UGX | Yes | — | Fonbnk on/offramp |
-| ZA | South Africa | ZAR | Yes | Yes | Fonbnk on/offramp, Paystack card |
-| ZM | Zambia | ZMW | Yes | — | Fonbnk on/offramp |
+Only countries with `enabled: true` appear in the public catalog.
 
-## Fiat at checkout (Moolre)
-
-These fiat currencies accept **mobile money** and **virtual bank transfer** at checkout when Moolre is enabled for your environment:
-
-- **GHS**
-- **NGN**
-
-## Paystack card markets
-
-Card checkout via Paystack is probed for these markets:
-
-| Country | Code | Currency | Paystack slug |
+| Code | Country | Currency | Enabled |
 | --- | --- | --- | --- |
-| Nigeria | NG | NGN | nigeria |
-| Ghana | GH | GHS | ghana |
-| Kenya | KE | KES | kenya |
-| South Africa | ZA | ZAR | south_africa |
-| Côte d'Ivoire | CI | XOF | cote_d_ivoire |
+| CI | Ivory Coast | XOF | Yes |
+| GH | Ghana | GHS | Yes |
+| KE | Kenya | KES | Yes |
+| NG | Nigeria | NGN | Yes |
+| ZA | South Africa | ZAR | Yes |
+
+## Fiat checkout methods
+
+Mobile money, bank transfer, and card checkout are separate from crypto checkout tokens. Supported fiat methods:
+
+| Currency | Method | Use |
+| --- | --- | --- |
+| GHS | Mobile money | Checkout |
+| GHS | Bank transfer | Checkout |
+| NGN | Mobile money | Checkout |
+| NGN | Bank transfer | Checkout |
+| NGN | Card | Checkout |
+| GHS | Card | Checkout |
+| KES | Card | Checkout |
+| ZAR | Card | Checkout |
+| XOF | Card | Checkout |
+
+## Card checkout markets
+
+Card processing is available in these business countries:
+
+| Country | Code | Currency |
+| --- | --- | --- |
+| Nigeria | NG | NGN |
+| Ghana | GH | GHS |
+| Kenya | KE | KES |
+| South Africa | ZA | ZAR |
+| Côte d'Ivoire | CI | XOF |
 
 ## API
 
-Full REST documentation: [Catalog API](/api-reference/catalog#countries) · [Fiat checkout API](/api-reference/fiat-checkout)
-
 ```bash
-curl -s "https://api.morapay.io/api/public/catalog/countries?supported=any"
+curl -s "https://api.morapay.io/api/public/catalog/countries"
 ```
 
-Filter with `?supported=fonbnk`, `paystack`, or `any`.
+Returns enabled countries with `code`, `name`, `currency`, and `enabled`.
 
 ## Related
 

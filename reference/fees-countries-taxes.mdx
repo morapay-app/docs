@@ -13,13 +13,13 @@ Morapay pricing is **quote-first**: every product exposes a quote or settlement 
 
 | Product | SDK | API |
 |---------|-----|-----|
-| Fiat checkout (payer total) | — | `POST /api/commerce/checkout-fiat` |
+| Fiat checkout payer total | Use REST | `POST /api/commerce/checkout-fiat` |
 | Merchant clearing (fiat link) | `morapay.link.quote(id, { invoice_major })` | `POST /api/v1/merchant/links/:id/quote` |
 | Disbursement batch | `morapay.disbursement.quote({ ... })` | `POST /api/v1/merchant/disbursement/batches/quote` |
 | Crypto ramp | `morapay.quotes.ramp.create({ ... })` | `POST /api/v1/merchant/quotes/ramp` |
 
 ```typescript
-// Disbursement — usdCharge is principal + all platform/network fees
+// Disbursement: usdCharge is principal + all platform/network fees
 const quote = await morapay.disbursement.quote({
   chainId: 8453,
   token: "USDC",
@@ -28,7 +28,7 @@ const quote = await morapay.disbursement.quote({
 });
 // quote.usdCharge → total debited from treasury
 
-// Fiat link — merchant USD clearing estimate
+// Fiat link: merchant USD clearing estimate
 const settlement = await morapay.link.quote("link_abc", { invoice_major: 100 });
 // settlement.merchantClearingUsd → expected USD credited after payer settles
 ```
@@ -37,7 +37,7 @@ const settlement = await morapay.link.quote("link_abc", { invoice_major: 100 });
 
 ### Payment links & checkout
 
-**Crypto checkout** — Morapay applies a platform fee on the transaction (percentage + FX spread at settlement). Use ramp quotes when building custom checkout UI:
+**Crypto checkout:** Morapay applies a platform fee on the transaction, percentage plus FX spread at settlement. Use ramp quotes when building custom checkout UI:
 
 ```typescript
 const ramp = await morapay.quotes.ramp.create({
@@ -50,7 +50,7 @@ const ramp = await morapay.quotes.ramp.create({
 });
 ```
 
-**Fiat checkout (MoMo, bank, card)** — Processing fees depend on your business country and the payer's payment method. Morapay supports two fee modes:
+**Fiat checkout:** MoMo, bank, and card processing fees depend on your business country and the payer payment method. Morapay supports two fee modes:
 
 | Mode | Who pays processing |
 |------|---------------------|
@@ -74,16 +74,16 @@ curl -s -X POST "https://api.morapay.io/api/commerce/checkout-fiat" \
 
 The response includes `spotPayerMajor`, `payerTotalMajor`, `feeMode`, and a processing-fee breakdown you can display in your UI.
 
-Supported fiat checkout currencies: **GHS** and **NGN** (MoMo and bank transfer). Card checkout is available in select markets — see [Countries & fiat](/reference/countries-and-fiat).
+Supported fiat checkout currencies: **GHS** and **NGN** for MoMo and bank transfer. Card checkout is available in select markets. See [Countries & fiat](/reference/countries-and-fiat).
 
 ### Subscriptions
 
 Recurring charges may include:
 
-- **Payment processing** — percentage + flat fee on each successful charge (configurable in your dashboard).
-- **Billing fee** — platform fee on subscription volume above a threshold (when enabled).
+- **Payment processing:** percentage plus flat fee on each successful charge, configurable in your dashboard.
+- **Billing fee:** platform fee on subscription volume above a threshold when enabled.
 
-Processing and billing fees can be **passed to the subscriber** or **absorbed by your business**, depending on your dashboard settings. Subscription charges enforce the same platform minimums as payment links — see [Payout timing & limits](/reference/payout-timing).
+Processing and billing fees can be **passed to the subscriber** or **absorbed by your business**, depending on your dashboard settings. Subscription charges enforce the same platform minimums as payment links. See [Payout timing & limits](/reference/payout-timing).
 
 ### Payouts & disbursements
 
@@ -102,27 +102,31 @@ const batch = await morapay.disbursement("batch_xyz");
 // batch metadata includes quoted usdCharge at creation time
 ```
 
-Always call `morapay.disbursement.quote()` immediately before `POST /disbursement/batches` — submitted `usdCharge` must match the quote within tolerance.
+Always call `morapay.disbursement.quote()` immediately before `POST /disbursement/batches`. Submitted `usdCharge` must match the quote within tolerance.
 
 ### Merchant withdrawals
 
-Settlement withdrawals from your Morapay balance to a linked MoMo or bank account carry **no additional Morapay platform fee** — the net amount received matches the gross amount requested, subject to carrier and FX rules on the rail.
+Settlement withdrawals from your Morapay balance to a linked MoMo or bank account carry **no additional Morapay platform fee**. The net amount received matches the gross amount requested, subject to carrier and FX rules on the rail.
 
 ## Country-specific processing rates
 
-Fiat processing fees are keyed to your **business country** (ISO code). Cross-currency checkout (e.g. USD invoice, GHS payer) uses international card tiers by default.
+Fiat processing fees are keyed to your **business country** ISO code. Cross-currency checkout, such as a USD invoice with a GHS payer, uses international card tiers by default.
 
-### Card & MoMo processing rates
+### Card and MoMo processing rates
 
-Representative processing fees by business country and payment method:
+Representative processing fees by business country and payment method. Card checkout uses Paystack card processing in supported markets.
 
-| Country | Code | Card (local) | Card (international) | MoMo | Bank transfer |
-|---------|------|--------------|----------------------|------|---------------|
+| Country | Code | Card local | Card international | MoMo | Bank transfer |
+|---------|------|------------|--------------------|------|---------------|
 | Ghana | GH | 1.95% | 1.95% | 1.95% | 1.95% |
 | Nigeria | NG | 1.5% + ₦100* | 3.9% + ₦100 | 1.5% | 1.5% |
 | Kenya | KE | 2.9% | 3.8% | 1.5% | 2.0% |
 | South Africa | ZA | 2.9% + R1 | 3.1% + R1 | 2.5% | 2.0% |
-| Côte d'Ivoire | CI | — | — | — | — |
+| Côte d'Ivoire | CI | Contact support | Contact support | Contact support | Contact support |
+
+### Paystack card processing
+
+Card checkout is powered by Paystack in Ghana, Nigeria, Kenya, South Africa, and Côte d'Ivoire. Request a payer total with `quote_tier` set to `card_local` or `card_international` before rendering checkout.
 
 \* Nigeria flat fee is waived when the spot payer amount is below **₦2,500**.
 
@@ -132,7 +136,7 @@ Additional West and East African countries use crypto on/offramp pricing at quot
 
 ### Regional minimums
 
-Some corridors enforce carrier floors that exceed USD platform minimums — for example **1.00 GHS** for Ghana MoMo. Below-minimum amounts return `links.amount.below_minimum`. See [error code docs](/errors/codes/links-amount-below-minimum).
+Some corridors enforce carrier floors that exceed USD platform minimums, for example **1.00 GHS** for Ghana MoMo. Below-minimum amounts return `links.amount.below_minimum`. See [error code docs](/errors/codes/links-amount-below-minimum).
 
 ## Taxes
 

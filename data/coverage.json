@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-07-04T05:57:10.518Z",
+  "exportedAt": "2026-07-05T20:05:18.711Z",
   "countries": {
     "all": [
       {
@@ -7,126 +7,144 @@
         "name": "Burkina Faso",
         "currency": "XOF",
         "supportedFonbnk": true,
-        "supportedPaystack": false
+        "supportedPaystack": false,
+        "enabled": false
       },
       {
         "code": "BJ",
         "name": "Benin",
         "currency": "XOF",
         "supportedFonbnk": true,
-        "supportedPaystack": false
+        "supportedPaystack": false,
+        "enabled": false
       },
       {
         "code": "BR",
         "name": "Brazil",
         "currency": "BRL",
         "supportedFonbnk": true,
-        "supportedPaystack": false
+        "supportedPaystack": false,
+        "enabled": false
       },
       {
         "code": "CG",
         "name": "Republic of the Congo",
         "currency": "XAF",
         "supportedFonbnk": true,
-        "supportedPaystack": false
+        "supportedPaystack": false,
+        "enabled": false
       },
       {
         "code": "CI",
         "name": "Ivory Coast",
         "currency": "XOF",
         "supportedFonbnk": true,
-        "supportedPaystack": false
+        "supportedPaystack": false,
+        "enabled": true
       },
       {
         "code": "CM",
         "name": "Cameroon",
         "currency": "XAF",
         "supportedFonbnk": true,
-        "supportedPaystack": false
+        "supportedPaystack": false,
+        "enabled": false
       },
       {
         "code": "GA",
         "name": "Gabon",
         "currency": "XAF",
         "supportedFonbnk": true,
-        "supportedPaystack": false
+        "supportedPaystack": false,
+        "enabled": false
       },
       {
         "code": "GH",
         "name": "Ghana",
         "currency": "GHS",
         "supportedFonbnk": true,
-        "supportedPaystack": true
+        "supportedPaystack": true,
+        "enabled": true
       },
       {
         "code": "KE",
         "name": "Kenya",
         "currency": "KES",
         "supportedFonbnk": true,
-        "supportedPaystack": true
+        "supportedPaystack": true,
+        "enabled": true
       },
       {
         "code": "MW",
         "name": "Malawi",
         "currency": "MWK",
         "supportedFonbnk": true,
-        "supportedPaystack": false
+        "supportedPaystack": false,
+        "enabled": false
       },
       {
         "code": "NG",
         "name": "Nigeria",
         "currency": "NGN",
         "supportedFonbnk": true,
-        "supportedPaystack": true
+        "supportedPaystack": true,
+        "enabled": true
       },
       {
         "code": "PH",
         "name": "Philippines",
         "currency": "PHP",
         "supportedFonbnk": true,
-        "supportedPaystack": false
+        "supportedPaystack": false,
+        "enabled": false
       },
       {
         "code": "RW",
         "name": "Rwanda",
         "currency": "RWF",
         "supportedFonbnk": true,
-        "supportedPaystack": false
+        "supportedPaystack": false,
+        "enabled": false
       },
       {
         "code": "SN",
         "name": "Senegal",
         "currency": "XOF",
         "supportedFonbnk": true,
-        "supportedPaystack": false
+        "supportedPaystack": false,
+        "enabled": false
       },
       {
         "code": "TZ",
         "name": "Tanzania",
         "currency": "TZS",
         "supportedFonbnk": true,
-        "supportedPaystack": false
+        "supportedPaystack": false,
+        "enabled": false
       },
       {
         "code": "UG",
         "name": "Uganda",
         "currency": "UGX",
         "supportedFonbnk": true,
-        "supportedPaystack": false
+        "supportedPaystack": false,
+        "enabled": false
       },
       {
         "code": "ZA",
         "name": "South Africa",
         "currency": "ZAR",
         "supportedFonbnk": true,
-        "supportedPaystack": true
+        "supportedPaystack": true,
+        "enabled": true
       },
       {
         "code": "ZM",
         "name": "Zambia",
         "currency": "ZMW",
         "supportedFonbnk": true,
-        "supportedPaystack": false
+        "supportedPaystack": false,
+        "enabled": false
       }
     ],
     "paymentEnabled": [
@@ -386,6 +404,48 @@
         "currency": "ZAR",
         "supportedFonbnk": true,
         "supportedPaystack": true
+      }
+    ],
+    "enabled": [
+      {
+        "code": "CI",
+        "name": "Ivory Coast",
+        "currency": "XOF",
+        "supportedFonbnk": true,
+        "supportedPaystack": false,
+        "enabled": true
+      },
+      {
+        "code": "GH",
+        "name": "Ghana",
+        "currency": "GHS",
+        "supportedFonbnk": true,
+        "supportedPaystack": true,
+        "enabled": true
+      },
+      {
+        "code": "KE",
+        "name": "Kenya",
+        "currency": "KES",
+        "supportedFonbnk": true,
+        "supportedPaystack": true,
+        "enabled": true
+      },
+      {
+        "code": "NG",
+        "name": "Nigeria",
+        "currency": "NGN",
+        "supportedFonbnk": true,
+        "supportedPaystack": true,
+        "enabled": true
+      },
+      {
+        "code": "ZA",
+        "name": "South Africa",
+        "currency": "ZAR",
+        "supportedFonbnk": true,
+        "supportedPaystack": true,
+        "enabled": true
       }
     ]
   },

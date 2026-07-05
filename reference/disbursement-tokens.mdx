@@ -3,41 +3,37 @@ title: "Disbursement tokens"
 description: "Stablecoin rails for batch disbursements and treasury payouts."
 ---
 
-`morapay.disbursement` batches debit merchant treasury liquidity on supported **pool tokens** and deliver fiat to MoMo / bank recipients.
+`morapay.payouts` batches debit merchant treasury liquidity on supported **pool tokens** and deliver fiat to MoMo or bank recipients.
 
-## LIVE (mainnet)
+## Live mainnet
 
-| Chain | Chain ID | Token | Fonbnk code |
-| --- | --- | --- | --- |
-| Base | 8453 | USDC | BASE_USDC |
-| Base | 8453 | ETH | BASE_NATIVE |
-| Ethereum | 1 | USDC | ETHEREUM_USDC |
-| Ethereum | 1 | ETH | ETHEREUM_NATIVE |
+| Chain | Chain ID | Token |
+| --- | --- | --- |
+| Base | 8453 | USDC |
+| Base | 8453 | ETH |
+| Ethereum | 1 | USDC |
+| Ethereum | 1 | ETH |
 
 Primary production rails:
 
-- **USDC on Base** (`8453`) — default disbursement rail
-- **USDC on Ethereum** (`1`)
+- **USDC on Base** chain ID 8453
+- **USDC on Ethereum** chain ID 1
 
 `ETH` on Base and Ethereum is also accepted for pool settlement when quoted.
 
-## TEST (testnet)
+## Test testnet
 
-| Chain | Chain ID | Token | Fonbnk code |
-| --- | --- | --- | --- |
-| Base Sepolia | 84532 | USDC | BASE_SEPOLIA_USDC |
-| Base Sepolia | 84532 | ETH | BASE_SEPOLIA_ETH |
+| Chain | Chain ID | Token |
+| --- | --- | --- |
+| Base Sepolia | 84532 | USDC |
+| Base Sepolia | 84532 | ETH |
 
-TEST batches must use testnet chains (e.g. **Base Sepolia** `84532`). Mainnet chain IDs are rejected in TEST mode.
-
-## API
-
-[Disbursement API](/api-reference/disbursement) — quote, create, list, and cancel batches.
+Test batches must use testnet chains such as **Base Sepolia** chain ID 84532. Mainnet chain IDs are rejected in test mode.
 
 ## Quote before batching
 
 ```typescript
-const quote = await morapay.disbursement.quote({
+const quote = await morapay.payouts.quote({
   chainId: 8453,
   token: "USDC",
   payoutTotal: 250,
