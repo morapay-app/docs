@@ -91,7 +91,7 @@ curl -s https://api.morapay.io/api/v1/merchant
 | Fiat initialize / verify | `POST`, `GET` | [Fiat checkout](/api-reference/fiat-checkout) |
 | Commerce fiat quote | `POST` | [Fiat checkout](/api-reference/fiat-checkout) (`/api/public/commerce/fiat` → Core `/api/commerce/checkout-fiat`) |
 
-### Portal-only (dashboard JWT)
+### Portal-only
 
 | Resource | Methods | Notes |
 |----------|---------|-------|
@@ -100,7 +100,6 @@ curl -s https://api.morapay.io/api/v1/merchant
 | KYC / KYB | `GET`, `POST` | Portal verification flows |
 | CSV exports | `GET` | `/exports/*.csv` |
 
-Full internal reference: `core/docs/merchant-v1-api.md` in the repository.
 
 ## Authentication
 
@@ -165,4 +164,4 @@ See [Conventions](/api-reference/conventions) for the full status code table and
 
 ## Client libraries
 
-For typed helpers and automatic request signing, use the [`@morapay/sdk`](/getting-started/quickstart) in Guides — not duplicated here.
+For typed helpers and automatic request signing, use the [`@morapay/sdk`](/getting-started/quickstart) in Guides.
