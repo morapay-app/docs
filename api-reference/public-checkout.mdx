@@ -5,7 +5,7 @@ description: "Payer-facing endpoints for payment links, business pay, and subscr
 
 These routes power hosted checkout and embed flows. They are **unsigned** unless noted. Base path: `https://api.morapay.io/api/public`.
 
-Use them from your checkout BFF or browser when building custom payer UI. Merchant integrations usually prefer [Payment links](/api-reference/payment-links) plus hosted URLs from the SDK.
+Use them from your checkout BFF or browser when building custom payer UI. Merchant-side configuration lives under [Payment links](/api-reference/payment-links) and [Business QR](/api-reference/business-qr).
 
 ## Payment links
 
@@ -21,10 +21,13 @@ Use them from your checkout BFF or browser when building custom payer UI. Mercha
 
 Optional query: `wallet` for wallet-aware pricing.
 
-```typescript
-const link = await morapay.public.paymentLinks.get("invoice-42");
-const url = morapay.buildCheckoutUrl(link.publicCode);
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/public/payment-links/invoice-42"
 ```
+
+</RequestExample>
 
 <ResponseExample>
 
@@ -53,6 +56,57 @@ const url = morapay.buildCheckoutUrl(link.publicCode);
 }
 ```
 
+```json 410 Gone
+{
+  "success": false,
+  "error": "Payment link is no longer active.",
+  "code": "resource.conflict",
+  "requestId": "req_pl410"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
+
+### Start checkout session
+
+`POST /api/public/payment-links/:slug/sessions`
+
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/public/payment-links/invoice-42/sessions" \
+  -H "Content-Type: application/json" \
+  -d '{ "amount": 100, "currency": "USD" }'
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 201 Created
+{
+  "success": true,
+  "data": {
+    "sessionId": "session_uuid",
+    "transactionId": "txn_uuid",
+    "status": "PENDING"
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": "Amount is below the minimum for this link.",
+  "code": "links.amount.below_minimum",
+  "requestId": "req_sess422"
+}
+```
+
 </CodeGroup>
 
 </ResponseExample>
@@ -63,10 +117,29 @@ const url = morapay.buildCheckoutUrl(link.publicCode);
 |--------|------|-------------|
 | `GET` | `/checkout/:businessSlug` | Open-amount business checkout config |
 
-```typescript
-const payUrl = morapay.buildBusinessPayCheckoutUrl("acme");
-const embedUrl = morapay.buildBusinessPayEmbedUrl("acme", { amount: 50, currency: "USD" });
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/public/checkout/acme-coffee"
 ```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "businessSlug": "acme-coffee",
+    "name": "Acme Coffee",
+    "defaultCurrency": "GHS",
+    "enabled": true
+  }
+}
+```
+
+</ResponseExample>
 
 See [Business QR](/api-reference/business-qr) for merchant-side QR configuration.
 
@@ -88,7 +161,30 @@ Public subscription routes live under `/api/public/subscription/*`. Subscribers 
 
 Merchant plan management: [Subscriptions](/api-reference/subscriptions).
 
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/public/subscription/plan_uuid"
+```
+
+</RequestExample>
+
 <ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "id": "plan_uuid",
+    "name": "Pro monthly",
+    "amount": 29,
+    "currency": "USD",
+    "interval": "month"
+  }
+}
+```
 
 ```json 422 Unprocessable Entity
 {
@@ -98,6 +194,8 @@ Merchant plan management: [Subscriptions](/api-reference/subscriptions).
   "requestId": "req_sub_checkout422"
 }
 ```
+
+</CodeGroup>
 
 </ResponseExample>
 
@@ -109,26 +207,19 @@ Merchant plan management: [Subscriptions](/api-reference/subscriptions).
 | `POST` | `/quotes/swap` | Swap quote for on-chain checkout |
 | `POST` | `/commerce/fiat` | Fiat payer total for link or product |
 
-Commerce fiat quote body (abbreviated):
+<RequestExample>
 
-```json
-{
-  "payment_link_id": "link_uuid",
-  "payer_currency": "GHS",
-  "quote_tier": "mobile_money",
-  "invoice_major": 100
-}
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/public/catalog/quotes/checkout" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "inputAmount": "100",
+    "inputCurrency": "USD",
+    "environment": "LIVE"
+  }'
 ```
 
-SDK for merchant-signed checkout quotes:
-
-```typescript
-const rows = await morapay.quotes.checkout.create({
-  inputAmount: "100",
-  inputCurrency: "USD",
-  environment: "LIVE",
-});
-```
+</RequestExample>
 
 See [Quotes](/api-reference/quotes) and [Fiat checkout](/api-reference/fiat-checkout).
 

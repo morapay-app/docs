@@ -87,11 +87,6 @@ curl -s "https://api.morapay.io/api/public/fiat/config?environment=LIVE"
 
 </ResponseExample>
 
-```typescript
-const res = await fetch("https://api.morapay.io/api/public/fiat/config?environment=LIVE");
-const { data } = await res.json();
-```
-
 ## Commerce fiat quote
 
 `POST /api/public/commerce/fiat`
@@ -105,6 +100,21 @@ Quote fiat checkout amounts for a payment link or product session. Used by hoste
 | `payer_currency` | string | Yes | e.g. `GHS`, `NGN` |
 | `quote_tier` | string | Yes | `mobile_money`, `bank_transfer`, `card_local`, `card_international` |
 | `invoice_major` | number | No | Override invoice amount |
+
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/public/commerce/fiat" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "payment_link_id": "link_uuid",
+    "payer_currency": "GHS",
+    "quote_tier": "mobile_money",
+    "invoice_major": 100
+  }'
+```
+
+</RequestExample>
 
 <ResponseExample>
 
@@ -213,6 +223,14 @@ Poll payment status after the payer completes MoMo, bank, or card checkout.
 |-------|-------------|
 | `payment_method` | Same method used at initialize |
 
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/public/fiat/transactions/verify/fiat_ref_xyz?payment_method=mobile_money"
+```
+
+</RequestExample>
+
 <ResponseExample>
 
 <CodeGroup>
@@ -296,21 +314,6 @@ International on/offramp corridors use additional countries at quote time. See [
 Ghana GHS: **MTN**, **Telecel**, **AirtelTigo**
 
 Kenya KES: **M-PESA**, **Airtel Kenya**, **Telkom Kenya**
-
-## SDK note
-
-Fiat initialize and verify are payer-facing REST calls. Merchant treasury quotes use:
-
-```typescript
-const fiat = await morapay.quotes.fiat.create({
-  from: "USD",
-  to: "GHS",
-  amount: 100,
-  purpose: "spot",
-});
-```
-
-Checkout row quotes: `morapay.quotes.checkout.create(...)`. See [Quotes](/api-reference/quotes).
 
 ## Related
 

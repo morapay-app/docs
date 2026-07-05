@@ -169,23 +169,6 @@ curl -s "https://api.morapay.io/api/public/catalog/tokens?chain_id=8453&environm
 
 `GET /api/public/tokens/list` exposes a UI-oriented shape with `displaySymbol` and `logoUri`. Same query parameters as `/tokens`.
 
-## SDK equivalent
-
-Catalog routes are unsigned public `GET` endpoints. Use `fetch` from your server or checkout BFF:
-
-```typescript
-const base = "https://api.morapay.io";
-const countries = await fetch(`${base}/api/public/catalog/countries`).then((r) => r.json());
-const tokens = await fetch(`${base}/api/public/catalog/tokens?chain_id=8453&environment=LIVE`).then((r) => r.json());
-```
-
-For payer-facing **payment link** lookup (not the full catalog), the SDK exposes:
-
-```typescript
-const link = await morapay.public.paymentLinks.get("invoice-42");
-const checkoutUrl = morapay.buildCheckoutUrl(link.publicCode);
-```
-
 ## Errors
 
 Catalog routes are public. Typical failures:
@@ -197,6 +180,8 @@ Catalog routes are public. Typical failures:
 
 <ResponseExample>
 
+<CodeGroup>
+
 ```json 400 Bad Request
 {
   "success": false,
@@ -205,6 +190,17 @@ Catalog routes are public. Typical failures:
   "requestId": "req_cat400"
 }
 ```
+
+```json 503 Service Unavailable
+{
+  "success": false,
+  "error": "Catalog temporarily unavailable.",
+  "code": "api.service_unavailable",
+  "requestId": "req_cat503"
+}
+```
+
+</CodeGroup>
 
 </ResponseExample>
 

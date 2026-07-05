@@ -24,9 +24,47 @@ Base path: `/api/v1/merchant/webhooks`
 
 `GET /api/v1/merchant/webhooks/endpoints`
 
-```typescript
-const endpoints = await morapay.webhooks.endpoints();
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/v1/merchant/webhooks/endpoints" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
 ```
+
+</RequestExample>
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": [
+    {
+      "id": "wh_ep_uuid",
+      "url": "https://api.example.com/webhooks/morapay",
+      "events": ["payment_link.paid"],
+      "displayName": "Production"
+    }
+  ]
+}
+```
+
+```json 401 Unauthorized
+{
+  "success": false,
+  "error": "Invalid request signature.",
+  "code": "auth.signature.mismatch",
+  "requestId": "req_wh401"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
 
 ## Create endpoint
 
@@ -37,6 +75,22 @@ const endpoints = await morapay.webhooks.endpoints();
 | `url` | string | Yes | HTTPS callback URL |
 | `events` | string[] | Yes | Event types to subscribe |
 | `displayName` | string | No | Dashboard label |
+
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/webhooks/endpoints" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{
+    "url": "https://api.example.com/webhooks/morapay",
+    "events": ["payment_link.paid", "payout.status_updated"]
+  }'
+```
+
+</RequestExample>
 
 <ResponseExample>
 
@@ -63,26 +117,48 @@ const endpoints = await morapay.webhooks.endpoints();
 }
 ```
 
+```json 403 Forbidden
+{
+  "success": false,
+  "error": "Your role or key does not allow this action.",
+  "code": "FORBIDDEN_MERCHANT_ROLE",
+  "requestId": "req_wh403"
+}
+```
+
 </CodeGroup>
 
 </ResponseExample>
 
-```typescript
-const endpoint = await morapay.webhooks.endpoints.create({
-  url: "https://api.example.com/webhooks/morapay",
-  events: ["payment_link.paid"],
-});
-```
-
 ## Update and delete
 
-```typescript
-await morapay.webhooks.endpoints.update("wh_ep_uuid", {
-  url: "https://api.example.com/v2/morapay",
-});
+`PATCH /api/v1/merchant/webhooks/endpoints/:id`
 
-await morapay.webhooks.endpoints.delete("wh_ep_uuid");
+<RequestExample>
+
+```bash cURL
+curl -s -X PATCH "https://api.morapay.io/api/v1/merchant/webhooks/endpoints/wh_ep_uuid" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{ "url": "https://api.example.com/v2/morapay" }'
 ```
+
+</RequestExample>
+
+`DELETE /api/v1/merchant/webhooks/endpoints/:id`
+
+<ResponseExample>
+
+```json 200 OK
+{
+  "success": true,
+  "data": { "deleted": true }
+}
+```
+
+</ResponseExample>
 
 ## Reveal secret
 
@@ -90,11 +166,31 @@ await morapay.webhooks.endpoints.delete("wh_ep_uuid");
 
 Returns the signing secret once per call. Store it securely.
 
-```typescript
-const { secret } = await morapay.webhooks.endpoints.revealSecret("wh_ep_uuid");
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/webhooks/endpoints/wh_ep_uuid/reveal-secret" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
 ```
 
-Verify inbound webhooks with `morapay.utils.verifyWebhook({ payload, signature, secret })`.
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "secret": "whsec_live_abc123xyz"
+  }
+}
+```
+
+</ResponseExample>
+
+Verify inbound webhooks per the [Webhooks guide](/developer-tools/webhooks).
 
 ## Deliveries
 
@@ -102,7 +198,30 @@ Verify inbound webhooks with `morapay.utils.verifyWebhook({ payload, signature, 
 
 `POST /api/v1/merchant/webhooks/deliveries/:id/retry`
 
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/webhooks/deliveries/delivery_uuid/retry" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
+```
+
+</RequestExample>
+
 <ResponseExample>
+
+<CodeGroup>
+
+```json 202 Accepted
+{
+  "success": true,
+  "data": {
+    "id": "delivery_uuid",
+    "status": "QUEUED"
+  }
+}
+```
 
 ```json 404 Not Found
 {
@@ -112,6 +231,8 @@ Verify inbound webhooks with `morapay.utils.verifyWebhook({ payload, signature, 
   "requestId": "req_wh404"
 }
 ```
+
+</CodeGroup>
 
 </ResponseExample>
 

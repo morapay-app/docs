@@ -56,6 +56,8 @@ Returns bank institutions for the merchant's country. Requires `fiatRailsSupport
 
 <ResponseExample>
 
+<CodeGroup>
+
 ```json 200 OK
 {
   "success": true,
@@ -73,6 +75,17 @@ Returns bank institutions for the merchant's country. Requires `fiatRailsSupport
   }
 }
 ```
+
+```json 400 Bad Request
+{
+  "success": false,
+  "error": "Fiat payout rails are not available for this business.",
+  "code": "request.invalid",
+  "requestId": "req_banks400"
+}
+```
+
+</CodeGroup>
 
 </ResponseExample>
 
@@ -127,6 +140,8 @@ curl -s "https://api.morapay.io/api/v1/merchant/rails/resolve?type=BANK_ACCOUNT&
 
 <ResponseExample>
 
+<CodeGroup>
+
 ```json 200 OK
 {
   "success": true,
@@ -135,6 +150,17 @@ curl -s "https://api.morapay.io/api/v1/merchant/rails/resolve?type=BANK_ACCOUNT&
   }
 }
 ```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": "Account name could not be resolved.",
+  "code": "payouts.momo.account_not_found",
+  "requestId": "req_resolve422"
+}
+```
+
+</CodeGroup>
 
 </ResponseExample>
 
@@ -157,10 +183,6 @@ Example MoMo validate body:
   "currency": "GHS"
 }
 ```
-
-## SDK equivalent
-
-The SDK does not yet wrap rails helpers. Call the Merchant API from your server or extend your integration layer.
 
 ## Errors
 

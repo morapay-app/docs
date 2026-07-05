@@ -21,7 +21,20 @@ Base path: `/api/v1/merchant`
 
 `GET /api/v1/merchant/qr`
 
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/v1/merchant/qr" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
+```
+
+</RequestExample>
+
 <ResponseExample>
+
+<CodeGroup>
 
 ```json 200 OK
 {
@@ -35,13 +48,18 @@ Base path: `/api/v1/merchant`
 }
 ```
 
-</ResponseExample>
-
-```typescript
-const qr = await morapay.qr.get();
-const payUrl = morapay.buildBusinessPayCheckoutUrl(qr.businessSlug);
-const widgetUrl = morapay.buildBusinessPayWidgetUrl(qr.businessSlug);
+```json 401 Unauthorized
+{
+  "success": false,
+  "error": "Invalid request signature.",
+  "code": "auth.signature.mismatch",
+  "requestId": "req_qr401"
+}
 ```
+
+</CodeGroup>
+
+</ResponseExample>
 
 ## Update QR config
 
@@ -49,9 +67,45 @@ const widgetUrl = morapay.buildBusinessPayWidgetUrl(qr.businessSlug);
 
 Update slug visibility, default currency, and display options per your dashboard schema.
 
-```typescript
-await morapay.qr.update({ enabled: true, defaultCurrency: "GHS" });
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/qr" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{ "enabled": true, "defaultCurrency": "GHS" }'
 ```
+
+</RequestExample>
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "enabled": true,
+    "defaultCurrency": "GHS"
+  }
+}
+```
+
+```json 400 Bad Request
+{
+  "success": false,
+  "error": "Invalid body.",
+  "code": "request.invalid",
+  "requestId": "req_qr400"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
 
 ## Payment requests
 
@@ -63,6 +117,48 @@ Legacy REQUEST-type flows for ad hoc invoices.
 | `POST` | `/payment-requests` | Create |
 | `GET` | `/payment-requests/:id` | Detail |
 
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/payment-requests" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{ "amount": 50, "currency": "GHS", "description": "Table 4" }'
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 201 Created
+{
+  "success": true,
+  "data": {
+    "id": "req_uuid",
+    "amount": 50,
+    "currency": "GHS",
+    "status": "PENDING"
+  }
+}
+```
+
+```json 404 Not Found
+{
+  "success": false,
+  "error": "Payment request not found.",
+  "code": "resource.not_found",
+  "requestId": "req_pr404"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
+
 ## Common errors
 
 | Code | HTTP | Cause |
@@ -70,8 +166,10 @@ Legacy REQUEST-type flows for ad hoc invoices.
 | `resource.not_found` | 404 | Unknown request id |
 | `links.slug.duplicate` | 409 | Business slug conflict |
 | `request.invalid` | 400 | Invalid body |
+| `auth.signature.mismatch` | 401 | Invalid signed request |
 
 ## Related
 
+- [Public checkout](/api-reference/public-checkout)
 - [Payment links API](/api-reference/payment-links)
 - [Products API](/api-reference/products)

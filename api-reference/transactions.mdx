@@ -32,7 +32,20 @@ Base path: `/api/v1/merchant`
 | `type` | Transaction type |
 | `from`, `to` | ISO date range |
 
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/v1/merchant/transactions?page=1&limit=20" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
+```
+
+</RequestExample>
+
 <ResponseExample>
+
+<CodeGroup>
 
 ```json 200 OK
 {
@@ -51,6 +64,17 @@ Base path: `/api/v1/merchant`
 }
 ```
 
+```json 401 Unauthorized
+{
+  "success": false,
+  "error": "Invalid request signature.",
+  "code": "auth.signature.mismatch",
+  "requestId": "req_txn401"
+}
+```
+
+</CodeGroup>
+
 </ResponseExample>
 
 ## Get transaction
@@ -59,7 +83,33 @@ Base path: `/api/v1/merchant`
 
 Returns line items, fees, payer metadata, and linked payment link or subscription when present.
 
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/v1/merchant/transactions/txn_uuid" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
+```
+
+</RequestExample>
+
 <ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "id": "txn_uuid",
+    "type": "PAYMENT",
+    "status": "COMPLETED",
+    "amount": "100.00",
+    "currency": "USD"
+  }
+}
+```
 
 ```json 404 Not Found
 {
@@ -69,6 +119,8 @@ Returns line items, fees, payer metadata, and linked payment link or subscriptio
   "requestId": "req_txn404"
 }
 ```
+
+</CodeGroup>
 
 </ResponseExample>
 
@@ -83,11 +135,24 @@ Portal users need finance role. Merchant API keys have full tenant access.
 | `amount` | string / number | No | Partial refund; omit for full |
 | `reason` | string | No | Internal note |
 
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/transactions/txn_uuid/refunds" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{ "amount": "100.00", "reason": "Customer request" }'
+```
+
+</RequestExample>
+
 <ResponseExample>
 
 <CodeGroup>
 
-```json 201 Created
+```json 202 Accepted
 {
   "success": true,
   "data": {
@@ -96,6 +161,15 @@ Portal users need finance role. Merchant API keys have full tenant access.
     "status": "PENDING",
     "amount": "100.00"
   }
+}
+```
+
+```json 403 Forbidden
+{
+  "success": false,
+  "error": "Your role or key does not allow this action.",
+  "code": "FORBIDDEN_MERCHANT_ROLE",
+  "requestId": "req_refund403"
 }
 ```
 
@@ -114,14 +188,44 @@ Portal users need finance role. Merchant API keys have full tenant access.
 
 ## Settlements and withdrawals
 
-| Method | Path | SDK |
-|--------|------|-----|
-| `GET /settlements` | List merchant payouts | Dashboard / REST |
-| `POST /settlements/withdraw` | Withdraw to linked MoMo or bank | REST |
+`GET /api/v1/merchant/settlements` lists merchant payouts.
+
+`POST /api/v1/merchant/settlements/withdraw` withdraws to a linked MoMo or bank account.
 
 Withdraw body: `{ "amount", "currency", "payoutMethodId" }`.
 
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/settlements/withdraw" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{
+    "amount": "500.00",
+    "currency": "GHS",
+    "payoutMethodId": "pm_uuid"
+  }'
+```
+
+</RequestExample>
+
 <ResponseExample>
+
+<CodeGroup>
+
+```json 202 Accepted
+{
+  "success": true,
+  "data": {
+    "id": "settlement_uuid",
+    "status": "PROCESSING",
+    "amount": "500.00",
+    "currency": "GHS"
+  }
+}
+```
 
 ```json 400 Bad Request
 {
@@ -131,6 +235,8 @@ Withdraw body: `{ "amount", "currency", "payoutMethodId" }`.
   "requestId": "req_withdraw400"
 }
 ```
+
+</CodeGroup>
 
 </ResponseExample>
 
@@ -143,5 +249,6 @@ Returns volume, fees, status breakdowns, and time series for the resolved TEST o
 ## Related
 
 - [Payment links API](/api-reference/payment-links)
+- [Payout methods](/api-reference/payout-methods)
 - [Payout rails API](/api-reference/payout-rails)
 - [Conventions](/api-reference/conventions)

@@ -30,7 +30,20 @@ Portal JWT users need the correct [business role](/api-reference/conventions#por
 
 Returns name, slug, country, KYB status, branding colors, support URLs, and portal KYC hints for dashboard users.
 
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/v1/merchant/business" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
+```
+
+</RequestExample>
+
 <ResponseExample>
+
+<CodeGroup>
 
 ```json 200 OK
 {
@@ -46,6 +59,17 @@ Returns name, slug, country, KYB status, branding colors, support URLs, and port
   }
 }
 ```
+
+```json 401 Unauthorized
+{
+  "success": false,
+  "error": "Invalid request signature.",
+  "code": "auth.signature.mismatch",
+  "requestId": "req_biz401"
+}
+```
+
+</CodeGroup>
 
 </ResponseExample>
 
@@ -64,6 +88,19 @@ Returns name, slug, country, KYB status, branding colors, support URLs, and port
 | `supportUrl` | string | Help center link |
 | `termsOfServiceUrl` | string | Terms URL shown at checkout |
 | `returnPolicyUrl` | string | Returns policy URL |
+
+<RequestExample>
+
+```bash cURL
+curl -s -X PATCH "https://api.morapay.io/api/v1/merchant/business" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{ "brandColor": "#1E40AF" }'
+```
+
+</RequestExample>
 
 <ResponseExample>
 
@@ -145,11 +182,27 @@ Keys are scoped to **TEST** or **LIVE** at creation time. The secret is shown on
 | `domains` | string[] | No | Allowed origins; default `["*"]` |
 | `permissions` | string[] | No | Default `["*"]` for merchant keys |
 
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/keys" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{
+    "name": "Production server",
+    "environment": "LIVE"
+  }'
+```
+
+</RequestExample>
+
 <ResponseExample>
 
 <CodeGroup>
 
-```json 200 OK
+```json 201 Created
 {
   "success": true,
   "data": {
@@ -190,10 +243,6 @@ Keys are scoped to **TEST** or **LIVE** at creation time. The secret is shown on
 ```
 
 </ResponseExample>
-
-## SDK note
-
-The SDK does not wrap profile or key management yet. Call the Merchant API from your server with signed headers, or manage keys in the [dashboard](https://business.morapay.io/developers/api-keys).
 
 ## Related
 

@@ -21,7 +21,20 @@ Portal users need **OWNER**, **ADMIN**, or **FINANCE** role for mutating routes.
 
 `GET /api/v1/merchant/methods`
 
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/v1/merchant/methods" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
+```
+
+</RequestExample>
+
 <ResponseExample>
+
+<CodeGroup>
 
 ```json 200 OK
 {
@@ -42,6 +55,17 @@ Portal users need **OWNER**, **ADMIN**, or **FINANCE** role for mutating routes.
   ]
 }
 ```
+
+```json 401 Unauthorized
+{
+  "success": false,
+  "error": "Invalid request signature.",
+  "code": "auth.signature.mismatch",
+  "requestId": "req_methods401"
+}
+```
+
+</CodeGroup>
 
 </ResponseExample>
 
@@ -70,6 +94,28 @@ Example MoMo body:
   }
 }
 ```
+
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/methods" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{
+    "type": "MOBILE_MONEY",
+    "label": "MTN MoMo",
+    "isPrimary": true,
+    "details": {
+      "phone": "233241234567",
+      "provider": "MTN",
+      "accountName": "JOHN DOE"
+    }
+  }'
+```
+
+</RequestExample>
 
 <ResponseExample>
 
@@ -117,10 +163,6 @@ Update `label`, `isPrimary`, or deactivate with `{ "isActive": false }`.
 ## Withdraw to a method
 
 After saving a method, call `POST /api/v1/merchant/settlements/withdraw` with `payoutMethodId`. See [Transactions](/api-reference/transactions#settlements-and-withdrawals).
-
-## SDK note
-
-Payout methods are not in the SDK yet. Use signed REST calls from your backend.
 
 ## Related
 

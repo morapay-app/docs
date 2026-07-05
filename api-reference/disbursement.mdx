@@ -26,6 +26,8 @@ curl -s "https://api.morapay.io/api/v1/merchant/disbursement/account" \
 
 <ResponseExample>
 
+<CodeGroup>
+
 ```json 200 OK
 {
   "success": true,
@@ -37,6 +39,17 @@ curl -s "https://api.morapay.io/api/v1/merchant/disbursement/account" \
   }
 }
 ```
+
+```json 401 Unauthorized
+{
+  "success": false,
+  "error": "Invalid request signature.",
+  "code": "auth.signature.mismatch",
+  "requestId": "req_acct401"
+}
+```
+
+</CodeGroup>
 
 </ResponseExample>
 
@@ -75,6 +88,8 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/disbursement/batches/quo
 
 <ResponseExample>
 
+<CodeGroup>
+
 ```json 200 OK
 {
   "success": true,
@@ -89,6 +104,17 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/disbursement/batches/quo
   }
 }
 ```
+
+```json 400 Bad Request
+{
+  "success": false,
+  "error": "Chain 8453 is not available in TEST mode.",
+  "code": "UNSUPPORTED_CHAIN",
+  "requestId": "req_quote_chain"
+}
+```
+
+</CodeGroup>
 
 </ResponseExample>
 
@@ -155,6 +181,8 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/disbursement/batches" \
 
 <ResponseExample>
 
+<CodeGroup>
+
 ```json 201 Created
 {
   "success": true,
@@ -169,6 +197,26 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/disbursement/batches" \
   }
 }
 ```
+
+```json 400 Bad Request
+{
+  "success": false,
+  "error": "Insufficient disbursement balance.",
+  "code": "INSUFFICIENT_RECURRING",
+  "requestId": "req_batch_bal"
+}
+```
+
+```json 401 Unauthorized
+{
+  "success": false,
+  "error": "Invalid request signature.",
+  "code": "auth.signature.mismatch",
+  "requestId": "req_batch401"
+}
+```
+
+</CodeGroup>
 
 </ResponseExample>
 
@@ -254,19 +302,6 @@ After dispatch starts, recipients typically receive funds within **~2 minutes pe
 </CodeGroup>
 
 </ResponseExample>
-
-## SDK equivalent
-
-| API | SDK |
-|-----|-----|
-| `GET /disbursement/account` | `morapay.disbursement.account()` |
-| `POST /disbursement/batches/quote` | `morapay.disbursement.quote({ .. })` |
-| `GET /disbursement/batches` | `morapay.disbursement({ limit })` |
-| `GET /disbursement/batches/:id` | `morapay.disbursement("batch_xyz")` |
-| `DELETE /disbursement/batches/:id` | `morapay.disbursement.cancel("batch_xyz")` |
-| `GET /disbursement/ledger` | `morapay.disbursement.ledger({ page, limit })` |
-
-Deposit/withdraw with `idempotencyKey` are API-only today; call the REST endpoints from your server.
 
 ## Related
 

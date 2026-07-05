@@ -18,16 +18,25 @@ Base path: `/api/v1/merchant`
 
 `POST /api/v1/merchant/quotes/ramp`
 
-```typescript
-const ramp = await morapay.quotes.ramp.create({
-  action: "buy",
-  sourceAsset: "USDC",
-  targetAsset: "ETH",
-  targetChain: "1",
-  amount: 100,
-  amountType: "source",
-});
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/quotes/ramp" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{
+    "action": "buy",
+    "sourceAsset": "USDC",
+    "targetAsset": "ETH",
+    "targetChain": "1",
+    "amount": 100,
+    "amountType": "source"
+  }'
 ```
+
+</RequestExample>
 
 <ResponseExample>
 
@@ -42,6 +51,15 @@ const ramp = await morapay.quotes.ramp.create({
     "targetAmount": "0.042",
     "expiresAt": "2026-03-01T12:05:00.000Z"
   }
+}
+```
+
+```json 401 Unauthorized
+{
+  "success": false,
+  "error": "Invalid request signature.",
+  "code": "auth.signature.mismatch",
+  "requestId": "req_ramp401"
 }
 ```
 
@@ -64,17 +82,58 @@ const ramp = await morapay.quotes.ramp.create({
 
 Returns corridor pricing for fiat legs used in custom integrations.
 
-```typescript
-const fiat = await morapay.quotes.fiat.create({
-  /* corridor fields per API schema */
-});
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/quotes/fiat" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{
+    "from": "USD",
+    "to": "GHS",
+    "amount": 100,
+    "purpose": "spot"
+  }'
 ```
+
+</RequestExample>
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "from": "USD",
+    "to": "GHS",
+    "rate": "12.45",
+    "amountOut": "1245.00"
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": "Corridor not supported.",
+  "code": "request.validation_failed",
+  "requestId": "req_fiat422"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
 
 ## Commerce fiat quote
 
-`POST /api/commerce/checkout-fiat`
+`POST /api/public/commerce/fiat`
 
-Public signed route for hosted checkout payer totals. Used when rendering MoMo, bank, or card checkout.
+Public route for hosted checkout payer totals. Used when rendering MoMo, bank, or card checkout.
 
 | Field | Description |
 |-------|-------------|
@@ -91,15 +150,73 @@ See [Fiat checkout API](/api-reference/fiat-checkout).
 
 Merchant clearing estimate for fiat-denominated links.
 
-```typescript
-const settlement = await morapay.link.quote("link_uuid", { invoice_major: 100 });
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/links/link_uuid/settlement-quote" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{ "invoice_major": 100 }'
 ```
+
+</RequestExample>
 
 ## Checkout catalog quote
 
 `POST /api/v1/quotes/checkout`
 
-Returns token payout rows for custom checkout UIs. Proxied at `POST /api/public/catalog/quotes/checkout` on some hosts.
+Returns token payout rows for custom checkout UIs. Also available at `POST /api/public/catalog/quotes/checkout`.
+
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/quotes/checkout" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{
+    "inputAmount": "100",
+    "inputCurrency": "USD",
+    "environment": "LIVE"
+  }'
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "rows": [
+      {
+        "tokenSymbol": "USDC",
+        "chainId": "8453",
+        "payoutAmount": "99.50"
+      }
+    ]
+  }
+}
+```
+
+```json 400 Bad Request
+{
+  "success": false,
+  "error": "inputAmount is required.",
+  "code": "request.invalid",
+  "requestId": "req_checkout400"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
 
 ## Related
 

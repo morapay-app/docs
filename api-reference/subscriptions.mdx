@@ -25,7 +25,7 @@ Base path: `/api/v1/merchant/subscriptions`
 | `GET` | `/subscriptions/account` | Subscription treasury account |
 | `GET` | `/subscriptions/stats` | Subscription metrics |
 
-Public checkout for subscribers uses the checkout host at `/subscription/:planId` without merchant keys.
+Public checkout for subscribers uses the checkout host at `/subscription/:planId` without merchant keys. See [Public checkout](/api-reference/public-checkout).
 
 ## Plans
 
@@ -33,15 +33,60 @@ Public checkout for subscribers uses the checkout host at `/subscription/:planId
 
 `GET /api/v1/merchant/subscriptions/plans`
 
-```typescript
-const { data: plans } = await morapay.subscriptions.plans();
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/v1/merchant/subscriptions/plans" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
 ```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 OK
+{
+  "success": true,
+  "data": [
+    {
+      "id": "plan_uuid",
+      "name": "Pro monthly",
+      "amount": 29,
+      "currency": "USD",
+      "interval": "month",
+      "isActive": true
+    }
+  ]
+}
+```
+
+</ResponseExample>
 
 ### Create plan
 
 `POST /api/v1/merchant/subscriptions/plans`
 
 Typical body fields: `name`, `amount`, `currency`, `interval`, `intervalCount`, `trialDays`, `metadata`.
+
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/subscriptions/plans" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{
+    "name": "Pro monthly",
+    "amount": 29,
+    "currency": "USD",
+    "interval": "month"
+  }'
+```
+
+</RequestExample>
 
 <ResponseExample>
 
@@ -70,51 +115,114 @@ Typical body fields: `name`, `amount`, `currency`, `interval`, `intervalCount`, 
 }
 ```
 
+```json 403 Forbidden
+{
+  "success": false,
+  "error": "Complete KYB before creating LIVE subscription plans.",
+  "code": "kyb.forbidden",
+  "requestId": "req_sub403"
+}
+```
+
 </CodeGroup>
 
 </ResponseExample>
-
-```typescript
-const plan = await morapay.subscriptions.plans.create({
-  name: "Pro monthly",
-  amount: 29,
-  currency: "USD",
-  interval: "month",
-});
-```
 
 ### Update plan
 
 `PATCH /api/v1/merchant/subscriptions/plans/:id`
 
-```typescript
-await morapay.subscriptions.plans.update("plan_uuid", { isActive: false });
+<RequestExample>
+
+```bash cURL
+curl -s -X PATCH "https://api.morapay.io/api/v1/merchant/subscriptions/plans/plan_uuid" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{ "isActive": false }'
 ```
+
+</RequestExample>
 
 ## Enrollments
 
 ### List
 
-`GET /api/v1/merchant/subscriptions`
+`GET /api/v1/merchant/subscriptions?status=ACTIVE`
 
-```typescript
-const { data } = await morapay.subscriptions({ status: "ACTIVE" });
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/v1/merchant/subscriptions?status=ACTIVE" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
 ```
+
+</RequestExample>
 
 ### Get
 
-```typescript
-const sub = await morapay.subscriptions("sub_uuid");
+`GET /api/v1/merchant/subscriptions/:id`
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "id": "sub_uuid",
+    "planId": "plan_uuid",
+    "status": "ACTIVE",
+    "customerEmail": "buyer@example.com"
+  }
+}
 ```
+
+```json 404 Not Found
+{
+  "success": false,
+  "error": "Subscription not found.",
+  "code": "resource.not_found",
+  "requestId": "req_sub404"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
 
 ### Lifecycle
 
-| Action | REST | SDK |
-|--------|------|-----|
-| Pause | `POST /subscriptions/:id/pause` | `morapay.subscriptions.pause(id)` |
-| Cancel | `POST /subscriptions/:id/cancel` | `morapay.subscriptions.cancel(id)` |
+| Action | Method | Path |
+|--------|--------|------|
+| Pause | `POST` | `/subscriptions/:id/pause` |
+| Cancel | `POST` | `/subscriptions/:id/cancel` |
+
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/subscriptions/sub_uuid/cancel" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
+```
+
+</RequestExample>
 
 <ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": { "cancelled": true }
+}
+```
 
 ```json 409 Conflict
 {
@@ -124,6 +232,8 @@ const sub = await morapay.subscriptions("sub_uuid");
   "requestId": "req_sub409"
 }
 ```
+
+</CodeGroup>
 
 </ResponseExample>
 
@@ -141,9 +251,11 @@ const sub = await morapay.subscriptions("sub_uuid");
 | `resource.not_found` | 404 | Unknown plan or enrollment |
 | `resource.conflict` | 409 | Invalid state transition |
 | `kyb.forbidden` | 403 | LIVE blocked by KYB |
+| `auth.signature.mismatch` | 401 | Invalid signed request |
 
 ## Related
 
 - [Subscriptions concept](/concepts/subscriptions)
+- [Public checkout](/api-reference/public-checkout)
 - [Webhooks API](/api-reference/webhooks)
 - [Fees reference](/reference/fees-countries-taxes)

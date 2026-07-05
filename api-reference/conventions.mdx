@@ -42,7 +42,7 @@ Paginated success responses include `meta`:
 { "success": true, "data": { } }
 ```
 
-Create endpoints return **201 Created** when a new row is inserted. Idempotent replays may return **200 OK** with the same body.
+Create endpoints return **201 Created** when a new row is inserted. Async actions such as refunds, withdrawals, and webhook retries may return **202 Accepted** while processing continues. Idempotent replays may return **200 OK** with the same body.
 
 ## Error envelope
 
@@ -69,6 +69,9 @@ Always log `requestId` and include it when contacting support.
 
 | HTTP | Typical `code` | When you see it |
 |------|----------------|-----------------|
+| **200** | — | Successful read or update |
+| **201** | — | Resource created |
+| **202** | — | Accepted; processing continues async (refunds, withdrawals, webhook retry) |
 | **400** | `request.invalid` | Malformed JSON or failed Zod validation |
 | **401** | `auth.keys.invalid`, `auth.signature.mismatch`, `auth.signature.timestamp_expired` | Missing or wrong API key or signature |
 | **403** | `kyb.forbidden`, `FORBIDDEN_MERCHANT_ROLE` | LIVE action blocked by KYB tier or portal role |
@@ -131,55 +134,18 @@ Always log `requestId` and include it when contacting support.
 }
 ```
 
-</CodeGroup>
-
-</ResponseExample>
-
-## SDK error handling
-
-The SDK throws typed errors that mirror the envelope:
-
-```typescript
-import {
-  Morapay,
-  MorapayAuthenticationError,
-  MorapayInvalidRequestError,
-  isMorapayError,
-} from "@morapay/sdk";
-
-const morapay = new Morapay({
-  publicKey: process.env.MORAPAY_PUBLIC_KEY!,
-  secretKey: process.env.MORAPAY_SECRET_KEY!,
-});
-
-try {
-  const link = await morapay.link.create({
-    title: "Invoice",
-    amount: 0.5,
-    currency: "GHS",
-  });
-} catch (err) {
-  if (err instanceof MorapayInvalidRequestError) {
-    console.error(err.code, err.displayMessage, err.requestId);
-  } else if (err instanceof MorapayAuthenticationError) {
-    console.error("Check keys and signing", err.requestId);
-  } else if (isMorapayError(err)) {
-    console.error(err.format());
-  }
-  throw err;
+```json 503 Service Unavailable
+{
+  "success": false,
+  "error": "Service temporarily unavailable.",
+  "code": "api.service_unavailable",
+  "requestId": "req_pqr678"
 }
 ```
 
-## Callable SDK pattern
+</CodeGroup>
 
-Many resources use one function for list and get:
-
-| Pattern | REST | SDK |
-|---------|------|-----|
-| List | `GET /links?page=1` | `morapay.link()` or `morapay.link({ page: 1 })` |
-| Get one | `GET /links/:id` | `morapay.link("link_uuid")` |
-| Create | `POST /links` | `morapay.link.create({ ... })` |
-| Update | `PATCH /links/:id` | `morapay.link.update(id, { ... })` |
+</ResponseExample>
 
 ## Portal RBAC
 

@@ -1,6 +1,6 @@
 ---
 title: "Payment links"
-description: "Create, list, update, and quote payment links via REST and the SDK."
+description: "Create, list, update, and quote payment links via REST."
 ---
 
 Payment links are fixed or open-amount checkout URLs scoped to your business and TEST or LIVE environment.
@@ -30,7 +30,20 @@ Base path: `/api/v1/merchant/links`
 | `active` | boolean | `true` or `false` |
 | `amountType` | string | `fixed` or `open` |
 
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/v1/merchant/links?page=1&limit=20&active=true" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
+```
+
+</RequestExample>
+
 <ResponseExample>
+
+<CodeGroup>
 
 ```json 200 OK
 {
@@ -52,22 +65,52 @@ Base path: `/api/v1/merchant/links`
 }
 ```
 
-</ResponseExample>
-
-```typescript
-const { data, meta } = await morapay.link({ page: 1, limit: 20, active: true });
+```json 401 Unauthorized
+{
+  "success": false,
+  "error": "Invalid request signature.",
+  "code": "auth.signature.mismatch",
+  "requestId": "req_links401"
+}
 ```
+
+</CodeGroup>
+
+</ResponseExample>
 
 ## Get link
 
 `GET /api/v1/merchant/links/:id`
 
-```typescript
-const link = await morapay.link("link_uuid");
-const paid = morapay.utils.isPaid(link);
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/v1/merchant/links/link_uuid" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
 ```
 
+</RequestExample>
+
 <ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "id": "link_uuid",
+    "title": "Invoice #42",
+    "amount": 100,
+    "currency": "USD",
+    "publicCode": "abc123xyz",
+    "isActive": true,
+    "paidAt": null
+  }
+}
+```
 
 ```json 404 Not Found
 {
@@ -77,6 +120,8 @@ const paid = morapay.utils.isPaid(link);
   "requestId": "req_link404"
 }
 ```
+
+</CodeGroup>
 
 </ResponseExample>
 
@@ -143,6 +188,15 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/links" \
 }
 ```
 
+```json 403 Forbidden
+{
+  "success": false,
+  "error": "Complete KYB before creating LIVE payment links.",
+  "code": "kyb.forbidden",
+  "requestId": "req_kyb403"
+}
+```
+
 ```json 409 Conflict
 {
   "success": false,
@@ -156,26 +210,51 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/links" \
 
 </ResponseExample>
 
-```typescript
-const link = await morapay.link.create({
-  title: "Invoice #42",
-  amount: 100,
-  currency: "USD",
-});
-
-const checkoutUrl = morapay.buildCheckoutUrl(link.publicCode);
-const embedUrl = morapay.buildPaymentLinkEmbedUrl(link.publicCode);
-```
-
 ## Update link
 
 `PATCH /api/v1/merchant/links/:id`
 
 Send only fields to change: `title`, `description`, `amount`, `currency`, `isActive`, `isOneTime`, `metadata`, and others supported by the API.
 
-```typescript
-await morapay.link.update("link_uuid", { isActive: false });
+<RequestExample>
+
+```bash cURL
+curl -s -X PATCH "https://api.morapay.io/api/v1/merchant/links/link_uuid" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{ "isActive": false }'
 ```
+
+</RequestExample>
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "id": "link_uuid",
+    "isActive": false
+  }
+}
+```
+
+```json 404 Not Found
+{
+  "success": false,
+  "error": "Payment link not found.",
+  "code": "resource.not_found",
+  "requestId": "req_patch404"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
 
 ## Settlement quote
 
@@ -183,18 +262,81 @@ await morapay.link.update("link_uuid", { isActive: false });
 
 Body optional: `{ "invoice_major": 100 }` for fiat invoice amount in major units.
 
-```typescript
-const quote = await morapay.link.quote("link_uuid", { invoice_major: 100 });
-// quote.merchantClearingUsd
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/links/link_uuid/settlement-quote" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{ "invoice_major": 100 }'
 ```
+
+</RequestExample>
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "merchantClearingUsd": "98.50",
+    "invoiceMajor": 100,
+    "currency": "GHS"
+  }
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": "Link does not support fiat settlement quote.",
+  "code": "request.validation_failed",
+  "requestId": "req_quote422"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
 
 ## Checkout sessions
 
 `GET /api/v1/merchant/links/:id/checkout-sessions?limit=20`
 
-```typescript
-const { items } = await morapay.link.sessions("link_uuid", { limit: 20 });
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/v1/merchant/links/link_uuid/checkout-sessions?limit=20" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
 ```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "session_uuid",
+        "status": "COMPLETED",
+        "transactionId": "txn_uuid",
+        "createdAt": "2026-03-01T12:00:00.000Z"
+      }
+    ]
+  }
+}
+```
+
+</ResponseExample>
 
 ## Common errors
 

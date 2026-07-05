@@ -31,17 +31,93 @@ Base path: `/api/v1/merchant/products`
 | `type` | Product type filter |
 | `includeArchived` | `1` to include archived |
 
-```typescript
-const { data: products } = await morapay.products({ page: 1 });
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/v1/merchant/products?page=1&limit=20" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
 ```
+
+</RequestExample>
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": [
+    {
+      "id": "product_uuid",
+      "name": "Pro plan",
+      "currency": "USD",
+      "price": 49,
+      "isArchived": false
+    }
+  ],
+  "meta": { "page": 1, "limit": 20, "total": 1 }
+}
+```
+
+```json 401 Unauthorized
+{
+  "success": false,
+  "error": "Invalid API key.",
+  "code": "auth.keys.invalid",
+  "requestId": "req_prod401"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
 
 ## Get product
 
 `GET /api/v1/merchant/products/:id`
 
-```typescript
-const product = await morapay.products("product_uuid");
+<RequestExample>
+
+```bash cURL
+curl -s "https://api.morapay.io/api/v1/merchant/products/product_uuid" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
 ```
+
+</RequestExample>
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "id": "product_uuid",
+    "name": "Pro plan",
+    "price": 49,
+    "currency": "USD"
+  }
+}
+```
+
+```json 404 Not Found
+{
+  "success": false,
+  "error": "Product not found.",
+  "code": "resource.not_found",
+  "requestId": "req_prod404"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
 
 ## Create product
 
@@ -55,6 +131,23 @@ const product = await morapay.products("product_uuid");
 | `currency` | string | No | Default currency |
 | `type` | string | No | Product type |
 | `metadata` | object | No | Custom fields |
+
+<RequestExample>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/products" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{
+    "name": "Pro plan",
+    "price": 49,
+    "currency": "USD"
+  }'
+```
+
+</RequestExample>
 
 <ResponseExample>
 
@@ -83,25 +176,49 @@ const product = await morapay.products("product_uuid");
 }
 ```
 
+```json 403 Forbidden
+{
+  "success": false,
+  "error": "Complete KYB before creating LIVE products.",
+  "code": "kyb.forbidden",
+  "requestId": "req_prod403"
+}
+```
+
 </CodeGroup>
 
 </ResponseExample>
-
-```typescript
-const product = await morapay.products.create({
-  name: "Pro plan",
-  price: 49,
-  currency: "USD",
-});
-```
 
 ## Update product
 
 `PATCH /api/v1/merchant/products/:id`
 
-```typescript
-await morapay.products.update("product_uuid", { name: "Pro plan v2" });
+<RequestExample>
+
+```bash cURL
+curl -s -X PATCH "https://api.morapay.io/api/v1/merchant/products/product_uuid" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{ "name": "Pro plan v2" }'
 ```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 OK
+{
+  "success": true,
+  "data": {
+    "id": "product_uuid",
+    "name": "Pro plan v2"
+  }
+}
+```
+
+</ResponseExample>
 
 ## Product payment links
 
@@ -109,15 +226,54 @@ await morapay.products.update("product_uuid", { name: "Pro plan v2" });
 
 Creates a payment link attached to the product. Optional `customerEmail`, `customerName`, `customerExternalId`, and `metadata`.
 
-```typescript
-const link = await morapay.products.link("product_uuid", {
-  amount: 49,
-  currency: "USD",
-  customerEmail: "buyer@example.com",
-});
+<RequestExample>
 
-const { data: links } = await morapay.products.links("product_uuid");
+```bash cURL
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/products/product_uuid/links" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{
+    "amount": 49,
+    "currency": "USD",
+    "customerEmail": "buyer@example.com"
+  }'
 ```
+
+</RequestExample>
+
+<ResponseExample>
+
+<CodeGroup>
+
+```json 201 Created
+{
+  "success": true,
+  "data": {
+    "id": "link_uuid",
+    "productId": "product_uuid",
+    "amount": 49,
+    "currency": "USD",
+    "publicCode": "abc123xyz"
+  }
+}
+```
+
+```json 404 Not Found
+{
+  "success": false,
+  "error": "Product not found.",
+  "code": "resource.not_found",
+  "requestId": "req_plink404"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
+
+`GET /api/v1/merchant/products/:id/links` lists links for the product.
 
 ## Common errors
 
@@ -126,6 +282,7 @@ const { data: links } = await morapay.products.links("product_uuid");
 | `resource.not_found` | 404 | Unknown product id |
 | `request.invalid` | 400 | Invalid body |
 | `kyb.forbidden` | 403 | LIVE mutation blocked by KYB |
+| `auth.keys.invalid` | 401 | Invalid signed request |
 
 ## Related
 

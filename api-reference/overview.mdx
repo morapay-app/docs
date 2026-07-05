@@ -13,10 +13,6 @@ The **Morapay API** is the public HTTP surface for merchant integrations. Produc
 | **Public catalog and checkout** | `/api/public` | Mostly unsigned |
 | **V1 quotes** | `/api/v1/quotes` | Varies by route |
 
-<Note>
-  Prefer the [`@morapay/sdk`](/getting-started/quickstart) on your server. It signs Merchant API requests and maps resources to typed methods.
-</Note>
-
 ## Discover Merchant API v1
 
 ```bash
@@ -126,23 +122,35 @@ Success:
 { "success": true, "data": { }, "meta": { "page": 1, "limit": 20, "total": 42 } }
 ```
 
-Failure responses include `code`, `displayMessage`, and `requestId`. You will commonly see **401** auth errors, **422** validation errors, and **404** missing resources during day-to-day integration.
+Failure responses include `code`, `displayMessage`, and `requestId`. During day-to-day integration you will commonly see **401**, **403**, **404**, **422**, and **429**.
 
-See [Conventions](/api-reference/conventions) for status code tables and SDK error handling examples.
+<ResponseExample>
 
-## SDK resource map
+<CodeGroup>
 
-| SDK | REST base |
-|-----|-----------|
-| `morapay.link` | `/links` |
-| `morapay.products` | `/products` |
-| `morapay.disbursement` | `/disbursement` |
-| `morapay.subscriptions` | `/subscriptions` |
-| `morapay.webhooks.endpoints` | `/webhooks/endpoints` |
-| `morapay.quotes.ramp` | `/quotes/ramp` |
-| `morapay.qr` | `/qr` |
-| `morapay.public.paymentLinks` | `/api/public/payment-links/*` |
-| `morapay.quotes.checkout` | `/api/v1/quotes/checkout` |
+```json 401 Unauthorized
+{
+  "success": false,
+  "error": "Invalid request signature.",
+  "code": "auth.signature.mismatch",
+  "requestId": "req_overview401"
+}
+```
+
+```json 422 Unprocessable Entity
+{
+  "success": false,
+  "error": "Amount is below the minimum for this corridor.",
+  "code": "links.amount.below_minimum",
+  "requestId": "req_overview422"
+}
+```
+
+</CodeGroup>
+
+</ResponseExample>
+
+See [Conventions](/api-reference/conventions) for the full status code table and error envelope.
 
 ## Coverage cross-reference
 
@@ -153,3 +161,7 @@ See [Conventions](/api-reference/conventions) for status code tables and SDK err
 | Banks and MoMo | [Payout rails](/api-reference/payout-rails) | [Banks](/reference/banks-and-momo) |
 | Disbursement tokens | [Disbursement](/api-reference/disbursement) | [Tokens](/reference/disbursement-tokens) |
 | Fees | [Quotes](/api-reference/quotes) | [Fees](/reference/fees-countries-taxes) |
+
+## Client libraries
+
+For typed helpers and automatic request signing, use the [`@morapay/sdk`](/getting-started/quickstart) in Guides — not duplicated here.
