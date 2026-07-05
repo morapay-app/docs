@@ -148,13 +148,19 @@ The SDK unwraps `data` on success and throws a typed `MorapayError` subclass on 
 **Failure:** the same `422` body becomes a thrown error:
 
 ```typescript
-import { MorapayInvalidRequestError, isMorapayError } from "@morapay/sdk";
+import {
+  MorapayInvalidRequestError,
+  MorapayErrorCode,
+  isMorapayError,
+} from "@morapay/sdk";
 
 try {
   await morapay.link.create({ title: "Order", amount: 0.5, currency: "GHS" });
 } catch (err) {
-  if (err instanceof MorapayInvalidRequestError) {
-    err.code;            // "links.amount.below_minimum"
+  if (
+    err instanceof MorapayInvalidRequestError &&
+    err.code === MorapayErrorCode.LinksAmountBelowMinimum
+  ) {
     err.displayMessage;  // safe for customer UI
     err.requestId;       // pass to support
     console.error(err.format());

@@ -22,7 +22,7 @@ The API key used for this request has passed its expiration date.
 
 ## How to fix it
 
-Create a new **TEST** or **LIVE** key pair in **Dashboard → Developers → API keys** and update server environment variables (`MORAPAY_PUBLIC_KEY`, `MORAPAY_SECRET_KEY`). Revoke the expired key after deploy.
+Create a new key pair in the dashboard and update MORAPAY_PUBLIC_KEY / MORAPAY_SECRET_KEY.
 
 ## UI hint
 
@@ -35,10 +35,10 @@ Create a new **TEST** or **LIVE** key pair in **Dashboard → Developers → API
 ## Programmatic handling
 
 ```typescript
-import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "auth.keys.expired") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthKeysExpired) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

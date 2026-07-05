@@ -35,10 +35,10 @@ Sync server clocks (NTP) and ensure timestamps are Unix seconds at request time.
 ## Programmatic handling
 
 ```typescript
-import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "auth.signature.timestamp_expired") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthSignatureTimestampExpired) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

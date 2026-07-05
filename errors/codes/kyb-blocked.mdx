@@ -35,10 +35,10 @@ Check KYB status in the dashboard or contact Morapay support.
 ## Programmatic handling
 
 ```typescript
-import { MorapayPermissionError, isMorapayError } from "@morapay/sdk";
+import { MorapayPermissionError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "kyb.blocked") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.KybBlocked) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

@@ -35,10 +35,10 @@ Refresh the quote and retry, or widen slippage tolerance if your product allows 
 ## Programmatic handling
 
 ```typescript
-import { MorapayInvalidRequestError, isMorapayError } from "@morapay/sdk";
+import { MorapayInvalidRequestError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "crypto.slippage.exceeded") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.CryptoSlippageExceeded) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

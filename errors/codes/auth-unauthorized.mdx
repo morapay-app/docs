@@ -35,10 +35,10 @@ Initialize Morapay with your pk_* and sk_* pair on the server. Never expose sk_*
 ## Programmatic handling
 
 ```typescript
-import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "auth.unauthorized") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthUnauthorized) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

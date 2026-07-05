@@ -35,10 +35,10 @@ Verify baseUrl, TLS, and that the Morapay API is reachable from your server.
 ## Programmatic handling
 
 ```typescript
-import { MorapayApiError, isMorapayError } from "@morapay/sdk";
+import { MorapayApiError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "api.connection_failed") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.ApiConnectionFailed) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

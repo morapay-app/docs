@@ -35,10 +35,10 @@ Verify baseUrl, network connectivity, and that the API is running. Retry with ba
 ## Programmatic handling
 
 ```typescript
-import { MorapayApiError, isMorapayError } from "@morapay/sdk";
+import { MorapayApiError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "api.proxy.core_unreachable") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.ApiProxyCoreUnreachable) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

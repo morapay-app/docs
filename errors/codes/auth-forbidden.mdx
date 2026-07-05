@@ -35,10 +35,10 @@ Confirm key scopes in the dashboard and that you are using the correct business 
 ## Programmatic handling
 
 ```typescript
-import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "auth.forbidden") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthForbidden) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

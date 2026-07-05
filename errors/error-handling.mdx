@@ -47,6 +47,7 @@ import {
   Morapay,
   MorapayInvalidRequestError,
   MorapayAuthenticationError,
+  MorapayErrorCode,
   MorapayUi,
   isMorapayError,
 } from "@morapay/sdk";
@@ -59,10 +60,41 @@ try {
     console.error(err.format());
   } else if (err instanceof MorapayAuthenticationError) {
     alertOps(err.requestId);
-  } else if (isMorapayError(err) && err.code.startsWith("payouts.")) {
+  } else if (isMorapayError(err) && err.code === MorapayErrorCode.PayoutsMomoInsufficientBalance) {
     MorapayUi.toast(err);
   }
 }
+```
+
+### Error code dictionary
+
+Import `MorapayErrorCode` for IDE autocomplete instead of string literals. Typos fail at compile time when you compare against the dictionary:
+
+```typescript
+import { MorapayErrorCode, isMorapayError, isMorapayErrorCode } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err)) {
+    switch (err.code) {
+      case MorapayErrorCode.LinksAmountBelowMinimum:
+        showInlineError(err.displayMessage);
+        break;
+      case MorapayErrorCode.AuthKeysExpired:
+        redirectToKeyRotation();
+        break;
+      default:
+        if (isMorapayErrorCode(err.code)) {
+          console.error(err.format());
+        }
+    }
+  }
+}
+```
+
+Regenerate the dictionary after catalog changes:
+
+```bash
+pnpm run generate:error-codes --filter @morapay/sdk
 ```
 
 ### Error subclasses
@@ -90,9 +122,10 @@ payouts.momo.insufficient_balance
 
 ## Error code catalog
 
-The canonical dictionary lives in `sdk/src/errors/catalog.json`. Regenerate docs after catalog changes:
+The canonical dictionary lives in `sdk/src/errors/catalog.json` and is exported from the SDK as `MorapayErrorCode`. Regenerate SDK constants and docs after catalog changes:
 
 ```bash
+cd sdk && pnpm run generate:error-codes
 node docs/scripts/generate-error-code-pages.mjs
 ```
 

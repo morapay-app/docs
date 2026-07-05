@@ -35,10 +35,10 @@ Confirm you are using the correct TEST/LIVE key pair from Developers → API key
 ## Programmatic handling
 
 ```typescript
-import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "auth.keys.invalid") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthKeysInvalid) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

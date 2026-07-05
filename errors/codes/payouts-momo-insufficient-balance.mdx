@@ -41,10 +41,10 @@ Check available balance with await morapay.disbursement.account() before initiat
 ## Programmatic handling
 
 ```typescript
-import { MorapayInvalidRequestError, isMorapayError } from "@morapay/sdk";
+import { MorapayInvalidRequestError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "payouts.momo.insufficient_balance") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.PayoutsMomoInsufficientBalance) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

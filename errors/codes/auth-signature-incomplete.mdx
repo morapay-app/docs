@@ -35,10 +35,10 @@ Send all three headers on every authenticated request. The SDK adds them automat
 ## Programmatic handling
 
 ```typescript
-import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "auth.signature.incomplete") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthSignatureIncomplete) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

@@ -35,10 +35,10 @@ Fetch the latest state and retry with an updated payload or a new idempotency ke
 ## Programmatic handling
 
 ```typescript
-import { MorapayConflictError, isMorapayError } from "@morapay/sdk";
+import { MorapayConflictError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "resource.conflict") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.ResourceConflict) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

@@ -35,10 +35,10 @@ Verify API credentials and base URL on your server. Contact Morapay support if t
 ## Programmatic handling
 
 ```typescript
-import { MorapayApiError, isMorapayError } from "@morapay/sdk";
+import { MorapayApiError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "api.proxy.core_unconfigured") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.ApiProxyCoreUnconfigured) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

@@ -35,10 +35,10 @@ Prefix the HMAC digest with v1= as documented. The SDK formats this automaticall
 ## Programmatic handling
 
 ```typescript
-import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "auth.signature.invalid_format") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthSignatureInvalidFormat) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

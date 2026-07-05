@@ -35,10 +35,10 @@ Include Morapay-Timestamp (unix seconds) and Morapay-Signature (v1=<hex>) on eve
 ## Programmatic handling
 
 ```typescript
-import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "auth.signature.missing") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthSignatureMissing) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

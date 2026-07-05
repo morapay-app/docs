@@ -35,10 +35,10 @@ Add the server origin to the key's allowed domains in the dashboard, or call the
 ## Programmatic handling
 
 ```typescript
-import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "auth.keys.origin_not_allowed") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthKeysOriginNotAllowed) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

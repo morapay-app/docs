@@ -35,10 +35,10 @@ Retry once. If it persists, contact Morapay support with the requestId.
 ## Programmatic handling
 
 ```typescript
-import { MorapayApiError, isMorapayError } from "@morapay/sdk";
+import { MorapayApiError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "api.internal_error") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.ApiInternalError) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

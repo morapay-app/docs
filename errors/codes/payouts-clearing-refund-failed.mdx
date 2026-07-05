@@ -35,10 +35,10 @@ Contact Morapay support with the requestId. Do not retry the same batch until th
 ## Programmatic handling
 
 ```typescript
-import { MorapayApiError, isMorapayError } from "@morapay/sdk";
+import { MorapayApiError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "payouts.clearing.refund_failed") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.PayoutsClearingRefundFailed) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

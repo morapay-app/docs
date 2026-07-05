@@ -35,10 +35,10 @@ Verify the resource ID, environment (TEST vs LIVE), and that the record was not 
 ## Programmatic handling
 
 ```typescript
-import { MorapayNotFoundError, isMorapayError } from "@morapay/sdk";
+import { MorapayNotFoundError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "resource.not_found") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.ResourceNotFound) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

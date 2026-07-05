@@ -35,10 +35,10 @@ Inspect details for field-level validation errors and correct the request body.
 ## Programmatic handling
 
 ```typescript
-import { MorapayInvalidRequestError, isMorapayError } from "@morapay/sdk";
+import { MorapayInvalidRequestError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "request.invalid") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.RequestInvalid) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

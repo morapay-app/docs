@@ -35,10 +35,10 @@ Retry with backoff. If the issue persists, contact support with the requestId.
 ## Programmatic handling
 
 ```typescript
-import { MorapayApiError, isMorapayError } from "@morapay/sdk";
+import { MorapayApiError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "api.service_unavailable") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.ApiServiceUnavailable) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

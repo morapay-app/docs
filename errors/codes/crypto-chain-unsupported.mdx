@@ -35,10 +35,10 @@ Use a supported network from your dashboard settings or contact Morapay to enabl
 ## Programmatic handling
 
 ```typescript
-import { MorapayInvalidRequestError, isMorapayError } from "@morapay/sdk";
+import { MorapayInvalidRequestError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "crypto.chain.unsupported") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.CryptoChainUnsupported) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

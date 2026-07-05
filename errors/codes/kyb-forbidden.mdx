@@ -35,10 +35,10 @@ Complete KYB verification in the dashboard or contact your business admin.
 ## Programmatic handling
 
 ```typescript
-import { MorapayPermissionError, isMorapayError } from "@morapay/sdk";
+import { MorapayPermissionError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "kyb.forbidden") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.KybForbidden) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

@@ -35,10 +35,10 @@ Re-enable the key in the dashboard or create a new key pair and update your envi
 ## Programmatic handling
 
 ```typescript
-import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "auth.keys.revoked") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthKeysRevoked) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

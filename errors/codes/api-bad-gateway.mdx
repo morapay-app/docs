@@ -35,10 +35,10 @@ Retry with exponential backoff. Contact support with requestId if it persists.
 ## Programmatic handling
 
 ```typescript
-import { MorapayApiError, isMorapayError } from "@morapay/sdk";
+import { MorapayApiError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "api.bad_gateway") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.ApiBadGateway) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

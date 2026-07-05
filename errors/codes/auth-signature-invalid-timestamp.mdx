@@ -35,10 +35,10 @@ Set Morapay-Timestamp to Math.floor(Date.now() / 1000) at request time.
 ## Programmatic handling
 
 ```typescript
-import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "auth.signature.invalid_timestamp") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthSignatureInvalidTimestamp) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

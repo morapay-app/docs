@@ -35,10 +35,10 @@ Implement exponential backoff. Batch reads where possible and cache idempotent l
 ## Programmatic handling
 
 ```typescript
-import { MorapayRateLimitError, isMorapayError } from "@morapay/sdk";
+import { MorapayRateLimitError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "api.rate_limited") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.ApiRateLimited) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

@@ -35,10 +35,10 @@ Pick a different slug or omit it to let Morapay allocate one automatically.
 ## Programmatic handling
 
 ```typescript
-import { MorapayConflictError, isMorapayError } from "@morapay/sdk";
+import { MorapayConflictError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "links.slug.duplicate") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.LinksSlugDuplicate) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

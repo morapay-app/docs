@@ -28,17 +28,7 @@ Mobile network operators enforce a platform floor transaction limit (for example
 
 ## How to fix it
 
-Validate cart totals and dynamic pricing so the amount meets the regional minimum before creating a payment link (`POST /api/v1/merchant/links`) or product checkout link.
-
-## Platform defaults
-
-| Kind | Default (USD equiv.) |
-|------|---------------------|
-| Payment link | $1 |
-| Subscription | $1 |
-| Disbursement / recurring | $5 |
-
-Regional MoMo floors may exceed these; always validate for your corridor.
+Validate cart totals and dynamic pricing so amount meets the regional minimum before calling morapay.link.create() or morapay.products.link().
 
 ## UI hint
 
@@ -51,10 +41,10 @@ Regional MoMo floors may exceed these; always validate for your corridor.
 ## Programmatic handling
 
 ```typescript
-import { MorapayInvalidRequestError, isMorapayError } from "@morapay/sdk";
+import { MorapayInvalidRequestError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "links.amount.below_minimum") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.LinksAmountBelowMinimum) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

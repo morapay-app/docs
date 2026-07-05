@@ -1,0 +1,114 @@
+{
+  "pages": [
+    "api-bad-gateway",
+    "api-connection-failed",
+    "api-gateway-timeout",
+    "api-internal-error",
+    "api-proxy-core-unconfigured",
+    "api-proxy-core-unreachable",
+    "api-proxy-signing-unconfigured",
+    "api-rate-limited",
+    "api-service-unavailable",
+    "auth-forbidden",
+    "auth-keys-expired",
+    "auth-keys-invalid",
+    "auth-keys-legacy-unsupported",
+    "auth-keys-origin-not-allowed",
+    "auth-keys-revoked",
+    "auth-keys-secret-in-header",
+    "auth-signature-incomplete",
+    "auth-signature-invalid-format",
+    "auth-signature-invalid-timestamp",
+    "auth-signature-mismatch",
+    "auth-signature-missing",
+    "auth-signature-timestamp-expired",
+    "auth-unauthorized",
+    "crypto-chain-unsupported",
+    "crypto-slippage-exceeded",
+    "kyb-blocked",
+    "kyb-forbidden",
+    "links-amount-below-minimum",
+    "links-slug-duplicate",
+    "payouts-clearing-refund-failed",
+    "payouts-momo-insufficient-balance",
+    "payouts-network-carrier-down",
+    "request-invalid",
+    "request-validation-failed",
+    "resource-conflict",
+    "resource-not-found"
+  ],
+  "navGroups": [
+    {
+      "group": "Authentication",
+      "pages": [
+        "auth-forbidden",
+        "auth-keys-expired",
+        "auth-keys-invalid",
+        "auth-keys-legacy-unsupported",
+        "auth-keys-origin-not-allowed",
+        "auth-keys-revoked",
+        "auth-keys-secret-in-header",
+        "auth-signature-incomplete",
+        "auth-signature-invalid-format",
+        "auth-signature-invalid-timestamp",
+        "auth-signature-mismatch",
+        "auth-signature-missing",
+        "auth-signature-timestamp-expired",
+        "auth-unauthorized"
+      ]
+    },
+    {
+      "group": "KYB & permissions",
+      "pages": [
+        "kyb-blocked",
+        "kyb-forbidden"
+      ]
+    },
+    {
+      "group": "Payment links",
+      "pages": [
+        "links-amount-below-minimum",
+        "links-slug-duplicate"
+      ]
+    },
+    {
+      "group": "Payouts & treasury",
+      "pages": [
+        "payouts-clearing-refund-failed",
+        "payouts-momo-insufficient-balance",
+        "payouts-network-carrier-down"
+      ]
+    },
+    {
+      "group": "Crypto checkout",
+      "pages": [
+        "crypto-chain-unsupported",
+        "crypto-slippage-exceeded"
+      ]
+    },
+    {
+      "group": "Resources & validation",
+      "pages": [
+        "request-invalid",
+        "request-validation-failed",
+        "resource-conflict",
+        "resource-not-found"
+      ]
+    },
+    {
+      "group": "Platform & connectivity",
+      "pages": [
+        "api-bad-gateway",
+        "api-connection-failed",
+        "api-gateway-timeout",
+        "api-internal-error",
+        "api-proxy-core-unconfigured",
+        "api-proxy-core-unreachable",
+        "api-proxy-signing-unconfigured",
+        "api-rate-limited",
+        "api-service-unavailable"
+      ]
+    }
+  ],
+  "generatedAt": "2026-07-05T22:42:21.928Z"
+}

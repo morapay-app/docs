@@ -35,10 +35,10 @@ Upgrade to the Morapay SDK and use HMAC-signed requests with Morapay-Key.
 ## Programmatic handling
 
 ```typescript
-import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "auth.keys.legacy_unsupported") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthKeysLegacyUnsupported) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

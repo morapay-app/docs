@@ -35,10 +35,10 @@ Use the official SDK signing path. If rolling your own signer, verify timestamp,
 ## Programmatic handling
 
 ```typescript
-import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+import { MorapayAuthenticationError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "auth.signature.mismatch") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.AuthSignatureMismatch) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

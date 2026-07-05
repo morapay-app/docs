@@ -35,10 +35,10 @@ Queue the payout for retry and alert operations. Include requestId when contacti
 ## Programmatic handling
 
 ```typescript
-import { MorapayApiError, isMorapayError } from "@morapay/sdk";
+import { MorapayApiError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "payouts.network.carrier_down") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.PayoutsNetworkCarrierDown) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

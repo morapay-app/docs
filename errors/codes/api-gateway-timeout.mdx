@@ -35,10 +35,10 @@ Retry with backoff. Reduce payload size or split batch operations if applicable.
 ## Programmatic handling
 
 ```typescript
-import { MorapayApiError, isMorapayError } from "@morapay/sdk";
+import { MorapayApiError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "api.gateway_timeout") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.ApiGatewayTimeout) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

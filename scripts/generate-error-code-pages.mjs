@@ -7,6 +7,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { toCodeKey } from "../../sdk/scripts/generate-error-codes.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(__dirname, "../..");
@@ -148,6 +149,7 @@ function renderPage(code, entry) {
       : `\n## Related\n\n- [Error handling](/errors/error-handling)\n- [Conventions](/api-reference/conventions)\n`;
 
   const ErrorClass = sdkClass(code, status);
+  const codeConst = toCodeKey(code);
 
   return `---
 title: "${code}"
@@ -186,10 +188,10 @@ ${ui.actionText ? `| \`actionText\` | \`${ui.actionText}\` |` : ""}
 ## Programmatic handling
 
 \`\`\`typescript
-import { ${ErrorClass}, isMorapayError } from "@morapay/sdk";
+import { ${ErrorClass}, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "${code}") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.${codeConst}) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId

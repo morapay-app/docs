@@ -35,10 +35,10 @@ Configure platform API signing credentials on your server.
 ## Programmatic handling
 
 ```typescript
-import { MorapayApiError, isMorapayError } from "@morapay/sdk";
+import { MorapayApiError, isMorapayError, MorapayErrorCode } from "@morapay/sdk";
 
 catch (err) {
-  if (isMorapayError(err) && err.code === "api.proxy.signing_unconfigured") {
+  if (isMorapayError(err) && err.code === MorapayErrorCode.ApiProxySigningUnconfigured) {
     console.error(err.format());
     // Customer UI: err.displayMessage ?? err.safeMessage
     // Support: err.requestId
