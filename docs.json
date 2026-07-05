@@ -144,8 +144,77 @@
               {
                 "group": "Error codes",
                 "pages": [
-                  "errors/codes/auth-keys-expired",
-                  "errors/codes/links-amount-below-minimum"
+                  {
+                    "group": "Authentication",
+                    "pages": [
+                      "errors/codes/auth-unauthorized",
+                      "errors/codes/auth-forbidden",
+                      "errors/codes/auth-keys-invalid",
+                      "errors/codes/auth-keys-revoked",
+                      "errors/codes/auth-keys-expired",
+                      "errors/codes/auth-keys-legacy-unsupported",
+                      "errors/codes/auth-keys-secret-in-header",
+                      "errors/codes/auth-keys-origin-not-allowed",
+                      "errors/codes/auth-signature-mismatch",
+                      "errors/codes/auth-signature-timestamp-expired",
+                      "errors/codes/auth-signature-incomplete",
+                      "errors/codes/auth-signature-missing",
+                      "errors/codes/auth-signature-invalid-timestamp",
+                      "errors/codes/auth-signature-invalid-format"
+                    ]
+                  },
+                  {
+                    "group": "KYB & permissions",
+                    "pages": [
+                      "errors/codes/kyb-forbidden",
+                      "errors/codes/kyb-blocked"
+                    ]
+                  },
+                  {
+                    "group": "Payment links",
+                    "pages": [
+                      "errors/codes/links-amount-below-minimum",
+                      "errors/codes/links-slug-duplicate"
+                    ]
+                  },
+                  {
+                    "group": "Payouts & treasury",
+                    "pages": [
+                      "errors/codes/payouts-momo-insufficient-balance",
+                      "errors/codes/payouts-network-carrier-down",
+                      "errors/codes/payouts-clearing-refund-failed"
+                    ]
+                  },
+                  {
+                    "group": "Crypto checkout",
+                    "pages": [
+                      "errors/codes/crypto-chain-unsupported",
+                      "errors/codes/crypto-slippage-exceeded"
+                    ]
+                  },
+                  {
+                    "group": "Resources & validation",
+                    "pages": [
+                      "errors/codes/resource-not-found",
+                      "errors/codes/resource-conflict",
+                      "errors/codes/request-invalid",
+                      "errors/codes/request-validation-failed"
+                    ]
+                  },
+                  {
+                    "group": "Platform & connectivity",
+                    "pages": [
+                      "errors/codes/api-rate-limited",
+                      "errors/codes/api-service-unavailable",
+                      "errors/codes/api-internal-error",
+                      "errors/codes/api-bad-gateway",
+                      "errors/codes/api-gateway-timeout",
+                      "errors/codes/api-connection-failed",
+                      "errors/codes/api-proxy-core-unconfigured",
+                      "errors/codes/api-proxy-signing-unconfigured",
+                      "errors/codes/api-proxy-core-unreachable"
+                    ]
+                  }
                 ]
               }
             ]

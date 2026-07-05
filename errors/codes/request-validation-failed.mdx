@@ -1,0 +1,51 @@
+---
+title: "request.validation_failed"
+description: "Some of the information provided is invalid. Please review and try again."
+---
+
+**Code:** `request.validation_failed`  
+**HTTP:** `422 Unprocessable Entity`
+
+## What happened
+
+The API understood the request but rejected the payload or business rules.
+
+## Safe message
+
+> Some of the information provided is invalid. Please review and try again.
+
+Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
+
+## Why this happened
+
+The request was understood but failed business or schema validation.
+
+## How to fix it
+
+Read details for per-field issues. Cross-check required fields in the API reference.
+
+## UI hint
+
+| Field | Value |
+|-------|-------|
+| `severity` | `warning` |
+| `placement` | `inline` |
+
+
+## Programmatic handling
+
+```typescript
+import { MorapayInvalidRequestError, isMorapayError } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err) && err.code === "request.validation_failed") {
+    console.error(err.format());
+    // Customer UI: err.displayMessage ?? err.safeMessage
+    // Support: err.requestId
+  }
+}
+```
+
+## Related codes
+
+- [`request.invalid`](/errors/codes/request-invalid)

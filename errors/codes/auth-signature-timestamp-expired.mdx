@@ -1,0 +1,54 @@
+---
+title: "auth.signature.timestamp_expired"
+description: "We could not verify this request. Please try again later."
+---
+
+**Code:** `auth.signature.timestamp_expired`  
+**HTTP:** `401 Unauthorized`
+
+## What happened
+
+The API rejected the request during authentication before your route handler ran.
+
+## Safe message
+
+> We could not verify this request. Please try again later.
+
+Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
+
+## Why this happened
+
+The Morapay-Timestamp header is outside the allowed clock-skew window.
+
+## How to fix it
+
+Sync server clocks (NTP) and ensure timestamps are Unix seconds at request time.
+
+## UI hint
+
+| Field | Value |
+|-------|-------|
+| `severity` | `critical` |
+| `placement` | `toast` |
+
+
+## Programmatic handling
+
+```typescript
+import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err) && err.code === "auth.signature.timestamp_expired") {
+    console.error(err.format());
+    // Customer UI: err.displayMessage ?? err.safeMessage
+    // Support: err.requestId
+  }
+}
+```
+
+## Related codes
+
+- [`auth.unauthorized`](/errors/codes/auth-unauthorized)
+- [`auth.keys.invalid`](/errors/codes/auth-keys-invalid)
+- [`auth.keys.revoked`](/errors/codes/auth-keys-revoked)
+- [`auth.keys.expired`](/errors/codes/auth-keys-expired)

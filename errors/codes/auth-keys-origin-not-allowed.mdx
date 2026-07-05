@@ -1,0 +1,54 @@
+---
+title: "auth.keys.origin_not_allowed"
+description: "This action is not available from this application."
+---
+
+**Code:** `auth.keys.origin_not_allowed`  
+**HTTP:** `403 Forbidden`
+
+## What happened
+
+The API rejected the request during authentication before your route handler ran.
+
+## Safe message
+
+> This action is not available from this application.
+
+Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
+
+## Why this happened
+
+The API key is restricted to specific allowed origins and the request origin is not on the allowlist.
+
+## How to fix it
+
+Add the server origin to the key's allowed domains in the dashboard, or call the API from an approved backend.
+
+## UI hint
+
+| Field | Value |
+|-------|-------|
+| `severity` | `critical` |
+| `placement` | `toast` |
+
+
+## Programmatic handling
+
+```typescript
+import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err) && err.code === "auth.keys.origin_not_allowed") {
+    console.error(err.format());
+    // Customer UI: err.displayMessage ?? err.safeMessage
+    // Support: err.requestId
+  }
+}
+```
+
+## Related codes
+
+- [`auth.unauthorized`](/errors/codes/auth-unauthorized)
+- [`auth.keys.invalid`](/errors/codes/auth-keys-invalid)
+- [`auth.keys.revoked`](/errors/codes/auth-keys-revoked)
+- [`auth.keys.expired`](/errors/codes/auth-keys-expired)

@@ -1,0 +1,51 @@
+---
+title: "kyb.forbidden"
+description: "You do not have permission to perform this action."
+---
+
+**Code:** `kyb.forbidden`  
+**HTTP:** `403 Forbidden`
+
+## What happened
+
+The API blocked the action because of your business KYB state or permissions.
+
+## Safe message
+
+> You do not have permission to perform this action.
+
+Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
+
+## Why this happened
+
+Your account does not have KYB permissions for this operation.
+
+## How to fix it
+
+Complete KYB verification in the dashboard or contact your business admin.
+
+## UI hint
+
+| Field | Value |
+|-------|-------|
+| `severity` | `critical` |
+| `placement` | `modal` |
+
+
+## Programmatic handling
+
+```typescript
+import { MorapayPermissionError, isMorapayError } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err) && err.code === "kyb.forbidden") {
+    console.error(err.format());
+    // Customer UI: err.displayMessage ?? err.safeMessage
+    // Support: err.requestId
+  }
+}
+```
+
+## Related codes
+
+- [`kyb.blocked`](/errors/codes/kyb-blocked)

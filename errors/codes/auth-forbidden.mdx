@@ -1,0 +1,54 @@
+---
+title: "auth.forbidden"
+description: "You do not have permission to perform this action."
+---
+
+**Code:** `auth.forbidden`  
+**HTTP:** `403 Forbidden`
+
+## What happened
+
+The API rejected the request during authentication before your route handler ran.
+
+## Safe message
+
+> You do not have permission to perform this action.
+
+Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
+
+## Why this happened
+
+Your API key is valid but lacks permission for this resource or operation.
+
+## How to fix it
+
+Confirm key scopes in the dashboard and that you are using the correct business account.
+
+## UI hint
+
+| Field | Value |
+|-------|-------|
+| `severity` | `critical` |
+| `placement` | `toast` |
+
+
+## Programmatic handling
+
+```typescript
+import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err) && err.code === "auth.forbidden") {
+    console.error(err.format());
+    // Customer UI: err.displayMessage ?? err.safeMessage
+    // Support: err.requestId
+  }
+}
+```
+
+## Related codes
+
+- [`auth.unauthorized`](/errors/codes/auth-unauthorized)
+- [`auth.keys.invalid`](/errors/codes/auth-keys-invalid)
+- [`auth.keys.revoked`](/errors/codes/auth-keys-revoked)
+- [`auth.keys.expired`](/errors/codes/auth-keys-expired)

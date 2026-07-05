@@ -1,0 +1,51 @@
+---
+title: "kyb.blocked"
+description: "This action is not available for your account."
+---
+
+**Code:** `kyb.blocked`  
+**HTTP:** `403 Forbidden`
+
+## What happened
+
+The API blocked the action because of your business KYB state or permissions.
+
+## Safe message
+
+> This action is not available for your account.
+
+Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
+
+## Why this happened
+
+KYB verification is blocked or under review for this business.
+
+## How to fix it
+
+Check KYB status in the dashboard or contact Morapay support.
+
+## UI hint
+
+| Field | Value |
+|-------|-------|
+| `severity` | `critical` |
+| `placement` | `modal` |
+
+
+## Programmatic handling
+
+```typescript
+import { MorapayPermissionError, isMorapayError } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err) && err.code === "kyb.blocked") {
+    console.error(err.format());
+    // Customer UI: err.displayMessage ?? err.safeMessage
+    // Support: err.requestId
+  }
+}
+```
+
+## Related codes
+
+- [`kyb.forbidden`](/errors/codes/kyb-forbidden)

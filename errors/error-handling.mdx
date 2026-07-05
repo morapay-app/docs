@@ -15,8 +15,8 @@ Morapay errors are designed as an **on-demand consultant**, not just a stack tra
   "safeMessage": "This amount is below the minimum allowed for mobile money checkout in this region.",
   "displayMessage": "The transaction amount must be at least 1.00 GHS.",
   "why": "Mobile network operators enforce a platform floor transaction limit.",
-  "howToFix": "Validate cart totals before calling morapay.link.create() or morapay.products.link().",
-  "docUrl": "https://docs.morapay.io/codes/links/amount/below-minimum",
+  "howToFix": "Validate cart totals before calling the payment links API.",
+  "docUrl": "https://docs.morapay.io/errors/codes/links-amount-below-minimum",
   "uiHint": {
     "severity": "warning",
     "placement": "inline",
@@ -55,10 +55,7 @@ try {
   await morapay.products.link("prod_123", { amount: 0.1, currency: "GHS" });
 } catch (err) {
   if (err instanceof MorapayInvalidRequestError) {
-    // Customer UI: use displayMessage or safeMessage, never message
     showInlineError(err.displayMessage);
-
-    // Developer terminal: consultant layout
     console.error(err.format());
   } else if (err instanceof MorapayAuthenticationError) {
     alertOps(err.requestId);
@@ -91,20 +88,84 @@ links.amount.below_minimum
 payouts.momo.insufficient_balance
 ```
 
-## Catalog
+## Error code catalog
 
-The canonical error dictionary is maintained in the Morapay error catalog. All `success: false` JSON responses from the API include enriched consultant fields (`safeMessage`, `displayMessage`, `uiHint`, `docUrl`, `requestId`).
+The canonical dictionary lives in `sdk/src/errors/catalog.json`. Regenerate docs after catalog changes:
 
-## Example code pages
+```bash
+node docs/scripts/generate-error-code-pages.mjs
+```
 
-<CardGroup cols={2}>
-  <Card title="auth.keys.expired" icon="key" href="/errors/codes/auth-keys-expired">
-    Expired API key rotation.
-  </Card>
-  <Card title="links.amount.below_minimum" icon="coins" href="/errors/codes/links-amount-below-minimum">
-    Regional MoMo floor limits.
-  </Card>
-</CardGroup>
+### Authentication
+
+| Code | HTTP |
+|------|------|
+| [`auth.unauthorized`](/errors/codes/auth-unauthorized) | 401 |
+| [`auth.forbidden`](/errors/codes/auth-forbidden) | 403 |
+| [`auth.keys.invalid`](/errors/codes/auth-keys-invalid) | 401 |
+| [`auth.keys.revoked`](/errors/codes/auth-keys-revoked) | 401 |
+| [`auth.keys.expired`](/errors/codes/auth-keys-expired) | 401 |
+| [`auth.keys.legacy_unsupported`](/errors/codes/auth-keys-legacy-unsupported) | 401 |
+| [`auth.keys.secret_in_header`](/errors/codes/auth-keys-secret-in-header) | 401 |
+| [`auth.keys.origin_not_allowed`](/errors/codes/auth-keys-origin-not-allowed) | 403 |
+| [`auth.signature.mismatch`](/errors/codes/auth-signature-mismatch) | 401 |
+| [`auth.signature.timestamp_expired`](/errors/codes/auth-signature-timestamp-expired) | 401 |
+| [`auth.signature.incomplete`](/errors/codes/auth-signature-incomplete) | 401 |
+| [`auth.signature.missing`](/errors/codes/auth-signature-missing) | 401 |
+| [`auth.signature.invalid_timestamp`](/errors/codes/auth-signature-invalid-timestamp) | 401 |
+| [`auth.signature.invalid_format`](/errors/codes/auth-signature-invalid-format) | 401 |
+
+### KYB and permissions
+
+| Code | HTTP |
+|------|------|
+| [`kyb.forbidden`](/errors/codes/kyb-forbidden) | 403 |
+| [`kyb.blocked`](/errors/codes/kyb-blocked) | 403 |
+
+### Payment links
+
+| Code | HTTP |
+|------|------|
+| [`links.amount.below_minimum`](/errors/codes/links-amount-below-minimum) | 422 |
+| [`links.slug.duplicate`](/errors/codes/links-slug-duplicate) | 409 |
+
+### Payouts and treasury
+
+| Code | HTTP |
+|------|------|
+| [`payouts.momo.insufficient_balance`](/errors/codes/payouts-momo-insufficient-balance) | 400 |
+| [`payouts.network.carrier_down`](/errors/codes/payouts-network-carrier-down) | 503 |
+| [`payouts.clearing.refund_failed`](/errors/codes/payouts-clearing-refund-failed) | 500 |
+
+### Crypto checkout
+
+| Code | HTTP |
+|------|------|
+| [`crypto.chain.unsupported`](/errors/codes/crypto-chain-unsupported) | 422 |
+| [`crypto.slippage.exceeded`](/errors/codes/crypto-slippage-exceeded) | 422 |
+
+### Resources and validation
+
+| Code | HTTP |
+|------|------|
+| [`resource.not_found`](/errors/codes/resource-not-found) | 404 |
+| [`resource.conflict`](/errors/codes/resource-conflict) | 409 |
+| [`request.invalid`](/errors/codes/request-invalid) | 400 |
+| [`request.validation_failed`](/errors/codes/request-validation-failed) | 422 |
+
+### Platform and connectivity
+
+| Code | HTTP |
+|------|------|
+| [`api.rate_limited`](/errors/codes/api-rate-limited) | 429 |
+| [`api.service_unavailable`](/errors/codes/api-service-unavailable) | 503 |
+| [`api.internal_error`](/errors/codes/api-internal-error) | 500 |
+| [`api.bad_gateway`](/errors/codes/api-bad-gateway) | 502 |
+| [`api.gateway_timeout`](/errors/codes/api-gateway-timeout) | 504 |
+| [`api.connection_failed`](/errors/codes/api-connection-failed) | 502 |
+| [`api.proxy.core_unconfigured`](/errors/codes/api-proxy-core-unconfigured) | 503 |
+| [`api.proxy.signing_unconfigured`](/errors/codes/api-proxy-signing-unconfigured) | 503 |
+| [`api.proxy.core_unreachable`](/errors/codes/api-proxy-core-unreachable) | 502 |
 
 ## Next step
 

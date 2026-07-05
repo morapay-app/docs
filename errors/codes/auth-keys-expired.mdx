@@ -1,6 +1,6 @@
 ---
 title: "auth.keys.expired"
-description: "The API key used for this request has passed its expiration date."
+description: "We could not verify this request. Please try again later."
 ---
 
 **Code:** `auth.keys.expired`  
@@ -8,7 +8,7 @@ description: "The API key used for this request has passed its expiration date."
 
 ## What happened
 
-The public key in `Morapay-Key` maps to an API key record whose `expiresAt` is in the past. The API rejects the request before route handlers run.
+The API rejected the request during authentication before your route handler ran.
 
 ## Safe message
 
@@ -18,23 +18,11 @@ Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
 
 ## Why this happened
 
-The API key used for this request has passed its expiration date configured when the key was created or last rotated.
+The API key used for this request has passed its expiration date.
 
 ## How to fix it
 
-1. Open **Dashboard → Developers → API keys**.
-2. Create a new **TEST** or **LIVE** key pair (matching your environment).
-3. Update server environment variables:
-   - `MORAPAY_PUBLIC_KEY`
-   - `MORAPAY_SECRET_KEY`
-4. Redeploy and revoke the expired key.
-
-```typescript
-const morapay = new Morapay({
-  publicKey: process.env.MORAPAY_PUBLIC_KEY!,
-  secretKey: process.env.MORAPAY_SECRET_KEY!,
-});
-```
+Create a new **TEST** or **LIVE** key pair in **Dashboard → Developers → API keys** and update server environment variables (`MORAPAY_PUBLIC_KEY`, `MORAPAY_SECRET_KEY`). Revoke the expired key after deploy.
 
 ## UI hint
 
@@ -43,22 +31,24 @@ const morapay = new Morapay({
 | `severity` | `critical` |
 | `placement` | `toast` |
 
-Authentication failures should not be shown inline on checkout forms; alert operators via toast or monitoring.
 
 ## Programmatic handling
 
 ```typescript
-import { MorapayAuthenticationError } from "@morapay/sdk";
+import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
 
 catch (err) {
-  if (err instanceof MorapayAuthenticationError && err.code === "auth.keys.expired") {
-    await pagerDuty("Morapay API key expired", { requestId: err.requestId });
+  if (isMorapayError(err) && err.code === "auth.keys.expired") {
+    console.error(err.format());
+    // Customer UI: err.displayMessage ?? err.safeMessage
+    // Support: err.requestId
   }
 }
 ```
 
 ## Related codes
 
-- [`auth.keys.invalid`](/errors/error-handling): key not found
-- [`auth.keys.revoked`](/errors/error-handling): key deactivated
-- [`auth.signature.mismatch`](/getting-started/authentication). HMAC failure
+- [`auth.unauthorized`](/errors/codes/auth-unauthorized)
+- [`auth.keys.invalid`](/errors/codes/auth-keys-invalid)
+- [`auth.keys.revoked`](/errors/codes/auth-keys-revoked)
+- [`auth.keys.legacy_unsupported`](/errors/codes/auth-keys-legacy-unsupported)

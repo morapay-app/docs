@@ -1,0 +1,51 @@
+---
+title: "resource.not_found"
+description: "The requested item could not be found."
+---
+
+**Code:** `resource.not_found`  
+**HTTP:** `404 Not Found`
+
+## What happened
+
+The API could not find or reconcile the resource referenced in your request.
+
+## Safe message
+
+> The requested item could not be found.
+
+Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
+
+## Why this happened
+
+The ID in the request path does not exist or is not visible to your merchant account.
+
+## How to fix it
+
+Verify the resource ID, environment (TEST vs LIVE), and that the record was not deleted.
+
+## UI hint
+
+| Field | Value |
+|-------|-------|
+| `severity` | `info` |
+| `placement` | `inline` |
+
+
+## Programmatic handling
+
+```typescript
+import { MorapayNotFoundError, isMorapayError } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err) && err.code === "resource.not_found") {
+    console.error(err.format());
+    // Customer UI: err.displayMessage ?? err.safeMessage
+    // Support: err.requestId
+  }
+}
+```
+
+## Related codes
+
+- [`resource.conflict`](/errors/codes/resource-conflict)

@@ -1,0 +1,54 @@
+---
+title: "auth.signature.missing"
+description: "We could not verify this request. Please try again later."
+---
+
+**Code:** `auth.signature.missing`  
+**HTTP:** `401 Unauthorized`
+
+## What happened
+
+The API rejected the request during authentication before your route handler ran.
+
+## Safe message
+
+> We could not verify this request. Please try again later.
+
+Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
+
+## Why this happened
+
+Morapay-Timestamp or Morapay-Signature was missing from the signed request.
+
+## How to fix it
+
+Include Morapay-Timestamp (unix seconds) and Morapay-Signature (v1=<hex>) on every authenticated call.
+
+## UI hint
+
+| Field | Value |
+|-------|-------|
+| `severity` | `critical` |
+| `placement` | `toast` |
+
+
+## Programmatic handling
+
+```typescript
+import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err) && err.code === "auth.signature.missing") {
+    console.error(err.format());
+    // Customer UI: err.displayMessage ?? err.safeMessage
+    // Support: err.requestId
+  }
+}
+```
+
+## Related codes
+
+- [`auth.unauthorized`](/errors/codes/auth-unauthorized)
+- [`auth.keys.invalid`](/errors/codes/auth-keys-invalid)
+- [`auth.keys.revoked`](/errors/codes/auth-keys-revoked)
+- [`auth.keys.expired`](/errors/codes/auth-keys-expired)

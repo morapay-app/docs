@@ -1,6 +1,6 @@
 ---
 title: "links.amount.below_minimum"
-description: "Transaction amount is below the regional mobile money platform floor."
+description: "This amount is below the minimum allowed for mobile money checkout in this region."
 ---
 
 **Code:** `links.amount.below_minimum`  
@@ -8,7 +8,13 @@ description: "Transaction amount is below the regional mobile money platform flo
 
 ## What happened
 
-The API rejected a payment link or product checkout link because the amount falls below the **platform or carrier minimum** for that corridor.
+The API rejected a payment link or checkout link create/update request.
+
+## Safe message
+
+> This amount is below the minimum allowed for mobile money checkout in this region.
+
+Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
 
 ## Display message
 
@@ -18,58 +24,11 @@ Use `err.displayMessage` in UI components. Reserve `err.message` for server logs
 
 ## Why this happened
 
-Mobile network operators (MTN, Telecel, etc.) enforce a hard floor transaction limit. In Ghana, MoMo checkouts commonly require at least **1.00 GHS** even when the USD platform minimum is lower.
+Mobile network operators enforce a platform floor transaction limit (for example, 1.00 GHS in Ghana).
 
 ## How to fix it
 
-Validate cart totals **before** calling the API:
-
-```typescript
-const MIN_GHS = 1.0;
-
-function validateAmount(amount: number, currency: string) {
-  if (currency === "GHS" && amount < MIN_GHS) {
-    throw new Error(`Amount must be at least ${MIN_GHS} GHS`);
-  }
-}
-
-validateAmount(cartTotal, "GHS");
-const link = await morapay.link.create({
-  title: "Order",
-  amount: cartTotal,
-  currency: "GHS",
-});
-```
-
-For catalog products:
-
-```typescript
-await morapay.products.link(productId, {
-  customerEmail: "alex@example.com",
-  amount: Math.max(cartTotal, MIN_GHS),
-});
-```
-
-## UI hint
-
-| Field | Value |
-|-------|-------|
-| `severity` | `warning` |
-| `placement` | `inline` |
-| `actionText` | `Update amount` |
-
-Render under the amount input, not as a blocking modal.
-
-```typescript
-import { MorapayUi } from "@morapay/sdk";
-
-catch (err) {
-  if (isMorapayError(err) && err.code === "links.amount.below_minimum") {
-    setFieldError("amount", err.displayMessage);
-    // or: MorapayUi.toast(err) for non-form contexts
-  }
-}
-```
+Validate cart totals and dynamic pricing so the amount meets the regional minimum before creating a payment link (`POST /api/v1/merchant/links`) or product checkout link.
 
 ## Platform defaults
 
@@ -81,7 +40,28 @@ catch (err) {
 
 Regional MoMo floors may exceed these; always validate for your corridor.
 
-## Related
+## UI hint
 
-- [Payment links](/concepts/payment-links)
-- [Error handling](/errors/error-handling)
+| Field | Value |
+|-------|-------|
+| `severity` | `warning` |
+| `placement` | `inline` |
+| `actionText` | `Update amount` |
+
+## Programmatic handling
+
+```typescript
+import { MorapayInvalidRequestError, isMorapayError } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err) && err.code === "links.amount.below_minimum") {
+    console.error(err.format());
+    // Customer UI: err.displayMessage ?? err.safeMessage
+    // Support: err.requestId
+  }
+}
+```
+
+## Related codes
+
+- [`links.slug.duplicate`](/errors/codes/links-slug-duplicate)

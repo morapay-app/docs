@@ -1,0 +1,54 @@
+---
+title: "auth.keys.revoked"
+description: "We could not verify this request. Please try again later."
+---
+
+**Code:** `auth.keys.revoked`  
+**HTTP:** `401 Unauthorized`
+
+## What happened
+
+The API rejected the request during authentication before your route handler ran.
+
+## Safe message
+
+> We could not verify this request. Please try again later.
+
+Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
+
+## Why this happened
+
+The API key used for this request has been deactivated.
+
+## How to fix it
+
+Re-enable the key in the dashboard or create a new key pair and update your environment variables.
+
+## UI hint
+
+| Field | Value |
+|-------|-------|
+| `severity` | `critical` |
+| `placement` | `toast` |
+
+
+## Programmatic handling
+
+```typescript
+import { MorapayAuthenticationError, isMorapayError } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err) && err.code === "auth.keys.revoked") {
+    console.error(err.format());
+    // Customer UI: err.displayMessage ?? err.safeMessage
+    // Support: err.requestId
+  }
+}
+```
+
+## Related codes
+
+- [`auth.unauthorized`](/errors/codes/auth-unauthorized)
+- [`auth.keys.invalid`](/errors/codes/auth-keys-invalid)
+- [`auth.keys.expired`](/errors/codes/auth-keys-expired)
+- [`auth.keys.legacy_unsupported`](/errors/codes/auth-keys-legacy-unsupported)

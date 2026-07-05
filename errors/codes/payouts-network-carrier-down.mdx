@@ -1,0 +1,52 @@
+---
+title: "payouts.network.carrier_down"
+description: "Mobile money is temporarily unavailable. Please try again in a few minutes."
+---
+
+**Code:** `payouts.network.carrier_down`  
+**HTTP:** `503 Service Unavailable`
+
+## What happened
+
+The API could not complete a payout, disbursement, or treasury operation.
+
+## Safe message
+
+> Mobile money is temporarily unavailable. Please try again in a few minutes.
+
+Use `err.safeMessage` or `err.displayMessage` in customer UI, not `err.message`.
+
+## Why this happened
+
+A regional mobile money operator node (MTN, Telecel, etc.) is reporting downtime.
+
+## How to fix it
+
+Queue the payout for retry and alert operations. Include requestId when contacting Morapay support.
+
+## UI hint
+
+| Field | Value |
+|-------|-------|
+| `severity` | `critical` |
+| `placement` | `modal` |
+| `actionText` | `View account` |
+
+## Programmatic handling
+
+```typescript
+import { MorapayApiError, isMorapayError } from "@morapay/sdk";
+
+catch (err) {
+  if (isMorapayError(err) && err.code === "payouts.network.carrier_down") {
+    console.error(err.format());
+    // Customer UI: err.displayMessage ?? err.safeMessage
+    // Support: err.requestId
+  }
+}
+```
+
+## Related codes
+
+- [`payouts.momo.insufficient_balance`](/errors/codes/payouts-momo-insufficient-balance)
+- [`payouts.clearing.refund_failed`](/errors/codes/payouts-clearing-refund-failed)
