@@ -11,20 +11,22 @@ Use them from your checkout BFF or browser when building custom payer UI. Mercha
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `GET` | `/payment-links/:lookup` | Link by slug or public code |
-| `POST` | `/payment-links/:slug/sessions` | Start checkout session |
-| `GET` | `/payment-links/gas-checkout/:publicCode` | Gas-sponsored checkout payload |
+| `GET` | `/links/:lookup` | Link by slug or public code |
+| `POST` | `/links/:slug/sessions` | Start checkout session |
+| `GET` | `/links/gas-checkout/:publicCode` | Gas-sponsored checkout payload |
+
+Legacy aliases under `/payment-links/*` mirror the same handlers.
 
 ### Get payment link
 
-`GET /api/public/payment-links/:lookup`
+`GET /api/public/links/:lookup`
 
 Optional query: `wallet` for wallet-aware pricing.
 
 <RequestExample>
 
 ```bash cURL
-curl -s "https://api.morapay.io/api/public/payment-links/invoice-42"
+curl -s "https://api.morapay.io/api/public/links/invoice-42"
 ```
 
 </RequestExample>
@@ -71,12 +73,12 @@ curl -s "https://api.morapay.io/api/public/payment-links/invoice-42"
 
 ### Start checkout session
 
-`POST /api/public/payment-links/:slug/sessions`
+`POST /api/public/links/:slug/sessions`
 
 <RequestExample>
 
 ```bash cURL
-curl -s -X POST "https://api.morapay.io/api/public/payment-links/invoice-42/sessions" \
+curl -s -X POST "https://api.morapay.io/api/public/links/invoice-42/sessions" \
   -H "Content-Type: application/json" \
   -d '{ "amount": 100, "currency": "USD" }'
 ```
@@ -199,18 +201,31 @@ curl -s "https://api.morapay.io/api/public/subscription/plan_uuid"
 
 </ResponseExample>
 
+## Payment requests
+
+Payer-facing helpers for REQUEST-type invoices created via [Business QR](/api-reference/business-qr).
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/requests/by-link/:linkId` | Lookup by pay link id |
+| `GET` | `/requests/:id` | Request detail |
+| `GET` | `/requests/calldata` | Crypto pay calldata |
+| `POST` | `/requests/confirm-crypto` | Confirm on-chain payment |
+
+Merchant management uses signed `GET`/`POST /api/v1/merchant/requests`.
+
 ## Checkout quotes
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `POST` | `/catalog/quotes/checkout` | Multi-row token quotes (checkout UI) |
+| `POST` | `/quotes/checkout` | Multi-row token quotes (checkout UI) |
 | `POST` | `/quotes/swap` | Swap quote for on-chain checkout |
-| `POST` | `/commerce/fiat` | Fiat payer total for link or product |
+| `POST` | `/commerce/fiat` | Fiat payer total (Core: `/api/commerce/checkout-fiat`) |
 
 <RequestExample>
 
 ```bash cURL
-curl -s -X POST "https://api.morapay.io/api/public/catalog/quotes/checkout" \
+curl -s -X POST "https://api.morapay.io/api/public/quotes/checkout" \
   -H "Content-Type: application/json" \
   -d '{
     "inputAmount": "100",

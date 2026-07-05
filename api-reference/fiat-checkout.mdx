@@ -11,11 +11,11 @@ Base URL: `https://api.morapay.io`
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| `GET` | `/api/public/fiat/config` | None | Enabled fiat methods |
+| `GET` | `/api/public/fiat/config` | None | Enabled fiat methods (proxies to Core `/api/commerce/fiat-checkout/config`) |
 | `POST` | `/api/public/fiat/payments/initialize` | None | Start MoMo, bank, or card session |
 | `GET` | `/api/public/fiat/transactions/verify/:reference` | None | Poll payment status |
 | `POST` | `/api/public/fiat/payments/test-confirm` | None | TEST mode only: simulate success |
-| `POST` | `/api/public/commerce/fiat` | None | Quote payer fiat total |
+| `POST` | `/api/public/commerce/fiat` | None | Quote payer fiat total (proxies to Core `/api/commerce/checkout-fiat`) |
 | `POST` | `/api/public/validate/momo` | None | Validate MoMo number |
 | `POST` | `/api/public/validate/bank` | None | Validate bank account |
 | `GET` | `/api/public/validate/banks` | None | Bank list for forms |
@@ -24,7 +24,7 @@ Base URL: `https://api.morapay.io`
 
 `GET /api/public/fiat/config`
 
-Returns enabled fiat methods for TEST or LIVE checkout.
+Returns enabled fiat methods for TEST or LIVE checkout. On Core this route is registered as `GET /api/commerce/fiat-checkout/config`.
 
 ### Query parameters
 
@@ -91,7 +91,11 @@ curl -s "https://api.morapay.io/api/public/fiat/config?environment=LIVE"
 
 `POST /api/public/commerce/fiat`
 
-Quote fiat checkout amounts for a payment link or product session. Used by hosted checkout and embed flows.
+Quote fiat checkout amounts for a payment link or product session. Proxies to Core `POST /api/commerce/checkout-fiat`.
+
+<Note>
+  Legacy Core alias: `POST /api/commerce/paystack-fiat-quote`. Do not use `/api/public/catalog/quotes/checkout` for fiat payer totals.
+</Note>
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|

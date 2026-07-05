@@ -61,12 +61,14 @@ const checkout = await morapay.products.link(product.id, {
 const paid = morapay.utils.isPaid(checkout); // false until payer completes
 ```
 
-### Sessions & settlement quotes
+### Sessions and link quotes
 
 ```typescript
 const sessions = await morapay.link.sessions("link_abc123", { limit: 10 });
-const quote = await morapay.link.quote("link_abc123", { chainId: 8453 });
+const quote = await morapay.link.quote("link_abc123", { invoice_major: 100 });
 ```
+
+REST equivalent: `GET /api/v1/merchant/links/:id/checkout-sessions` and `POST /api/v1/merchant/links/:id/quote`.
 
 ## Platform minimums
 

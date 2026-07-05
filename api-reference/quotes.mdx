@@ -133,7 +133,11 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/quotes/fiat" \
 
 `POST /api/public/commerce/fiat`
 
-Public route for hosted checkout payer totals. Used when rendering MoMo, bank, or card checkout.
+Proxies to Core `POST /api/commerce/checkout-fiat`. Use this path from checkout BFFs and hosted flows.
+
+<Note>
+  Legacy Core alias: `POST /api/commerce/paystack-fiat-quote` (same handler, not exposed on the public API host).
+</Note>
 
 | Field | Description |
 |-------|-------------|
@@ -144,16 +148,20 @@ Public route for hosted checkout payer totals. Used when rendering MoMo, bank, o
 
 See [Fiat checkout API](/api-reference/fiat-checkout).
 
-## Link settlement quote
+## Link quote
 
-`POST /api/v1/merchant/links/:id/settlement-quote`
+`POST /api/v1/merchant/links/:id/quote`
 
 Merchant clearing estimate for fiat-denominated links.
+
+<Note>
+  Legacy alias `POST /links/:id/settlement-quote` is no longer registered.
+</Note>
 
 <RequestExample>
 
 ```bash cURL
-curl -s -X POST "https://api.morapay.io/api/v1/merchant/links/link_uuid/settlement-quote" \
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/links/link_uuid/quote" \
   -H "Content-Type: application/json" \
   -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
   -H "Morapay-Timestamp: $TIMESTAMP" \
@@ -167,7 +175,12 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/links/link_uuid/settleme
 
 `POST /api/v1/quotes/checkout`
 
-Returns token payout rows for custom checkout UIs. Also available at `POST /api/public/catalog/quotes/checkout`.
+Returns token payout rows for custom checkout UIs.
+
+| Host | Path |
+|------|------|
+| Morapay API (public) | `POST /api/public/quotes/checkout` |
+| Core (direct) | `POST /api/v1/quotes/checkout` |
 
 <RequestExample>
 

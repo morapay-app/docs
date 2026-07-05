@@ -13,7 +13,7 @@ Morapay pricing is **quote-first**: every product exposes a quote or settlement 
 
 | Product | SDK | API |
 |---------|-----|-----|
-| Fiat checkout payer total | Use REST | `POST /api/commerce/checkout-fiat` |
+| Fiat checkout payer total | — | `POST /api/public/commerce/fiat` (Core: `/api/commerce/checkout-fiat`) |
 | Merchant clearing (fiat link) | `morapay.link.quote(id, { invoice_major })` | `POST /api/v1/merchant/links/:id/quote` |
 | Disbursement batch | `morapay.disbursement.quote({ .. })` | `POST /api/v1/merchant/disbursement/batches/quote` |
 | Crypto ramp | `morapay.quotes.ramp.create({ .. })` | `POST /api/v1/merchant/quotes/ramp` |
@@ -60,11 +60,8 @@ const ramp = await morapay.quotes.ramp.create({
 Request a payer total before rendering checkout:
 
 ```bash
-curl -s -X POST "https://api.morapay.io/api/commerce/checkout-fiat" \
+curl -s -X POST "https://api.morapay.io/api/public/commerce/fiat" \
   -H "Content-Type: application/json" \
-  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
-  -H "Morapay-Timestamp: $TIMESTAMP" \
-  -H "Morapay-Signature: v1=$SIGNATURE" \
   -d '{
     "payment_link_id": "link_uuid",
     "payer_currency": "GHS",
@@ -156,7 +153,7 @@ For account-specific fee schedules or enterprise pricing, contact [support@morap
 
 <AccordionGroup>
   <Accordion title="How do I show fees to my customers at checkout?">
-    Call `POST /api/commerce/checkout-fiat` with the payment link ID, payer currency, and `quote_tier` (`card_local`, `card_international`, `mobile_money`, or `bank_transfer`). Display `payerTotalMajor` when fees are passed to the customer, or `spotPayerMajor` when your business absorbs them (`feeMode` in the response).
+    Call `POST /api/public/commerce/fiat` with the payment link ID, payer currency, and `quote_tier` (`card_local`, `card_international`, `mobile_money`, or `bank_transfer`). Display `payerTotalMajor` when fees are passed to the customer, or `spotPayerMajor` when your business absorbs them (`feeMode` in the response).
   </Accordion>
   <Accordion title="Why does usdCharge differ from payoutTotal on disbursements?">
     `payoutTotal` is what recipients receive. `usdCharge` adds platform batch fees, per-recipient network fees, chain transfer costs, and any FX spread on the settlement token. The quote endpoint returns both values.

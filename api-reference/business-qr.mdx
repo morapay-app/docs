@@ -1,6 +1,6 @@
 ---
 title: "Business QR and pay pages"
-description: "Open-amount business checkout and QR configuration."
+description: "Open-amount business checkout, QR configuration, and payment requests."
 ---
 
 Business QR lets customers pay any amount at a stable `/pay/:businessSlug` URL.
@@ -13,9 +13,9 @@ Base path: `/api/v1/merchant`
 |--------|------|-------------|
 | `GET` | `/qr` | Get QR and pay page config |
 | `POST` | `/qr` | Update QR branding and settings |
-| `GET` | `/payment-requests` | List legacy payment requests |
-| `POST` | `/payment-requests` | Create payment request |
-| `GET` | `/payment-requests/:id` | Get payment request |
+| `GET` | `/requests` | List payment requests |
+| `POST` | `/requests` | Create payment request |
+| `GET` | `/requests/:id` | Get payment request |
 
 ## Get QR config
 
@@ -109,23 +109,36 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/qr" \
 
 ## Payment requests
 
-Legacy REQUEST-type flows for ad hoc invoices.
+REQUEST-type flows for ad hoc invoices: create a payable link, notify the payer, and track status.
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `GET` | `/payment-requests` | List |
-| `POST` | `/payment-requests` | Create |
-| `GET` | `/payment-requests/:id` | Detail |
+| `GET` | `/requests` | List requests |
+| `POST` | `/requests` | Create request |
+| `GET` | `/requests/:id` | Request detail |
+
+<Note>
+  Legacy path `/payment-requests` is retired. Use `/requests`.
+</Note>
+
+### Create request
+
+`POST /api/v1/merchant/requests`
 
 <RequestExample>
 
 ```bash cURL
-curl -s -X POST "https://api.morapay.io/api/v1/merchant/payment-requests" \
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/requests" \
   -H "Content-Type: application/json" \
   -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
   -H "Morapay-Timestamp: $TIMESTAMP" \
   -H "Morapay-Signature: v1=$SIGNATURE" \
-  -d '{ "amount": 50, "currency": "GHS", "description": "Table 4" }'
+  -d '{
+    "amount": 50,
+    "currency": "GHS",
+    "description": "Table 4",
+    "notifyEmail": "customer@example.com"
+  }'
 ```
 
 </RequestExample>
@@ -139,8 +152,10 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/payment-requests" \
   "success": true,
   "data": {
     "id": "req_uuid",
-    "amount": 50,
-    "currency": "GHS",
+    "code": "ABC123",
+    "linkId": "link_uuid",
+    "transactionId": "txn_uuid",
+    "payLink": "https://checkout.morapay.io/pay/ABC123",
     "status": "PENDING"
   }
 }
@@ -149,7 +164,7 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/payment-requests" \
 ```json 404 Not Found
 {
   "success": false,
-  "error": "Payment request not found.",
+  "error": "Payment link not found.",
   "code": "resource.not_found",
   "requestId": "req_pr404"
 }
@@ -158,6 +173,14 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/payment-requests" \
 </CodeGroup>
 
 </ResponseExample>
+
+### List and get
+
+`GET /api/v1/merchant/requests?page=1&limit=20&status=PENDING`
+
+`GET /api/v1/merchant/requests/:id`
+
+Payer-facing lookup and crypto pay helpers live on the public API. See [Public checkout](/api-reference/public-checkout#payment-requests).
 
 ## Common errors
 

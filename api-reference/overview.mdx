@@ -46,6 +46,7 @@ curl -s https://api.morapay.io/api/v1/merchant
 | Resource | Methods | Doc |
 |----------|---------|-----|
 | Payment links | `GET`, `POST`, `PATCH` | [Payment links](/api-reference/payment-links) |
+| Payment requests | `GET`, `POST` | [Business QR](/api-reference/business-qr) |
 | Products | `GET`, `POST`, `PATCH` | [Products](/api-reference/products) |
 | Business QR / pay | `GET`, `POST` | [Business QR](/api-reference/business-qr) |
 | Quotes | `POST` | [Quotes](/api-reference/quotes) |
@@ -88,7 +89,7 @@ curl -s https://api.morapay.io/api/v1/merchant
 | Subscription checkout | `GET`, `POST` | [Public checkout](/api-reference/public-checkout) |
 | Fiat config | `GET` | [Fiat checkout](/api-reference/fiat-checkout) |
 | Fiat initialize / verify | `POST`, `GET` | [Fiat checkout](/api-reference/fiat-checkout) |
-| Commerce fiat quote | `POST` | [Fiat checkout](/api-reference/fiat-checkout) |
+| Commerce fiat quote | `POST` | [Fiat checkout](/api-reference/fiat-checkout) (`/api/public/commerce/fiat` → Core `/api/commerce/checkout-fiat`) |
 
 ### Portal-only (dashboard JWT)
 

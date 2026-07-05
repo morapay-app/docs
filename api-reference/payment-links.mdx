@@ -16,7 +16,7 @@ Base path: `/api/v1/merchant/links`
 | `POST` | `/links` | Create link |
 | `PATCH` | `/links/:id` | Update link |
 | `GET` | `/links/:id/checkout-sessions` | Checkout sessions and payments |
-| `POST` | `/links/:id/settlement-quote` | Fiat clearing quote for a link |
+| `POST` | `/links/:id/quote` | Fiat clearing quote for a link |
 
 ## List links
 
@@ -256,16 +256,20 @@ curl -s -X PATCH "https://api.morapay.io/api/v1/merchant/links/link_uuid" \
 
 </ResponseExample>
 
-## Settlement quote
+## Link quote
 
-`POST /api/v1/merchant/links/:id/settlement-quote`
+`POST /api/v1/merchant/links/:id/quote`
 
 Body optional: `{ "invoice_major": 100 }` for fiat invoice amount in major units.
+
+<Note>
+  Legacy alias `POST /links/:id/settlement-quote` is no longer registered. Use `/quote`.
+</Note>
 
 <RequestExample>
 
 ```bash cURL
-curl -s -X POST "https://api.morapay.io/api/v1/merchant/links/link_uuid/settlement-quote" \
+curl -s -X POST "https://api.morapay.io/api/v1/merchant/links/link_uuid/quote" \
   -H "Content-Type: application/json" \
   -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
   -H "Morapay-Timestamp: $TIMESTAMP" \

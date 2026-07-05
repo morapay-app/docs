@@ -161,6 +161,19 @@ Some mutating routes require a **BusinessMember** role when using portal JWT aut
 
 On denial: **403** with `FORBIDDEN_MERCHANT_ROLE`.
 
+## Legacy route aliases
+
+Older docs and integrations may reference retired paths. Use the current route.
+
+| Legacy | Current |
+|--------|---------|
+| `GET/POST /api/v1/merchant/payment-requests` | `GET/POST /api/v1/merchant/requests` |
+| `POST /api/v1/merchant/links/:id/settlement-quote` | `POST /api/v1/merchant/links/:id/quote` |
+| `POST /api/commerce/paystack-fiat-quote` | `POST /api/commerce/checkout-fiat` (public entry: `POST /api/public/commerce/fiat`) |
+| `POST /api/public/catalog/quotes/checkout` | `POST /api/public/quotes/checkout` |
+| `GET /api/public/payment-links/:slug` | `GET /api/public/links/:slug` (alias still works) |
+| `POST /api/public/payment-links/:slug/sessions` | `POST /api/public/links/:slug/sessions` (alias still works) |
+
 ## Related
 
 - [Authentication](/getting-started/authentication)
