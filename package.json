@@ -1,0 +1,8 @@
+{
+  "name": "morapay-docs",
+  "private": true,
+  "description": "Morapay Mintlify documentation site",
+  "scripts": {
+    "generate": "node scripts/generate-all.mjs"
+  }
+}
