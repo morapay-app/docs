@@ -1,9 +1,7 @@
 ---
 title: "Environments"
-description: "TEST vs LIVE keys, API hosts, and checkout URLs."
+description: "Morapay separates **TEST** and **LIVE** at the API key level."
 ---
-
-Morapay separates **TEST** and **LIVE** at the API key level. There is no environment header when using signed merchant keys.
 
 ## TEST vs LIVE
 
@@ -14,7 +12,7 @@ Morapay separates **TEST** and **LIVE** at the API key level. There is no enviro
 | Funds | Simulated / sandbox rails | Real money movement |
 | Dashboard | TEST mode toggle | LIVE mode toggle |
 
-Use TEST keys for integration development. Rotate to LIVE only after checkout, webhooks, and payout flows are verified.
+Use TEST keys for integration development.<br />Rotate to LIVE only after checkout, webhooks, and payout flows are verified.
 
 ## API hosts
 
@@ -29,8 +27,6 @@ SDK options:
 const morapay = new Morapay({
   publicKey: process.env.MORAPAY_PUBLIC_KEY!,
   secretKey: process.env.MORAPAY_SECRET_KEY!,
-  baseUrl: "http://localhost:4001",           // Morapay API
-  checkoutBaseUrl: "http://localhost:3002",     // Checkout app
 });
 ```
 
@@ -48,7 +44,7 @@ flowchart LR
   MerchantApp -->|URL helpers| Checkout
 ```
 
-Point the SDK at `https://api.morapay.io` in production (the default). All signing, webhooks, payment links, subscriptions, and disbursements are served from this host.
+All signing, webhooks, payment links, subscriptions, and disbursements are served from https://api.morapay.io.
 
 ## Response envelope
 

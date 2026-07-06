@@ -91,12 +91,6 @@ catch (err) {
 }
 ```
 
-Regenerate the dictionary after catalog changes:
-
-```bash
-pnpm run generate:error-codes --filter @morapay/sdk
-```
-
 ### Error subclasses
 
 | Class | Typical HTTP |
@@ -118,15 +112,6 @@ Codes follow `domain.resource.reason`:
 auth.signature.mismatch
 links.amount.below_minimum
 payouts.momo.insufficient_balance
-```
-
-## Error code catalog
-
-The canonical dictionary lives in `sdk/src/errors/catalog.json` and is exported from the SDK as `MorapayErrorCode`. Regenerate SDK constants and docs after catalog changes:
-
-```bash
-cd sdk && pnpm run generate:error-codes
-node docs/scripts/generate-error-code-pages.mjs
 ```
 
 ### Authentication

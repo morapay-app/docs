@@ -1,9 +1,7 @@
 ---
 title: "Authentication"
-description: "HMAC-signed requests with Morapay API keys."
+description: "Morapay Merchant API v1 uses HMAC-signed requests with Morapay API keys."
 ---
-
-Morapay Merchant API v1 uses **signed requests**. Raw secret keys (`sk_*`) are never sent in headers.
 
 ## API key pairs
 
@@ -12,17 +10,17 @@ Morapay Merchant API v1 uses **signed requests**. Raw secret keys (`sk_*`) are n
 | Public key | `pk_test_*` / `pk_live_*` | `Morapay-Key` header |
 | Secret key | `sk_test_*` / `sk_live_*` | Server env only; used to sign |
 
-Create pairs in **Dashboard → Developers → API keys**. Each key is pinned to **TEST** or **LIVE** at creation time. The SDK infers environment from the key. Do not send `x-merchant-environment` with API keys.
+Create pairs in **Dashboard → Developers → API keys**. <br/>Each key is pinned to **TEST** or **LIVE** at creation time. <br/>The SDK infers environment from the key. Do not send `x-merchant-environment` with API keys.
 
 ## Required headers
 
 | Header | Value |
 |--------|--------|
-| `Morapay-Key` | Your public key (`pk_*`) |
+| `Morapay-Key` | Your public key `pk_*` |
 | `Morapay-Timestamp` | Unix seconds |
 | `Morapay-Signature` | `v1=<hex>` HMAC-SHA256 digest |
 
-The Morapay API validates signatures on every request. The canonical payload is:
+The Morapay API validates signatures on every request.<br/>The canonical payload is:
 
 ```
 {timestamp}.{METHOD}.{pathWithQuery}.{sha256HexBody}
@@ -52,10 +50,10 @@ If you cannot use the SDK, implement the same algorithm:
 
 1. Hash the raw request body with SHA-256 and encode as lowercase hex.
 2. Build the canonical string: `{timestamp}.{METHOD}.{pathWithQuery}.{bodySha256Hex}`.
-3. Derive the signing key: SHA-256 digest of the UTF-8 secret `sk_*` as **32 raw bytes** (not hex).
+3. Derive the signing key: SHA-256 digest of the UTF-8 secret `sk_*` as **32 raw bytes** not hex.
 4. HMAC-SHA256 the canonical string with that key; prefix the hex digest with `v1=`.
 
-Send the same raw body bytes you hashed. Do not re-serialize JSON after signing.
+Send the same raw body bytes you hashed. <br/>Do not re-serialize JSON after signing.
 
 <CodeGroup>
 
