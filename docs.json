@@ -252,7 +252,7 @@
             ]
           },
           {
-            "group": "Money movement",
+            "group": "Transfers and payouts",
             "icon": "coins",
             "pages": [
               "api-reference/merchant-ramp",
