@@ -1,8 +1,14 @@
 {
-  "name": "morapay-docs",
+  "name": "@morapay/docs",
   "private": true,
-  "description": "Morapay Mintlify documentation site",
+  "description": "Morapay Mintlify documentation (docs.morapay.io)",
   "scripts": {
-    "generate": "node scripts/generate-all.mjs"
+    "dev": "mint dev --port 3005",
+    "build": "sh scripts/build.sh",
+    "generate": "node scripts/generate-all.mjs",
+    "lint": "node -e \"process.exit(0)\""
+  },
+  "devDependencies": {
+    "mint": "4.2.614"
   }
 }

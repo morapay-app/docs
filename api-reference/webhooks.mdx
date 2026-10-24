@@ -241,6 +241,8 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/webhooks/deliveries/deli
 | Event | When |
 |-------|------|
 | `payment_link.paid` | Payer completes checkout on a link |
+| `ramp.created` | Merchant ramp transaction created ([Merchant ramp](/api-reference/merchant-ramp)) |
+| `ramp.status_updated` | Merchant ramp status or settlement changed |
 | `payout.status_updated` | Disbursement recipient status changes |
 | `disbursement_batch.created` | Batch scheduled or created |
 | `subscription.charge.succeeded` | Recurring charge succeeds |

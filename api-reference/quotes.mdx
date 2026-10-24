@@ -14,9 +14,11 @@ Base path: `/api/v1/merchant`
 | `POST` | `/quotes/ramp` | Crypto onramp or offramp quote |
 | `POST` | `/quotes/fiat` | Fiat corridor quote |
 
-### Ramp quote
+### Ramp quote (crypto assets)
 
 `POST /api/v1/merchant/quotes/ramp`
+
+For **fiat onramp and offramp** (mobile money, bank, GHS/NGN corridors), use the dedicated [Merchant ramp](/api-reference/merchant-ramp) API instead.
 
 <RequestExample>
 

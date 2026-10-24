@@ -6,7 +6,7 @@
  *   - Coverage JSON export (requires DATABASE_URL in core/.env)
  *   - Reference MDX pages from coverage (docs/reference/*.mdx)
  *
- *   cd docs && pnpm generate
+ *   cd morapay-web/apps/docs && pnpm generate
  *
  * Flags:
  *   --skip-coverage   Skip DB export; regenerate MDX from existing coverage.json only
@@ -20,8 +20,9 @@ import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const docsRoot = path.resolve(here, "..");
-const repoRoot = path.resolve(docsRoot, "..");
-const coreRoot = path.join(repoRoot, "core");
+const morapayWebRoot = path.resolve(docsRoot, "..", "..");
+const workspaceRoot = path.resolve(morapayWebRoot, "..");
+const coreRoot = path.join(workspaceRoot, "core");
 const coverageJson = path.join(docsRoot, "data/coverage.json");
 
 const skipCoverage = process.argv.includes("--skip-coverage");
@@ -49,8 +50,13 @@ function tryRun(label, cmd, args, cwd) {
   return result.status ?? 1;
 }
 
-run("SDK error codes", "node", ["sdk/scripts/generate-error-codes.mjs"], repoRoot);
-run("Error code MDX pages", "node", ["docs/scripts/generate-error-code-pages.mjs"], repoRoot);
+run("SDK error codes", "node", ["sdk/scripts/generate-error-codes.mjs"], workspaceRoot);
+run(
+  "Error code MDX pages",
+  "node",
+  ["morapay-web/apps/docs/scripts/generate-error-code-pages.mjs"],
+  workspaceRoot
+);
 
 if (!skipCoverage) {
   const exportArgs = [

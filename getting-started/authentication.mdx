@@ -18,7 +18,7 @@ Create pairs in **Dashboard → Developers → API keys**. <br/>Each key is pinn
 |--------|--------|
 | `Morapay-Key` | Your public key `pk_*` |
 | `Morapay-Timestamp` | Unix seconds |
-| `Morapay-Signature` | `v1=<hex>` HMAC-SHA256 digest |
+| `Morapay-Signature` | HMAC-SHA256 digest prefixed with `v1=` |
 
 The Morapay API validates signatures on every request.<br/>The canonical payload is:
 

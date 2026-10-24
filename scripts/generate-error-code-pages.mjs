@@ -7,12 +7,13 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { toCodeKey } from "../../sdk/scripts/generate-error-codes.mjs";
+import { toCodeKey } from "../../../../sdk/scripts/generate-error-codes.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const repoRoot = join(__dirname, "../..");
-const catalogPath = join(repoRoot, "sdk/src/errors/catalog.json");
-const outDir = join(repoRoot, "docs/errors/codes");
+const docsRoot = join(__dirname, "..");
+const workspaceRoot = join(docsRoot, "../../..");
+const catalogPath = join(workspaceRoot, "sdk/src/errors/catalog.json");
+const outDir = join(docsRoot, "errors/codes");
 
 const catalog = JSON.parse(readFileSync(catalogPath, "utf8"));
 

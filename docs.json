@@ -255,6 +255,7 @@
             "group": "Money movement",
             "icon": "coins",
             "pages": [
+              "api-reference/merchant-ramp",
               "api-reference/transactions",
               "api-reference/payout-methods",
               "api-reference/disbursement",
