@@ -3,22 +3,22 @@ title: "Merchant ramp"
 description: "Fiat onramp and offramp for registered merchants — quote, initiate, status, and webhooks."
 ---
 
-Use the **merchant ramp API** when you want a simple server-to-server flow: quote what the customer pays or receives, start the ramp when they are ready, then poll status or listen on webhooks.
+Use the **merchant ramp API** for a simple server-to-server flow: quote amounts, initiate when the customer is ready, then poll status or use webhooks.
 
 Base path: `/api/v1/merchant/ramp`
 
-Auth is the same as [Merchant API v1](/getting-started/authentication): signed requests with your API key, or portal JWT with `X-Business-Id` for dashboard-backed calls.
+Auth matches [Merchant API v1](/getting-started/authentication): signed API key requests, or portal JWT with `X-Business-Id`.
 
 <Note>
-  This is separate from `POST /api/v1/merchant/quotes/ramp`, which is for **crypto swap-style** quotes (assets and chains). Use **merchant ramp** for **fiat ↔ crypto** corridors (for example GHS and NGN mobile money or bank).
+  This is separate from `POST /api/v1/merchant/quotes/ramp` (crypto swap-style quotes). Use **merchant ramp** for **fiat ↔ crypto** corridors supported on your account.
 </Note>
 
 ## Flow
 
-1. **`POST /ramp/quote`** — price the corridor and show `customerAmount` (and optional `merchantFee` when your account markup applies).
-2. **`POST /ramp/onramp`** or **`POST /ramp/offramp`** — start the transaction with the same amount you quoted.
-3. **`GET /ramp/transactions/:reference`** — refresh status and payment or deposit instructions.
-4. **Webhooks** — subscribe to `ramp.created` and `ramp.status_updated` on your [merchant webhook endpoint](/api-reference/webhooks).
+1. **`POST /ramp/quote`** — amounts and fees (`customerAmount`, optional `merchantFee`).
+2. **`POST /ramp/onramp`** or **`POST /ramp/offramp`** — same `amount` as the quote.
+3. **`GET /ramp/transactions/:reference`** — status and payment or deposit instructions.
+4. **Webhooks** — `ramp.created` and `ramp.status_updated` ([Webhooks](/api-reference/webhooks)).
 
 ## Endpoints
 
@@ -29,26 +29,22 @@ Auth is the same as [Merchant API v1](/getting-started/authentication): signed r
 | Offramp | `POST` | `/ramp/offramp` |
 | Status | `GET` | `/ramp/transactions/:reference` |
 | List | `GET` | `/ramp/transactions` |
-| OTP (GHS MoMo) | `POST` | `/ramp/transactions/:reference/otp` |
+| OTP | `POST` | `/ramp/transactions/:reference/otp` |
 | Config | `GET` | `/ramp/config` |
-| Limits | `GET` | `/ramp/limits?currency=ghs` |
-| Banks | `GET` | `/ramp/banks?currency=ngn` |
+| Limits | `GET` | `/ramp/limits?currency={code}` |
+| Banks | `GET` | `/ramp/banks?currency={code}` |
 
 ## Rules
 
-- **Initiate** and **OTP** are **LIVE-only**. In TEST you receive `400` with code `RAMP_LIVE_ONLY`.
-- Transactions are scoped to your business. Unknown references return **404**.
-- **Initiate** requires portal **owner**, **admin**, or **finance** (API keys may initiate when permitted for your integration).
+- **Initiate** and **OTP** are **LIVE-only** (`400`, `RAMP_LIVE_ONLY` in TEST).
+- Transactions are scoped to your business; unknown references return **404**.
 - **Offramp** requires completed owner KYC (same as withdrawals).
 
-## Markup and fees
+## Markup
 
-When your business has ramp markup enabled:
-
-- The **owner** sets the live markup rate in the **merchant portal** (not via this API).
-- Quotes and transactions include **`merchantFee`** (`percent`, `amountUsd`, `amountFiat`) when markup applies; otherwise `merchantFee` is `null`.
-- **`customerAmount`** is what the customer pays (onramp) or receives in fiat (offramp) after markup.
-- Platform pricing is included in the quote; you do not configure provider credentials in the API.
+- Markup is set in the **merchant portal** (owner), not in the API.
+- **`customerAmount`** — customer pays (onramp) or receives in fiat (offramp) after markup.
+- **`merchantFee`** — `{ percent, amountUsd, amountFiat }` when markup applies; otherwise `null`.
 
 ---
 
@@ -59,8 +55,8 @@ When your business has ramp markup enabled:
 | Field | Description |
 |-------|-------------|
 | `direction` | `onramp` or `offramp` |
-| `currency` | Fiat corridor code (for example `ghs`, `ngn`) |
-| `amount` | Onramp: fiat amount to quote. Offramp: crypto amount the customer will send |
+| `currency` | Fiat corridor code |
+| `amount` | Onramp: fiat to quote. Offramp: crypto amount the customer will send |
 
 <RequestExample>
 
@@ -91,9 +87,6 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/ramp/quote" \
     "customerAmount": "212.40",
     "quotedAmount": "200",
     "quotedCurrency": "ghs",
-    "network": "mobile_money",
-    "rateLabel": "1 USDC ≈ …",
-    "limits": { "min": "10", "max": "50000" },
     "merchantFee": {
       "percent": "1.5",
       "amountUsd": "0.42",
@@ -111,14 +104,15 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/ramp/quote" \
 
 `POST /api/v1/merchant/ramp/onramp`
 
-Start after the customer accepts the quote. Use the **same `amount`** as in the quote.
+Use the **same `amount`** as the quote.
 
 | Field | Description |
 |-------|-------------|
-| `destinationWallet` | EVM address to receive crypto |
+| `currency` | Fiat corridor code |
+| `amount` | Same as quoted |
+| `destinationWallet` | EVM address that receives crypto after settlement |
 | `paymentMethod` | `mobile_money` or `bank` |
-| `phoneNumber`, `networkProvider` | Required for GHS mobile money (for example `MTN`) |
-| `customerName`, `customerEmail` | Optional customer contact |
+| `phoneNumber`, `networkProvider` | Required when `paymentMethod` is `mobile_money` |
 
 <RequestExample>
 
@@ -132,8 +126,6 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/ramp/onramp" \
     "currency": "ghs",
     "amount": "200",
     "destinationWallet": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
-    "customerName": "Ama Mensah",
-    "customerEmail": "ama@example.com",
     "paymentMethod": "mobile_money",
     "phoneNumber": "0244000000",
     "networkProvider": "MTN"
@@ -142,9 +134,7 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/ramp/onramp" \
 
 </RequestExample>
 
-The response `data` includes a **`reference`**, **`payment`** instructions for the customer, and **`requiresOtp`** when you must call the OTP endpoint.
-
-For NGN bank pay-in, use `"paymentMethod": "bank"` and omit phone fields.
+Response includes **`reference`**, **`payment`** instructions, and **`requiresOtp`** when the OTP endpoint is required.
 
 ---
 
@@ -154,9 +144,10 @@ For NGN bank pay-in, use `"paymentMethod": "bank"` and omit phone fields.
 
 | Field | Description |
 |-------|-------------|
-| `amount` | Crypto amount (same as quoted) |
-| `bankCode` | From `GET /ramp/banks?currency=…` |
-| `accountNumber` | Customer bank account |
+| `currency` | Fiat corridor code |
+| `amount` | Same as quoted (crypto) |
+| `bankCode` | From `GET /ramp/banks` |
+| `accountNumber` | Destination account |
 
 <RequestExample>
 
@@ -167,9 +158,8 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/ramp/offramp" \
   -H "Morapay-Timestamp: $TIMESTAMP" \
   -H "Morapay-Signature: v1=$SIGNATURE" \
   -d '{
-    "currency": "ngn",
+    "currency": "ghs",
     "amount": "25",
-    "customerName": "Adaeze Okonkwo",
     "bankCode": "058",
     "accountNumber": "0123456789"
   }'
@@ -177,11 +167,11 @@ curl -s -X POST "https://api.morapay.io/api/v1/merchant/ramp/offramp" \
 
 </RequestExample>
 
-Response includes **`deposit`** (where the customer sends crypto) and **`payout`** (fiat destination summary).
+Response includes **`deposit`** (crypto to send) and **`payout`** (fiat destination summary).
 
 ---
 
-## OTP (mobile money)
+## OTP
 
 `POST /api/v1/merchant/ramp/transactions/:reference/otp`
 
@@ -189,36 +179,28 @@ Response includes **`deposit`** (where the customer sends crypto) and **`payout`
 { "otp": "123456" }
 ```
 
-Use when onramp `requiresOtp` is true (common on GHS mobile money).
+Use when onramp `requiresOtp` is true.
 
 ---
 
 ## Status and list
 
-**`GET /api/v1/merchant/ramp/transactions/:reference`**
+**`GET /api/v1/merchant/ramp/transactions/:reference`** — amounts, `customerAmount`, `merchantFee`, instructions.
 
-Refreshes upstream status and returns amounts, `customerAmount`, `merchantFee`, and payment or deposit instructions.
+**`GET /api/v1/merchant/ramp/transactions`** — `page`, `limit`.
 
-**`GET /api/v1/merchant/ramp/transactions`**
-
-Query `page` and `limit` for a paginated history.
-
-Typical statuses: `INITIATED` → `PENDING` → `PROCESSING` → `COMPLETED` | `FAILED`.
+Statuses: `INITIATED` → `PENDING` → `PROCESSING` → `COMPLETED` | `FAILED`.
 
 ---
 
 ## Webhooks
 
-On **LIVE**, register your endpoint for:
-
 | Event | When |
 |-------|------|
-| `ramp.created` | A ramp transaction was created |
+| `ramp.created` | Ramp transaction created |
 | `ramp.status_updated` | Status or settlement changed |
 
-Verify `Morapay-Signature: sha256=<hex>` with your endpoint secret. Payload `data` uses `object: "ramp_transaction"` with `reference`, `direction`, `status`, amounts, and `merchantFee` when applicable.
-
-See [Webhooks](/api-reference/webhooks) for endpoint management and delivery retries.
+Payload `data`: `object: "ramp_transaction"`, `reference`, `direction`, `status`, amounts, `merchantFee` when applicable. Verify `Morapay-Signature` per [Webhooks](/api-reference/webhooks).
 
 ---
 
@@ -226,6 +208,6 @@ See [Webhooks](/api-reference/webhooks) for endpoint management and delivery ret
 
 | Endpoint | Purpose |
 |----------|---------|
-| `GET /ramp/config` | Corridor and feature flags (no secrets) |
-| `GET /ramp/limits?currency=ghs` | Min/max for a fiat currency |
-| `GET /ramp/banks?currency=ngn` | Bank codes for offramp and pay-in |
+| `GET /ramp/config` | Supported corridors and flags |
+| `GET /ramp/limits?currency={code}` | Min/max amounts |
+| `GET /ramp/banks?currency={code}` | Bank codes for offramp |
