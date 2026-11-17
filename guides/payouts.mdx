@@ -1,0 +1,108 @@
+---
+title: "Payouts"
+description: "Single payouts, batches, schedules, and saved recipients."
+---
+
+Send fiat to mobile money or bank accounts with **`/v2/payouts`**, **`/v2/batches`**, **`/v2/schedules`**, and **`/v2/recipients`**. All merchant paths live under `https://api.morapay.io/v2/*` and require signed headers (`Morapay-Key: pk_test_example`, `Morapay-Timestamp`, `Morapay-Signature: v1=…`).
+
+Schema details (status enums, rail fields, money precision) are in [OpenAPI](https://api.morapay.io/v2/openapi.json).
+
+## Payouts
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| `GET` | `/v2/payouts` | List payouts |
+| `POST` | `/v2/payouts` | Create one payout |
+| `GET` | `/v2/payouts/{payout_id}` | Read status |
+| `POST` | `/v2/payouts/{payout_id}/cancel` | Cancel pending |
+
+## Batches
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| `POST` | `/v2/batches` | Draft a batch |
+| `GET` | `/v2/batches/{id}` | Read batch |
+| `POST` | `/v2/batches/{id}/submit` | Submit for processing |
+| `POST` | `/v2/batches/{id}/cancel` | Cancel draft |
+
+## Schedules & recipients
+
+- **`/v2/schedules`** — `GET` list, `POST` create, `PATCH /v2/schedules/{id}` update, `DELETE` remove.
+- **`/v2/recipients`** — `GET` list, `POST` create, `POST /v2/recipients/resolve` normalize account details, `DELETE /v2/recipients/{recipient_id}`.
+
+## Create a payout
+
+<CodeGroup>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/v2/payouts" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: payout_2026-11-17_7f3a" \
+  -H "Morapay-Key: pk_test_example" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{"payout":{"amount":"250.00","currency":"GHS"},"recipient_id":"rcp_abc123","reference":"payroll_row_42"}'
+```
+
+```javascript Node.js
+import { createHash, createHmac } from "node:crypto";
+
+const sign = (pk, sk, method, path, body) => {
+  const ts = String(Math.floor(Date.now() / 1000));
+  const bh = createHash("sha256").update(body, "utf8").digest("hex");
+  const key = createHash("sha256").update(sk, "utf8").digest();
+  return {
+    "Morapay-Key": pk,
+    "Morapay-Timestamp": ts,
+    "Morapay-Signature": `v1=${createHmac("sha256", key).update(`${ts}.${method}.${path}.${bh}`, "utf8").digest("hex")}`,
+  };
+};
+
+const body = JSON.stringify({
+  payout: { amount: "250.00", currency: "GHS" },
+  recipient_id: "rcp_abc123",
+  reference: "payroll_row_42",
+});
+await fetch("https://api.morapay.io/v2/payouts", {
+  method: "POST",
+  headers: {
+    ...sign("pk_test_example", "sk_test_example", "POST", "/v2/payouts", body),
+    "Content-Type": "application/json",
+    "Idempotency-Key": "payout_2026-11-17_7f3a",
+  },
+  body,
+});
+```
+
+</CodeGroup>
+
+<ResponseExample>
+
+```json Payout created
+{
+  "data": {
+    "id": "pay_8xk2m9",
+    "status": "pending",
+    "payout": { "amount": "250.00", "currency": "GHS" },
+    "recipient_id": "rcp_abc123"
+  },
+  "meta": { "request_id": "req_1731810000004_e" }
+}
+```
+
+</ResponseExample>
+
+## List payouts
+
+```bash
+curl -s "https://api.morapay.io/v2/payouts?limit=20" \
+  -H "Morapay-Key: pk_test_example" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
+```
+
+List responses wrap **`data.items`** with **`meta`** (`page`, `limit`, `total`, or cursor fields per OpenAPI).
+
+<Tip>
+  Resolve unknown account numbers once with **`POST /v2/recipients/resolve`** before attaching a recipient to high-volume batches.
+</Tip>

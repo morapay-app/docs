@@ -1,0 +1,120 @@
+---
+title: "Responses and errors"
+description: "v2 JSON envelopes for success lists, single resources, and structured errors."
+---
+
+Morapay **v2** responses are always JSON. Success payloads include **`data`**; failures include **`error`** instead of `data`. Both shapes may include **`meta.request_id`** for support correlation.
+
+Base host: `https://api.morapay.io`. This guide applies to `/v2/*` routes only.
+
+## Success: single resource
+
+```json
+{
+  "data": {
+    "id": "pay_8xk2m9",
+    "status": "pending"
+  },
+  "meta": {
+    "request_id": "req_1731810000000_a"
+  }
+}
+```
+
+`data` holds the resource object. Extra fields depend on the operation — see [OpenAPI](https://api.morapay.io/v2/openapi.json).
+
+## Success: lists
+
+Paged merchant lists return items inside `data` with pagination metadata:
+
+```json
+{
+  "data": {
+    "items": [
+      { "id": "lnk_01", "currency": "GHS" },
+      { "id": "lnk_02", "currency": "NGN" }
+    ],
+    "meta": {
+      "page": 1,
+      "limit": 20,
+      "total": 42
+    }
+  },
+  "meta": {
+    "request_id": "req_1731810000001_b"
+  }
+}
+```
+
+Some endpoints use cursor paging (`has_more`, `next_cursor`) instead of `page` / `total`. The OpenAPI response schema is authoritative.
+
+## Error envelope
+
+Failed responses omit `data`:
+
+```json
+{
+  "error": {
+    "code": "request.validation_failed",
+    "message": "Some fields are invalid.",
+    "details": [
+      {
+        "field": "pay.amount",
+        "code": "invalid_amount",
+        "message": "Amount must be a decimal string."
+      }
+    ]
+  },
+  "meta": {
+    "request_id": "req_1731810000002_c"
+  }
+}
+```
+
+| Field | Meaning |
+|-------|---------|
+| `error.code` | Stable machine code (`domain.reason`) |
+| `error.message` | Safe catalog sentence (no stack traces) |
+| `error.details` | Optional field-level issues |
+| `meta.request_id` | Log correlation id |
+
+## HTTP status mapping
+
+| Status | Typical `error.code` |
+|--------|----------------------|
+| `400` | `request.invalid`, `money.invalid_amount` |
+| `401` | `auth.unauthorized` |
+| `403` | `auth.forbidden` |
+| `404` | `resource.not_found` |
+| `409` | `resource.conflict`, `idempotency.conflict` |
+| `422` | `request.validation_failed` |
+| `429` | `api.rate_limited` |
+
+## Example: signed call that fails
+
+<CodeGroup>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/v2/quotes" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: pk_test_example" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{"direction":"buy","pay":{"amount":"25.00","currency":"GHS"},"receive_currency":"USDC","rail":"mobile_money"}'
+```
+
+```javascript Node.js
+const bad = await fetch("https://api.morapay.io/v2/quotes", { method: "POST", headers, body: tooSmallBody });
+const payload = await bad.json();
+if (payload.error) {
+  console.error(payload.error.code, payload.meta?.request_id);
+}
+```
+
+</CodeGroup>
+
+<Tip>
+  **GHS buy** quotes below **50.00 GHS** fail validation — check `error.details` and fix amounts before retrying with a new idempotency key when required.
+</Tip>
+
+For legacy `success` / `displayMessage` shapes, see [Error handling](/errors/error-handling) (v1 SDK paths). New integrations should parse **`error.code`** on v2 only.

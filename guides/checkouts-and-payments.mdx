@@ -1,0 +1,98 @@
+---
+title: "Checkouts and payments"
+description: "Hosted checkout sessions, customer pay, and payment confirmation."
+---
+
+Checkouts are time-bound payment sessions. Merchants create them on **`POST /v2/checkouts`**; customers pay on **`POST /v2/public/checkouts/{id}/pay`**; you confirm card or async flows on **`POST /v2/payments/{payment_id}/confirm`**.
+
+Base URL: `https://api.morapay.io`. Merchant routes require `Morapay-Key`, `Morapay-Timestamp`, and `Morapay-Signature: v1=…` with paths like `/v2/checkouts` (not legacy `/api/v1/merchant` prefixes).
+
+## Flow
+
+1. **`POST /v2/checkouts`** — amount, optional `reference`, `payment_link_id`, `expires_in_seconds`.
+2. **`GET /v2/checkouts/{id}`** — poll session status.
+3. **`POST /v2/public/checkouts/{id}/pay`** — customer selects `method` (`card`, `mobile_money`, `bank_transfer`). Requires **`Idempotency-Key`**.
+4. **`POST /v2/payments/{payment_id}/confirm`** — finalize when the API returns a payment id (e.g. pass `session_secret` if required).
+5. **`POST /v2/checkouts/{id}/cancel`** — cancel an open checkout.
+
+Request and response fields: [OpenAPI](https://api.morapay.io/v2/openapi.json).
+
+## Create a checkout
+
+<CodeGroup>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/v2/checkouts" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: pk_test_example" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{"amount":{"amount":"75.00","currency":"GHS"},"reference":"order_8842","expires_in_seconds":3600}'
+```
+
+```javascript Node.js
+import { createHash, createHmac } from "node:crypto";
+
+const sign = (pk, sk, method, path, body = "") => {
+  const ts = String(Math.floor(Date.now() / 1000));
+  const h = createHash("sha256").update(body, "utf8").digest("hex");
+  const key = createHash("sha256").update(sk, "utf8").digest();
+  const sig = createHmac("sha256", key).update(`${ts}.${method}.${path}.${h}`, "utf8").digest("hex");
+  return { "Morapay-Key": pk, "Morapay-Timestamp": ts, "Morapay-Signature": `v1=${sig}` };
+};
+
+const body = JSON.stringify({
+  amount: { amount: "75.00", currency: "GHS" },
+  reference: "order_8842",
+  expires_in_seconds: 3600,
+});
+const res = await fetch("https://api.morapay.io/v2/checkouts", {
+  method: "POST",
+  headers: { ...sign("pk_test_example", "sk_test_example", "POST", "/v2/checkouts", body), "Content-Type": "application/json" },
+  body,
+});
+const { data: checkout } = await res.json();
+```
+
+</CodeGroup>
+
+<ResponseExample>
+
+```json Checkout created
+{
+  "data": {
+    "id": "chk_550e8400-e29b-41d4-a716-446655440000",
+    "status": "open",
+    "amount": { "amount": "75.00", "currency": "GHS" },
+    "expires_at": "2026-11-17T22:00:00Z"
+  },
+  "meta": { "request_id": "req_1731810000003_d" }
+}
+```
+
+</ResponseExample>
+
+## Customer pay (public)
+
+```bash
+curl -s -X POST "https://api.morapay.io/v2/public/checkouts/chk_550e8400-e29b-41d4-a716-446655440000/pay" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: pay_chk_8842_once" \
+  -d '{"method":"mobile_money","email":"payer@example.com","phone":"+233201234567"}'
+```
+
+## Confirm payment (merchant)
+
+```bash
+curl -s -X POST "https://api.morapay.io/v2/payments/pay_a1b2c3d4-e5f6-7890-abcd-ef1234567890/confirm" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: confirm_pay_8842" \
+  -H "Morapay-Key: pk_test_example" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{"session_secret":"sec_from_pay_response"}'
+```
+
+<Tip>
+  Amounts are always **decimal strings** in JSON (`"75.00"`, not `75`). For GHS mobile-money checkout floors, validate totals before calling the API.
+</Tip>
