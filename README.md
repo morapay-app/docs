@@ -32,7 +32,7 @@ Exports static site to `out/` (see `vercel.json`).
 | Path | Contents |
 |------|-----------|
 | `getting-started/` | Quickstart, auth, environments |
-| `concepts/` | Envelopes, payment links, payouts, subscriptions |
+| `concepts/` | Envelopes, payment links, payouts |
 | `guides/` | End-to-end v2 flows |
 | `api-reference/` | Overview + conventions (detail in OpenAPI) |
 | `openapi/` | `v2.openapi.json` from Core |

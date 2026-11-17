@@ -67,16 +67,7 @@ The response includes `spotPayerMajor`, `payerTotalMajor`, `feeMode`, and a proc
 
 Supported fiat checkout currencies: **GHS** and **NGN** for MoMo and bank transfer. Card checkout is available in select markets. See [Countries & fiat](/reference/countries-and-fiat).
 
-### Subscriptions
-
-Recurring charges may include:
-
-- **Payment processing:** percentage plus flat fee on each successful charge, configurable in your dashboard.
-- **Billing fee:** platform fee on subscription volume above a threshold when enabled.
-
-Processing and billing fees can be **passed to the subscriber** or **absorbed by your business**, depending on your dashboard settings. Subscription charges enforce the same platform minimums as payment links. See [Payout timing & limits](/reference/payout-timing).
-
-### Payouts & disbursements
+### Payouts
 
 Payouts debit treasury liquidity for the fiat amount sent to the recipient. Fees depend on rail, country, and whether the payout is scheduled — confirm totals in the `POST /v2/payouts` response and OpenAPI schemas.
 
@@ -112,10 +103,6 @@ Some corridors enforce carrier floors that exceed USD platform minimums, for exa
 
 Morapay is a **payments platform**, not a tax advisor. You are responsible for determining, collecting, and remitting taxes in the jurisdictions where you operate.
 
-### Subscription tax calculation
-
-When tax calculation is enabled for your business, Morapay can compute tax on subscription checkout based on your configuration. Tax amounts appear on the checkout session before the subscriber confirms payment.
-
 <Warning>
   Enabling tax calculation does not register your business with tax authorities or file returns on your behalf. Consult a qualified tax professional for VAT, GST, sales tax, and withholding obligations.
 </Warning>
@@ -134,8 +121,8 @@ For account-specific fee schedules or enterprise pricing, contact [support@morap
   <Accordion title="How do I show fees to my customers at checkout?">
     Call `POST /api/public/commerce/fiat` with the payment link ID, payer currency, and `quote_tier` (`card_local`, `card_international`, `mobile_money`, or `bank_transfer`). Display `payerTotalMajor` when fees are passed to the customer, or `spotPayerMajor` when your business absorbs them (`feeMode` in the response).
   </Accordion>
-  <Accordion title="Why does usdCharge differ from payoutTotal on disbursements?">
-    `payoutTotal` is what recipients receive. `usdCharge` adds platform batch fees, per-recipient network fees, chain transfer costs, and any FX spread on the settlement token. The quote endpoint returns both values.
+  <Accordion title="How are payout fees calculated?">
+    Fiat payout fees depend on rail, country, and treasury funding path. Confirm totals in the `POST /v2/payouts` response and OpenAPI schemas before moving money.
   </Accordion>
   <Accordion title="Do fees change between TEST and LIVE?">
     Fee **structure** is the same. TEST uses testnet chains and sandbox rails; LIVE uses production carriers and mainnet settlement. Always quote in the environment matching your API keys.
@@ -152,10 +139,10 @@ For account-specific fee schedules or enterprise pricing, contact [support@morap
     Supported markets, currencies, and checkout rails.
   </Card>
   <Card title="Payout timing & limits" icon="clock" href="/reference/payout-timing">
-    Platform minimums and batch scheduling.
+    Platform minimums and scheduled payouts.
   </Card>
   <Card title="Payouts guide" icon="coins" href="/guides/payouts">
-    Batches and payout quotes in v2.
+    Single payouts, schedules, and recipients in v2.
   </Card>
   <Card title="Checkouts guide" icon="credit-card" href="/guides/checkouts-and-payments">
     Checkout sessions and payment confirm.
