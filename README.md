@@ -1,62 +1,45 @@
 # @morapay/docs (Mintlify)
 
-Developer documentation for the Morapay Merchant API and SDK (`docs.morapay.io`).
-
-Content originated in [morapay-app/docs](https://github.com/morapay-app/docs); **this folder is the working copy** inside the `morapay-web` monorepo.
+Developer documentation for the Morapay **v2** API (`docs.morapay.io`).
 
 ## Development
 
-From the monorepo root:
-
 ```bash
-pnpm install --filter @morapay/docs...
-pnpm dev:docs
-```
-
-Or from this directory:
-
-```bash
+pnpm install
 pnpm dev
 ```
 
-Opens Mintlify on port **3005** (`mint dev --port 3005`).
+Local preview: **http://localhost:3005** (`mint dev --port 3005`).
 
-Global CLI (optional): `npm i -g mint` then `mint dev` from this directory.
+## OpenAPI
 
-## Build (Vercel / static export)
+The API reference tab is generated from `openapi/v2.openapi.json`. Refresh from Core:
+
+```bash
+CORE_ROOT=/path/to/morapay-app/core pnpm sync-openapi
+```
+
+## Build
 
 ```bash
 pnpm build
 ```
 
-Runs `mint export` → `out/` (see `vercel.json`).
+Exports static site to `out/` (see `vercel.json`).
 
-## Structure
+## Layout
 
-```
-apps/docs/
-├── docs.json                 # Site config (navigation tabs, branding)
-├── favicon.png
-├── logo/
-├── getting-started/
-├── concepts/
-├── api-reference/            # REST endpoint docs
-├── reference/                # Coverage reference tables
-├── frontend-ui/
-├── developer-tools/
-├── errors/
-└── support/
-```
-
-Navigation uses **tabs** at the root (`Guides`, `API reference`, `Coverage`).
-
-## AI-assisted writing
-
-```bash
-npx skills add https://mintlify.com/docs
-```
+| Path | Contents |
+|------|-----------|
+| `getting-started/` | Quickstart, auth, environments |
+| `concepts/` | Envelopes, payment links, payouts, subscriptions |
+| `guides/` | End-to-end v2 flows |
+| `api-reference/` | Overview + conventions (detail in OpenAPI) |
+| `openapi/` | `v2.openapi.json` from Core |
+| `reference/` | Coverage tables |
+| `developer-tools/` | Webhooks, idempotency |
+| `errors/` | Error handling + code pages |
 
 ## Publishing
 
-- **Vercel:** project root `apps/docs`, framework **Other**, output `out/`.
-- **Mintlify Cloud:** connect the GitHub repo via the [Mintlify dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
+Connect this repo in the [Mintlify dashboard](https://dashboard.mintlify.com) or deploy `out/` via Vercel.

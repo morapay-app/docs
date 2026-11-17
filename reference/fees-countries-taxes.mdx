@@ -11,26 +11,20 @@ Morapay pricing is **quote-first**: every product exposes a quote or settlement 
 
 ## Quote before you commit
 
-| Product | SDK | API |
-|---------|-----|-----|
-| Fiat checkout payer total | — | `POST /api/public/commerce/fiat` (Core: `/api/commerce/checkout-fiat`) |
-| Merchant clearing (fiat link) | `morapay.link.quote(id, { invoice_major })` | `POST /api/v1/merchant/links/:id/quote` |
-| Disbursement batch | `morapay.disbursement.quote({ .. })` | `POST /api/v1/merchant/disbursement/batches/quote` |
-| Crypto ramp | `morapay.quotes.ramp.create({ .. })` | `POST /api/v1/merchant/quotes/ramp` |
+| Product | v2 route |
+|---------|----------|
+| Fiat ↔ crypto ramp | `POST /v2/quotes` then `POST /v2/buys` or `/v2/sells` |
+| Indicative mid | `GET /v2/rates` |
+| Checkout payer total | Priced inside `POST /v2/checkouts` / public pay routes |
+| Payout batch | `POST /v2/batches` (quote fields on the batch body per OpenAPI) |
 
-```typescript
-// Disbursement: usdCharge is principal + all platform/network fees
-const quote = await morapay.disbursement.quote({
-  chainId: 8453,
-  token: "USDC",
-  payoutTotal: 250,
-  recipientCount: 10,
-});
-// quote.usdCharge → total debited from treasury
-
-// Fiat link: merchant USD clearing estimate
-const settlement = await morapay.link.quote("link_abc", { invoice_major: 100 });
-// settlement.merchantClearingUsd → expected USD credited after payer settles
+```bash
+curl -s -X POST "https://api.morapay.io/v2/quotes" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: pk_test_..." \
+  -H "Morapay-Timestamp: $TS" \
+  -H "Morapay-Signature: v1=$SIG" \
+  -d '{"direction":"buy","pay":{"amount":"100.00","currency":"GHS"},"receive_currency":"USDC","rail":"mobile_money","country":"GH"}'
 ```
 
 ## Fees by product
@@ -175,10 +169,10 @@ For account-specific fee schedules or enterprise pricing, contact [support@morap
   <Card title="Payout timing & limits" icon="clock" href="/reference/payout-timing">
     Platform minimums and batch scheduling.
   </Card>
-  <Card title="Disbursement API" icon="coins" href="/api-reference/disbursement">
-    Quote, create, and ledger endpoints.
+  <Card title="Payouts guide" icon="coins" href="/guides/payouts">
+    Batches and payout quotes in v2.
   </Card>
-  <Card title="Fiat checkout API" icon="credit-card" href="/api-reference/fiat-checkout">
-    MoMo, bank, and card session initialization.
+  <Card title="Checkouts guide" icon="credit-card" href="/guides/checkouts-and-payments">
+    Checkout sessions and payment confirm.
   </Card>
 </CardGroup>

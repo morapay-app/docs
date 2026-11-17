@@ -6,7 +6,7 @@ description: "Fiat on-ramp and off-ramp with firm quotes, live rates, buys, sell
 The **ramp API** converts between fiat and crypto in two steps: price with **`POST /v2/quotes`** (or skim **`GET /v2/rates`**), then execute with **`POST /v2/buys`** or **`POST /v2/sells`**. All merchant calls use `https://api.morapay.io` with signed headers ([Authentication](/getting-started/authentication)); sign the path exactly as sent, e.g. `/v2/rates?direction=buy&pay_currency=GHS&receive_currency=USDC&rail=mobile_money`.
 
 <Tip>
-  **GHS buy** quotes require at least **50.00 GHS** in `pay.amount`. Use decimal strings for every money field — see the [OpenAPI spec](https://api.morapay.io/v2/openapi.json).
+  **GHS buy** quotes require at least **50.00 GHS** in `pay.amount`. Use decimal strings for every money field — see the the **API reference** tab.
 </Tip>
 
 ## Typical flow
@@ -120,4 +120,4 @@ curl -s "https://api.morapay.io/v2/rates?direction=buy&pay_currency=GHS&receive_
   -H "Morapay-Signature: v1=$SIGNATURE"
 ```
 
-Sign the full query path above. Field definitions: [OpenAPI](https://api.morapay.io/v2/openapi.json).
+Sign the full query path above. Field definitions: the **API reference** tab.

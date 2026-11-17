@@ -6,6 +6,7 @@
     "dev": "mint dev --port 3005",
     "build": "sh scripts/build.sh",
     "generate": "node scripts/generate-all.mjs",
+    "sync-openapi": "node scripts/sync-openapi.mjs",
     "lint": "node -e \"process.exit(0)\""
   },
   "devDependencies": {

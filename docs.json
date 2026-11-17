@@ -1,7 +1,7 @@
 {
   "theme": "mint",
   "name": "Morapay",
-  "description": "Morapay Merchant API, SDK, and integration guides for checkout and payouts.",
+  "description": "Morapay Merchant API v2 integration guides and reference.",
   "colors": {
     "primary": "#0F172A",
     "light": "#F8FAFC",
@@ -51,7 +51,7 @@
   "seo": {
     "metatags": {
       "og:title": "Morapay Developer Docs",
-      "og:description": "Merchant API, SDK, checkout widget, and business QR documentation.",
+      "og:description": "Morapay API v2 guides, webhooks, and OpenAPI reference.",
       "og:url": "https://docs.morapay.io",
       "og:type": "website"
     }
@@ -111,21 +111,25 @@
             ]
           },
           {
-            "group": "Concepts",
+            "group": "Core concepts",
             "icon": "lightbulb",
             "pages": [
+              "concepts/responses-and-errors",
               "concepts/payment-links",
-              "concepts/subscriptions",
-              "concepts/payouts-momo"
+              "concepts/payouts-momo",
+              "concepts/subscriptions"
             ]
           },
           {
-            "group": "Frontend & UI",
-            "icon": "palette",
+            "group": "Integration guides",
+            "icon": "diagram-project",
             "pages": [
-              "frontend-ui/native-components",
-              "frontend-ui/react-hooks",
-              "frontend-ui/custom-styling"
+              "guides/quotes-and-ramp",
+              "guides/payment-links",
+              "guides/checkouts-and-payments",
+              "guides/payouts",
+              "guides/claims",
+              "guides/subscriptions"
             ]
           },
           {
@@ -231,64 +235,14 @@
       {
         "tab": "API reference",
         "icon": "code",
+        "openapi": "openapi/v2.openapi.json",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Introduction",
             "icon": "book",
             "pages": [
               "api-reference/overview",
               "api-reference/conventions"
-            ]
-          },
-          {
-            "group": "Payments",
-            "icon": "credit-card",
-            "pages": [
-              "api-reference/payment-links",
-              "api-reference/products",
-              "api-reference/business-qr",
-              "api-reference/quotes",
-              "api-reference/fiat-checkout"
-            ]
-          },
-          {
-            "group": "Transfers and payouts",
-            "icon": "coins",
-            "pages": [
-              "api-reference/merchant-ramp",
-              "api-reference/transactions",
-              "api-reference/payout-methods",
-              "api-reference/disbursement",
-              "api-reference/payout-rails"
-            ]
-          },
-          {
-            "group": "Account",
-            "icon": "building",
-            "pages": [
-              "api-reference/business-and-keys"
-            ]
-          },
-          {
-            "group": "Recurring and events",
-            "icon": "rotate",
-            "pages": [
-              "api-reference/subscriptions",
-              "api-reference/webhooks"
-            ]
-          },
-          {
-            "group": "Public checkout",
-            "icon": "cart-shopping",
-            "pages": [
-              "api-reference/public-checkout"
-            ]
-          },
-          {
-            "group": "Catalog",
-            "icon": "database",
-            "pages": [
-              "api-reference/catalog"
             ]
           }
         ]

@@ -1,168 +1,50 @@
 ---
 title: "API overview"
-description: "Morapay REST API base URL, authentication, endpoint index, and response envelope."
+description: "Morapay v2 REST API base URL, authentication, and resource map."
 ---
 
-The **Morapay API** is the public HTTP surface for merchant integrations. Production base URL: `https://api.morapay.io`.
+The **Morapay v2 API** is the HTTP integration surface for payments, ramp, payouts, and merchant account management.
 
-## API families
+## Base URL
 
-| Family | Base path | Auth |
-|--------|-----------|------|
-| **Merchant API v1** | `/api/v1/merchant` | HMAC signed headers |
-| **Public catalog and checkout** | `/api/public` | Mostly unsigned |
-| **V1 quotes** | `/api/v1/quotes` | Varies by route |
-
-## Discover Merchant API v1
-
-```bash
-curl -s https://api.morapay.io/api/v1/merchant
+```
+https://api.morapay.io
 ```
 
-<ResponseExample>
-
-```json 200 OK
-{
-  "success": true,
-  "data": {
-    "version": "v1",
-    "description": "Morapay merchant integration API",
-    "resources": {
-      "links": "/api/v1/merchant/links",
-      "products": "/api/v1/merchant/products",
-      "webhooks": "/api/v1/merchant/webhooks/endpoints",
-      "disbursement": "/api/v1/merchant/disbursement"
-    }
-  }
-}
-```
-
-</ResponseExample>
-
-## Endpoint index
-
-### Payments and catalog
-
-| Resource | Methods | Doc |
-|----------|---------|-----|
-| Payment links | `GET`, `POST`, `PATCH` | [Payment links](/api-reference/payment-links) |
-| Payment requests | `GET`, `POST` | [Business QR](/api-reference/business-qr) |
-| Products | `GET`, `POST`, `PATCH` | [Products](/api-reference/products) |
-| Business QR / pay | `GET`, `POST` | [Business QR](/api-reference/business-qr) |
-| Quotes | `POST` | [Quotes](/api-reference/quotes) |
-
-### Transfers and payouts
-
-| Resource | Methods | Doc |
-|----------|---------|-----|
-| Merchant ramp | `GET`, `POST` | [Merchant ramp](/api-reference/merchant-ramp) |
-| Transactions | `GET` | [Transactions](/api-reference/transactions) |
-| Refunds | `POST` | [Transactions](/api-reference/transactions#refund) |
-| Settlements / withdraw | `GET`, `POST` | [Transactions](/api-reference/transactions) |
-| Payout methods | `GET`, `POST`, `PATCH` | [Payout methods](/api-reference/payout-methods) |
-| Disbursement batches | `GET`, `POST`, `DELETE` | [Disbursement](/api-reference/disbursement) |
-| Payout rails | `GET` | [Payout rails](/api-reference/payout-rails) |
-
-### Account and keys
-
-| Resource | Methods | Doc |
-|----------|---------|-----|
-| Business profile | `GET`, `PATCH` | [Business and keys](/api-reference/business-and-keys) |
-| API keys | `GET`, `POST`, `PATCH`, `DELETE` | [Business and keys](/api-reference/business-and-keys) |
-| Summary KPIs | `GET` | [Business and keys](/api-reference/business-and-keys) |
-
-### Recurring and events
-
-| Resource | Methods | Doc |
-|----------|---------|-----|
-| Subscription plans | `GET`, `POST`, `PATCH` | [Subscriptions](/api-reference/subscriptions) |
-| Enrollments | `GET`, `POST`, pause, cancel | [Subscriptions](/api-reference/subscriptions) |
-| Webhook endpoints | `GET`, `POST`, `PATCH`, `DELETE` | [Webhooks](/api-reference/webhooks) |
-| Webhook deliveries | `GET`, retry | [Webhooks](/api-reference/webhooks) |
-
-### Public catalog and checkout
-
-| Resource | Methods | Doc |
-|----------|---------|-----|
-| Countries | `GET` | [Catalog](/api-reference/catalog) |
-| Chains and tokens | `GET` | [Catalog](/api-reference/catalog) |
-| Payment link lookup | `GET` | [Public checkout](/api-reference/public-checkout) |
-| Subscription checkout | `GET`, `POST` | [Public checkout](/api-reference/public-checkout) |
-| Fiat config | `GET` | [Fiat checkout](/api-reference/fiat-checkout) |
-| Fiat initialize / verify | `POST`, `GET` | [Fiat checkout](/api-reference/fiat-checkout) |
-| Commerce fiat quote | `POST` | [Fiat checkout](/api-reference/fiat-checkout) (`/api/public/commerce/fiat` → Core `/api/commerce/checkout-fiat`) |
-
-### Portal-only
-
-| Resource | Methods | Notes |
-|----------|---------|-------|
-| Team | `GET`, `POST`, `PATCH`, `DELETE` | `/team/*` |
-| CRM customers | `GET`, `POST`, `PATCH` | `/crm/customers` |
-| KYC / KYB | `GET`, `POST` | Portal verification flows |
-| CSV exports | `GET` | `/exports/*.csv` |
-
+All paths in this reference are rooted at `/v2`.
 
 ## Authentication
 
-Every Merchant API call requires signed headers. See [Authentication](/getting-started/authentication) and [Conventions](/api-reference/conventions).
+Signed merchant requests send:
 
-```bash
-curl -s -X GET "https://api.morapay.io/api/v1/merchant/links" \
-  -H "Morapay-Key: $MORAPAY_PUBLIC_KEY" \
-  -H "Morapay-Timestamp: $TIMESTAMP" \
-  -H "Morapay-Signature: v1=$SIGNATURE"
-```
+- `Morapay-Key`
+- `Morapay-Timestamp`
+- `Morapay-Signature` (`v1=<hex>`)
 
-TEST vs LIVE is determined by your key pair. Do not send `x-merchant-environment` with API keys.
+See [Authentication](/getting-started/authentication).
 
-## Responses and errors
+## Response shape
 
-Success:
+| Outcome | Shape |
+|---------|--------|
+| Success | `{ "data": …, "meta": { "request_id" } }` |
+| List | `{ "data": { "items": […], "meta": { "page", "limit", "total" } } }` |
+| Error | `{ "error": { "code", "message", … }, "meta": { "request_id" } }` |
 
-```json
-{ "success": true, "data": { }, "meta": { "page": 1, "limit": 20, "total": 42 } }
-```
+Details: [Responses and errors](/concepts/responses-and-errors).
 
-Failure responses include `code`, `displayMessage`, and `requestId`. During day-to-day integration you will commonly see **401**, **403**, **404**, **422**, and **429**.
+## Resource map
 
-<ResponseExample>
+| Area | Prefix | Guide |
+|------|--------|--------|
+| Catalog | `/v2/catalog/*` | — |
+| Quotes & rates | `/v2/quotes`, `/v2/rates` | [Quotes and ramp](/guides/quotes-and-ramp) |
+| Ramp | `/v2/buys`, `/v2/sells` | [Quotes and ramp](/guides/quotes-and-ramp) |
+| Links & checkout | `/v2/links`, `/v2/checkouts`, `/v2/payments` | [Payment links](/guides/payment-links), [Checkouts](/guides/checkouts-and-payments) |
+| Payouts | `/v2/payouts`, `/v2/batches`, `/v2/schedules`, `/v2/recipients` | [Payouts](/guides/payouts) |
+| Claims | `/v2/claims`, `/v2/public/claims/*` | [Claims](/guides/claims) |
+| Subscriptions | `/v2/plans`, `/v2/subscriptions` | [Subscriptions](/guides/subscriptions) |
+| Merchant account | `/v2/keys`, `/v2/webhooks`, `/v2/transactions`, … | OpenAPI tags `merchant_*` |
+| Webhooks (inbound) | `POST /v2/webhooks/{provider}` | Provider ingress (unsigned) |
 
-<CodeGroup>
-
-```json 401 Unauthorized
-{
-  "success": false,
-  "error": "Invalid request signature.",
-  "code": "auth.signature.mismatch",
-  "requestId": "req_overview401"
-}
-```
-
-```json 422 Unprocessable Entity
-{
-  "success": false,
-  "error": "Amount is below the minimum for this corridor.",
-  "code": "links.amount.below_minimum",
-  "requestId": "req_overview422"
-}
-```
-
-</CodeGroup>
-
-</ResponseExample>
-
-See [Conventions](/api-reference/conventions) for the full status code table and error envelope.
-
-## Coverage cross-reference
-
-| Topic | API doc | Reference data |
-|-------|---------|----------------|
-| Countries and fiat | [Catalog](/api-reference/catalog) | [Countries](/reference/countries-and-fiat) |
-| Chains and tokens | [Catalog](/api-reference/catalog) | [Chains](/reference/chains-and-tokens) |
-| Banks and MoMo | [Payout rails](/api-reference/payout-rails) | [Banks](/reference/banks-and-momo) |
-| Disbursement tokens | [Disbursement](/api-reference/disbursement) | [Tokens](/reference/disbursement-tokens) |
-| Fees | [Quotes](/api-reference/quotes) | [Fees](/reference/fees-countries-taxes) |
-
-## Client libraries
-
-For typed helpers and automatic request signing, use the [`@morapay/sdk`](/getting-started/quickstart) in Guides.
+Operation-level schemas are generated from the OpenAPI document bundled with this site (`openapi/v2.openapi.json`).
