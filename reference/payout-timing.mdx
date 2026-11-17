@@ -10,22 +10,21 @@ Constraints for disbursements, withdrawals, and checkout minimums. Values come f
 | Product | Minimum | Setting key |
 | --- | --- | --- |
 | Payment links | $1 | minPaymentLinkUsd |
-| Subscriptions | $1 | minSubscriptionUsd |
-| Disbursement / recurring batches | $5 | minRecurringUsd |
+| Scheduled payouts | $5 | minRecurringUsd |
 | Withdrawals | $5 | minWithdrawalUsd |
 | Payouts | $5 | minPayoutUsd |
 | Platform transfers | $0.5 | minPlatformTransferUsd |
 
 Regional MoMo floors may exceed USD equivalents, for example **1.00 GHS** in Ghana. Below-minimum amounts return `links.amount.below_minimum`.
 
-## Disbursement batch scheduling
+## Scheduled payout processing
 
 | Phase | Behavior |
 |-------|----------|
-| **Batch creation** | You set `processingAt` ISO datetime. Batch stays `SCHEDULED` until that time. |
-| **Dispatch** | Worker picks up batches when `processingAt <= now`. Status moves to `PROCESSING`. |
-| **On-chain settlement** | Stablecoin is sent from treasury pool to settlement infrastructure. |
-| **MoMo / bank delivery** | Local payout rails execute per recipient after on-chain leg completes. |
+| **Schedule** | `POST /v2/schedules` defines cadence and recipient. |
+| **Dispatch** | Workers enqueue payouts when the schedule fires. |
+| **On-chain settlement** | Stablecoin is sent from treasury pool to settlement infrastructure when required. |
+| **MoMo / bank delivery** | Local payout rails execute per payout after funding completes. |
 
 ### Estimated recipient delivery after dispatch starts
 

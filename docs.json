@@ -116,8 +116,7 @@
             "pages": [
               "concepts/responses-and-errors",
               "concepts/payment-links",
-              "concepts/payouts-momo",
-              "concepts/subscriptions"
+              "concepts/payouts-momo"
             ]
           },
           {
@@ -127,9 +126,7 @@
               "guides/quotes-and-ramp",
               "guides/payment-links",
               "guides/checkouts-and-payments",
-              "guides/payouts",
-              "guides/claims",
-              "guides/subscriptions"
+              "guides/payouts"
             ]
           },
           {

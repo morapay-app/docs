@@ -3,7 +3,7 @@ title: "Fees, countries & taxes"
 description: "Platform fees by product, country-specific processing rates, and tax responsibilities for merchants."
 ---
 
-Morapay pricing is **quote-first**: every product exposes a quote or settlement endpoint so you know the exact charge before creating a payment, batch, or subscription charge. Fees vary by **product**, **country**, and **payment rail**.
+Morapay pricing is **quote-first**: every product exposes a quote or settlement endpoint so you know the exact charge before creating a payment or payout. Fees vary by **product**, **country**, and **payment rail**.
 
 <Note>
   Rates on this page are representative. Your live account may differ by corridor, volume, or dashboard configuration. Always use the quote response at checkout time.
@@ -16,7 +16,7 @@ Morapay pricing is **quote-first**: every product exposes a quote or settlement 
 | Fiat ↔ crypto ramp | `POST /v2/quotes` then `POST /v2/buys` or `/v2/sells` |
 | Indicative mid | `GET /v2/rates` |
 | Checkout payer total | Priced inside `POST /v2/checkouts` / public pay routes |
-| Payout batch | `POST /v2/batches` (quote fields on the batch body per OpenAPI) |
+| Single payout | `POST /v2/payouts` (amount and recipient on the body per OpenAPI) |
 
 ```bash
 curl -s -X POST "https://api.morapay.io/v2/quotes" \
@@ -78,22 +78,7 @@ Processing and billing fees can be **passed to the subscriber** or **absorbed by
 
 ### Payouts & disbursements
 
-Batch payouts debit your treasury account by `usdCharge` from the quote. The charge includes:
-
-| Component | Description |
-|-----------|-------------|
-| **Payout principal** | USD value of tokens sent to recipients (includes FX for non-USD-pegged assets) |
-| **Batch platform fee** | Fixed fee per batch |
-| **Per-recipient network fee** | Multiplied by recipient count |
-| **Chain transfer fee** | On-chain settlement cost for the selected `chainId` |
-
-```typescript
-const { data: batches } = await morapay.disbursement();
-const batch = await morapay.disbursement("batch_xyz");
-// batch metadata includes quoted usdCharge at creation time
-```
-
-Always call `morapay.disbursement.quote()` immediately before `POST /disbursement/batches`. Submitted `usdCharge` must match the quote within tolerance.
+Payouts debit treasury liquidity for the fiat amount sent to the recipient. Fees depend on rail, country, and whether the payout is scheduled — confirm totals in the `POST /v2/payouts` response and OpenAPI schemas.
 
 ### Merchant withdrawals
 

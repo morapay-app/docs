@@ -39,3 +39,8 @@ if (!existsSync(src)) {
 mkdirSync(path.dirname(outFile), { recursive: true });
 copyFileSync(src, outFile);
 console.log(`✓ Wrote ${outFile}`);
+const filter = spawnSync("node", ["scripts/filter-merchant-openapi.mjs"], {
+  cwd: docsRoot,
+  stdio: "inherit",
+});
+if (filter.status !== 0) process.exit(filter.status ?? 1);

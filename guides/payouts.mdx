@@ -1,9 +1,9 @@
 ---
 title: "Payouts"
-description: "Single payouts, batches, schedules, and saved recipients."
+description: "Single payouts, schedules, and saved recipients."
 ---
 
-Send fiat to mobile money or bank accounts with **`/v2/payouts`**, **`/v2/batches`**, **`/v2/schedules`**, and **`/v2/recipients`**. All merchant paths live under `https://api.morapay.io/v2/*` and require signed headers (`Morapay-Key: pk_test_example`, `Morapay-Timestamp`, `Morapay-Signature: v1=…`).
+Send fiat to mobile money or bank accounts with **`/v2/payouts`**, **`/v2/schedules`**, and **`/v2/recipients`**. All merchant paths live under `https://api.morapay.io/v2/*` and require signed headers (`Morapay-Key: pk_test_example`, `Morapay-Timestamp`, `Morapay-Signature: v1=…`).
 
 Schema details (status enums, rail fields, money precision) are in the **API reference** tab.
 
@@ -15,15 +15,6 @@ Schema details (status enums, rail fields, money precision) are in the **API ref
 | `POST` | `/v2/payouts` | Create one payout |
 | `GET` | `/v2/payouts/{payout_id}` | Read status |
 | `POST` | `/v2/payouts/{payout_id}/cancel` | Cancel pending |
-
-## Batches
-
-| Method | Path | Purpose |
-|--------|------|---------|
-| `POST` | `/v2/batches` | Draft a batch |
-| `GET` | `/v2/batches/{id}` | Read batch |
-| `POST` | `/v2/batches/{id}/submit` | Submit for processing |
-| `POST` | `/v2/batches/{id}/cancel` | Cancel draft |
 
 ## Schedules & recipients
 
@@ -104,5 +95,5 @@ curl -s "https://api.morapay.io/v2/payouts?limit=20" \
 List responses wrap **`data.items`** with **`meta`** (`page`, `limit`, `total`, or cursor fields per OpenAPI).
 
 <Tip>
-  Resolve unknown account numbers once with **`POST /v2/recipients/resolve`** before attaching a recipient to high-volume batches.
+  Resolve unknown account numbers once with **`POST /v2/recipients/resolve`** before saving a recipient used for repeat payouts.
 </Tip>
