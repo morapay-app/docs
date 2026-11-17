@@ -1,61 +1,36 @@
 ---
 title: "Environments"
-description: "Morapay separates **TEST** and **LIVE** at the API key level."
+description: "Production base URL, TEST vs LIVE keys, and readiness checks."
 ---
 
-## TEST vs LIVE
+## Base URL
 
-| | TEST | LIVE |
-|---|------|------|
-| Public key | `pk_test_*` | `pk_live_*` |
-| Secret key | `sk_test_*` | `sk_live_*` |
-| Funds | Simulated / sandbox rails | Real money movement |
-| Dashboard | TEST mode toggle | LIVE mode toggle |
+All v2 routes are rooted at:
 
-Use TEST keys for integration development.<br />Rotate to LIVE only after checkout, webhooks, and payout flows are verified.
-
-## API hosts
-
-| Service | Production default | Local dev |
-|---------|-------------------|-----------|
-| **Morapay API** | `https://api.morapay.io`
-| **Checkout** (hosted + widget) | `https://checkout.morapay.io` | `http://localhost:3002` |
-
-SDK options:
-
-```typescript
-const morapay = new Morapay({
-  publicKey: process.env.MORAPAY_PUBLIC_KEY!,
-  secretKey: process.env.MORAPAY_SECRET_KEY!,
-});
+```
+https://api.morapay.io
 ```
 
-All merchant resources live under **`/api/v1/merchant`** on the Morapay API.
+There is no separate sandbox host. **TEST** and **LIVE** behavior is selected by the API key prefix (`pk_test_*` / `pk_live_*`).
 
-## Architecture
+## Readiness
 
-```mermaid
-flowchart LR
-  MerchantApp["Your server\n(@morapay/sdk)"]
-  API["Morapay API\n/api/v1/merchant"]
-  Checkout["Checkout host\n/widget"]
+| Route | Auth | Purpose |
+|-------|------|---------|
+| `GET /v2/health` | None | Liveness |
+| `GET /v2/ready` | None | Dependency readiness |
 
-  MerchantApp -->|HMAC signed| API
-  MerchantApp -->|URL helpers| Checkout
+```bash
+curl -s https://api.morapay.io/v2/health
+curl -s https://api.morapay.io/v2/ready
 ```
 
-All signing, webhooks, payment links, subscriptions, and disbursements are served from https://api.morapay.io.
+## Keys and data
 
-## Response envelope
+- TEST keys affect sandbox ledger data where applicable.
+- LIVE keys move real funds on supported rails.
+- Never embed `sk_*` in browsers or mobile apps.
 
-All Morapay API JSON responses follow:
+## Dashboard
 
-```json
-{ "success": true, "data": { ... }, "meta": { "page": 1, "limit": 20, "total": 42 } }
-```
-
-Errors include consultant fields. See [Error handling](/errors/error-handling).
-
-## Next step
-
-[Payment links](/concepts/payment-links): your first revenue primitive.
+Manage keys, webhooks, and KYB in [business.morapay.io](https://business.morapay.io).

@@ -1,102 +1,76 @@
 ---
 title: "Webhooks"
-description: "Register endpoints, verify signatures, and handle merchant events."
+description: "Register v2 webhook endpoints, verify delivery signatures, and retry failures."
 ---
 
-Morapay delivers **outbound webhooks** when payments, payouts, and subscriptions change state. Configure endpoints via the Merchant API; verify deliveries on your server.
+Morapay sends **outbound webhooks** when payments, payouts, and other resources change state.
 
-## Register an endpoint
+## Manage endpoints (merchant API)
 
-`morapay.webhooks.endpoints` uses the ****callable resource** pattern: call with no arguments to list, then use attached methods for writes:
+| Action | Route |
+|--------|--------|
+| List | `GET /v2/webhooks` |
+| Create | `POST /v2/webhooks` |
+| Update | `PATCH /v2/webhooks/{id}` |
+| Delete | `DELETE /v2/webhooks/{id}` |
+| List deliveries | `GET /v2/deliveries` |
+| Retry delivery | `POST /v2/deliveries/{id}/retry` |
 
-```typescript
-const endpoint = await morapay.webhooks.endpoints.create({
-  url: "https://api.yourapp.com/webhooks/morapay",
-  events: ["payment_link.paid", "payout.status_updated"],
-});
+Create endpoints with signed requests ([Authentication](/getting-started/authentication)). Store the endpoint **secret** when shown; it is required to verify deliveries.
 
-const secret = await morapay.webhooks.endpoints.revealSecret(endpoint.id);
-// Store secret securely; shown once per reveal call
-```
+## Event payload
 
-Manage endpoints:
+Deliveries are `POST` requests to your URL with JSON body and headers:
 
-```typescript
-const endpoints = await morapay.webhooks.endpoints();
-await morapay.webhooks.endpoints.update(id, { url: "https://..." });
-await morapay.webhooks.endpoints.delete(id);
-```
+| Header | Meaning |
+|--------|---------|
+| `Morapay-Event` | Event type |
+| `Morapay-Delivery` | Delivery log id |
+| `Morapay-Signature` | `sha256=<hex>` HMAC of the raw body |
 
-API path: `/api/v1/merchant/webhooks/endpoints`.
-
-## Event types
-
-| Event | Description |
-|-------|-------------|
-| `transaction.created` | New transaction record |
-| `transaction.status_updated` | Transaction state change |
-| `invoice.created` | Invoice issued |
-| `invoice.paid` | Invoice settled |
-| `payout.status_updated` | Payout lifecycle update |
-| `payment_link.paid` | Payment link checkout completed |
-| `disbursement_batch.created` | Disbursement batch accepted |
-| `subscription.payment_received` | Subscription payment settled |
-
-Subscribe only to events you handle; unused events add noise and retry load.
-
-## Verify signatures
-
-Morapay signs the **raw request body** with HMAC-SHA256. The `Morapay-Signature` header accepts:
-
-- `sha256=<hex>`, or
-- raw hex digest
-
-Use `MorapayUtils.verifyWebhook` on your server; it is synchronous and does not require a `Morapay` client instance:
-
-```typescript
-import { MorapayUtils } from "@morapay/sdk";
-
-export async function POST(req: Request) {
-  const rawBody = await req.text();
-  const signature = req.headers.get("morapay-signature") ?? "";
-
-  const valid = MorapayUtils.verifyWebhook({
-    payload: rawBody,
-    signature,
-    secret: process.env.MORAPAY_WEBHOOK_SECRET!,
-  });
-
-  if (!valid) {
-    return new Response("Invalid signature", { status: 401 });
-  }
-
-  const event = JSON.parse(rawBody);
-  // dispatch by event.type
-  return new Response("ok");
+```json
+{
+  "id": "evt_01",
+  "type": "payment_link.paid",
+  "created": "2026-11-17T20:00:00.000Z",
+  "data": {}
 }
 ```
 
+## Verify signatures
+
+Sign the **raw request body string** with HMAC-SHA256 using the endpoint secret. Compare to `Morapay-Signature`:
+
+<CodeGroup>
+
+```javascript Node.js
+import { createHmac, timingSafeEqual } from "node:crypto";
+
+export function verifyMorapayWebhook(rawBody, signatureHeader, secret) {
+  const expected = createHmac("sha256", secret).update(rawBody, "utf8").digest("hex");
+  const provided = signatureHeader.replace(/^sha256=/i, "").trim();
+  try {
+    const a = Buffer.from(provided, "hex");
+    const b = Buffer.from(expected, "hex");
+    return a.length === b.length && timingSafeEqual(a, b);
+  } catch {
+    return false;
+  }
+}
+```
+
+```bash cURL (test vector)
+# expected = HMAC-SHA256(secret, rawBody) as lowercase hex
+# header: Morapay-Signature: sha256=<expected>
+```
+
+</CodeGroup>
+
 <Note>
-  Always verify against the **raw body string** before JSON parsing. Re-serialized JSON will fail signature checks.
+  Parse JSON only **after** verification. Re-serialized JSON will not match the signature.
 </Note>
 
-## Delivery best practices
+## Reliability
 
-1. **Respond 2xx quickly**  offload processing to a queue.
-2. **Idempotent handlers**  the same event may be delivered more than once.
-3. **Log `requestId`** from inbound payloads when debugging with support.
-
-## FAQ
-
-<AccordionGroup>
-  <Accordion title="How do I rotate a webhook secret?">
-    Create a new endpoint or use `revealSecret` if your dashboard flow supports rotation, update your server env, then delete the old endpoint.
-  </Accordion>
-  <Accordion title="What IP addresses do webhooks come from?">
-    Contact support for the current egress allowlist if your firewall requires it.
-  </Accordion>
-</AccordionGroup>
-
-## Next step
-
-[Idempotency](/developer-tools/idempotency): safe retries for payouts and ledger operations.
+- Respond with `2xx` quickly; process asynchronously.
+- Failed deliveries appear in `GET /v2/deliveries` and can be retried with `POST /v2/deliveries/{id}/retry`.

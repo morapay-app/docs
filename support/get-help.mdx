@@ -17,7 +17,7 @@ When you're stuck, we want you back to a **200 OK** as fast as possible. Format 
 
 1. **`requestId`**: from the error body or `Morapay-Request-Id` response header. Every API request is logged with this ID.
 2. **Environment**: TEST or LIVE (from your key prefix).
-3. **Endpoint + SDK method**, for example `morapay.products.link()`, `POST /disbursement/batches`.
+3. **Endpoint**, for example `POST /v2/payouts` or `POST /v2/checkouts`.
 4. **Timestamp**: when the failure occurred.
 5. **Error `code`**, for example `links.amount.below_minimum`, not just HTTP 422.
 
@@ -26,7 +26,7 @@ When you're stuck, we want you back to a **200 OK** as fast as possible. Format 
 ```
 requestId: req_1717483920_x7k2
 env: TEST
-call: morapay.disbursement.quote({ chainId: 8453, token: "USDC", payoutTotal: 250, recipientCount: 10 })
+call: POST /v2/payouts (amount 250.00 GHS, recipient_id rcp_…)
 code: payouts.momo.insufficient_balance
 time: 2026-03-15T14:32:00Z
 ```

@@ -1,0 +1,106 @@
+---
+title: "Payment links"
+description: "Create and manage merchant payment links and load the public checkout surface."
+---
+
+**Payment links** are reusable checkout entry points. Merchants manage them under **`/v2/links`**; customers open **`GET /v2/public/links/{id}`** without API keys.
+
+Authenticated calls use `Morapay-Key: pk_test_example` and an HMAC signature. The signed path must match the request, including query strings (e.g. `/v2/links?page=1&limit=20`).
+
+## Merchant CRUD
+
+| Action | Method | Path |
+|--------|--------|------|
+| List | `GET` | `/v2/links` |
+| Create | `POST` | `/v2/links` |
+| Read | `GET` | `/v2/links/{id}` |
+| Update | `PATCH` | `/v2/links/{id}` |
+
+Deactivate a link with `PATCH` and `"is_active": false` (there is no delete verb). Optional fields (`product_id`, `settlement_token`, `metadata`, …) are in the **API reference** tab.
+
+## Create a link
+
+<CodeGroup>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/v2/links" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: pk_test_example" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{"title":"November invoice","currency":"GHS","amount":150,"is_active":true}'
+```
+
+```javascript Node.js
+import { createHash, createHmac } from "node:crypto";
+
+function sign(pk, sk, method, path, body = "") {
+  const ts = String(Math.floor(Date.now() / 1000));
+  const hash = createHash("sha256").update(body, "utf8").digest("hex");
+  const mac = createHmac("sha256", createHash("sha256").update(sk, "utf8").digest())
+    .update(`${ts}.${method}.${path}.${hash}`, "utf8").digest("hex");
+  return { "Morapay-Key": pk, "Morapay-Timestamp": ts, "Morapay-Signature": `v1=${mac}` };
+}
+
+const pk = "pk_test_example", sk = "sk_test_example";
+const body = JSON.stringify({ title: "November invoice", currency: "GHS", amount: 150, is_active: true });
+await fetch("https://api.morapay.io/v2/links", {
+  method: "POST",
+  headers: { ...sign(pk, sk, "POST", "/v2/links", body), "Content-Type": "application/json" },
+  body,
+});
+```
+
+</CodeGroup>
+
+<ResponseExample>
+
+```json Create link
+{
+  "data": {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "slug": "november-invoice",
+    "public_code": "pay_9k2m",
+    "currency": "GHS",
+    "amount_type": "fixed",
+    "is_active": true
+  },
+  "meta": { "request_id": "req_1731810000001_b" }
+}
+```
+
+</ResponseExample>
+
+## List links
+
+```bash
+curl -s "https://api.morapay.io/v2/links?page=1&limit=20" \
+  -H "Morapay-Key: pk_test_example" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
+```
+
+List payloads return **`data.items`** plus pagination metadata (`page`, `limit`, `total` or cursor fields — see OpenAPI for the exact shape).
+
+## Public read (customer)
+
+No signing. Use the link id or public identifier from your integration:
+
+```bash
+curl -s "https://api.morapay.io/v2/public/links/a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+```
+
+<ResponseExample>
+
+```json Public link
+{
+  "data": { "title": "November invoice", "currency": "GHS", "amount": "150.00", "business_id": "…" },
+  "meta": { "request_id": "req_1731810000002_c" }
+}
+```
+
+</ResponseExample>
+
+<Tip>
+  Pair payment links with [Checkouts and payments](/guides/checkouts-and-payments) when you need a timed session instead of an open amount page.
+</Tip>

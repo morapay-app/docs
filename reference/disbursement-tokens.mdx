@@ -1,9 +1,9 @@
 ---
-title: "Disbursement tokens"
-description: "Stablecoin rails for batch disbursements and treasury payouts."
+title: "Payout liquidity tokens"
+description: "Stablecoin rails that fund v2 payouts and treasury debits."
 ---
 
-`morapay.payouts` batches debit merchant treasury liquidity on supported **pool tokens** and deliver fiat to MoMo or bank recipients.
+Merchant **payouts** debit treasury liquidity on supported **pool tokens** and deliver fiat to MoMo or bank recipients.
 
 ## Live mainnet
 
@@ -28,20 +28,9 @@ Primary production rails:
 | Base Sepolia | 84532 | USDC |
 | Base Sepolia | 84532 | ETH |
 
-Test batches must use testnet chains such as **Base Sepolia** chain ID 84532. Mainnet chain IDs are rejected in test mode.
-
-## Quote before batching
-
-```typescript
-const quote = await morapay.payouts.quote({
-  chainId: 8453,
-  token: "USDC",
-  payoutTotal: 250,
-  recipientCount: 10,
-});
-```
+Test payouts must use testnet chains such as **Base Sepolia** chain ID 84532. Mainnet chain IDs are rejected in test mode.
 
 ## Related
 
+- [Payouts guide](/guides/payouts)
 - [Payout timing & limits](/reference/payout-timing)
-- [Payouts & MoMo](/concepts/payouts-momo)

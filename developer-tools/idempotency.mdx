@@ -1,59 +1,26 @@
 ---
 title: "Idempotency"
-description: "Prevent duplicate ledger movements and safely retry API calls."
+description: "Use Idempotency-Key on money-moving v2 POST routes."
 ---
 
-Idempotency ensures that **retrying the same logical operation** does not double-charge, double-credit, or create duplicate ledger entries.
+Routes that **move money** or create irreversible side effects require an **`Idempotency-Key`** header on `POST` (and sometimes on cancel/confirm verbs). OpenAPI marks each operation as `required`, `optional`, or unspecified.
 
-## Where Morapay uses idempotency
+## Rules
 
-### Disbursement account transfers
+1. Generate a unique key per **logical** operation (UUIDv4 is fine).
+2. On timeout or `5xx`, **retry with the same key** and the **same JSON body**.
+3. Do **not** reuse a key for a different payload — the API may return the first result or reject the call.
 
-`POST /api/v1/merchant/disbursement/deposit` and `/withdraw` require an `idempotencyKey` (8–200 characters):
+## Example
 
-```typescript
-// The API validates idempotencyKey on deposit/withdraw bodies
-await fetch("https://api.morapay.io/api/v1/merchant/disbursement/deposit", {
-  method: "POST",
-  body: JSON.stringify({
-    amountUsd: 100,
-    idempotencyKey: "deposit-2026-03-15-ops-topup",
-  }),
-});
+```bash
+curl -s -X POST "https://api.morapay.io/v2/buys" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: idem_01HZ_buy_100" \
+  -H "Morapay-Key: pk_test_example" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{"quote_id":"qt_01","destination_wallet":"0xabc..."}'
 ```
 
-Replaying the same key returns the original result instead of creating a second movement.
-
-### Automated settlement flows
-
-Subscription charges and other platform-initiated settlements use Morapay-managed idempotency. You do not supply keys for those events; design your webhook handlers to be idempotent instead.
-
-### Conflict retries
-
-When a resource changed since your last read, the API may return `resource.conflict` (HTTP 409). The error guide recommends fetching fresh state and retrying with an **updated payload or new idempotency key**.
-
-## Guidelines for merchants
-
-<Steps>
-  <Step title="Generate deterministic keys">
-    Use a stable identifier for the business action: `payout-batch-{batchId}`, `deposit-{treasuryTransferId}`.
-  </Step>
-  <Step title="Reuse keys only for true retries">
-    Same key + same body = safe retry after network timeout. A **different** amount needs a **new** key.
-  </Step>
-  <Step title="Store keys with your domain records">
-    Persist the idempotency key alongside the disbursement batch or treasury transfer row in your database.
-  </Step>
-</Steps>
-
-## SDK note
-
-The high-level `morapay.disbursement` resource exposes batch quote, list, and cancel helpers. Deposit/withdraw with explicit idempotency keys map to `/api/v1/merchant/disbursement/deposit` and `/disbursement/withdraw`; use your server's HTTP client or extend your integration layer when calling these directly.
-
-## Webhooks + idempotency
-
-Webhook handlers should be idempotent by `event.id` or a composite of `(event.type, resourceId, status)`. See [Webhooks](/developer-tools/webhooks).
-
-## Next step
-
-[Error handling](/errors/error-handling): structured errors with `requestId` for support correlation.
+Common required routes include `POST /v2/buys`, `POST /v2/sells`, `POST /v2/payouts`, and `POST /v2/settlements/withdraw`. See the API reference for the full list.

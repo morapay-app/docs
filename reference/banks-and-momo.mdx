@@ -3,7 +3,7 @@ title: "Banks & MoMo withdrawal"
 description: "Supported withdrawal rails, mobile money operators, and bank catalogs."
 ---
 
-Merchant **withdrawals** and **disbursement batch** recipients settle to local rails.
+Merchant **withdrawals** and **payout** recipients settle to local rails.
 
 ## Withdrawal rails
 
@@ -41,13 +41,17 @@ Bank lists are synced per market. Run `pnpm sync:providers` in `core/` to refres
 Fetch live lists from the Morapay API:
 
 ```bash
-curl -s "https://api.morapay.io/api/public/fiat/banks?country=ghana"
+# Unsigned institution helpers (when enabled on your deployment)
+curl -s "https://api.morapay.io/v2/catalog/countries"
 
-curl -s "https://api.morapay.io/api/v1/merchant/payout-rails/banks" \
+# Resolve a bank or MoMo account for payouts (signed)
+curl -s "https://api.morapay.io/v2/recipients/resolve?type=bank&country=GH" \
   -H "Morapay-Key: pk_test_..." \
   -H "Morapay-Timestamp: ..." \
   -H "Morapay-Signature: v1=..."
 ```
+
+Payout field shapes are in the **API reference** (`/v2/recipients`, `/v2/payouts`).
 
 ## Related
 

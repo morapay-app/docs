@@ -1,0 +1,123 @@
+---
+title: "Quotes and ramp"
+description: "Fiat on-ramp and off-ramp with firm quotes, live rates, buys, sells, and cancel."
+---
+
+The **ramp API** converts between fiat and crypto in two steps: price with **`POST /v2/quotes`** (or skim **`GET /v2/rates`**), then execute with **`POST /v2/buys`** or **`POST /v2/sells`**. All merchant calls use `https://api.morapay.io` with signed headers ([Authentication](/getting-started/authentication)); sign the path exactly as sent, e.g. `/v2/rates?direction=buy&pay_currency=GHS&receive_currency=USDC&rail=mobile_money`.
+
+<Tip>
+  **GHS buy** quotes require at least **50.00 GHS** in `pay.amount`. Use decimal strings for every money field — see the the **API reference** tab.
+</Tip>
+
+## Typical flow
+
+1. `POST /v2/quotes` — firm quote (`direction`, `pay`, `receive_currency`, `rail`, optional `country`).
+2. `POST /v2/buys` or `POST /v2/sells` — pass `quote_id` from the quote; add payout destination fields per direction.
+3. `GET /v2/buys/{id}` or `GET /v2/sells/{id}` — poll status.
+4. `POST /v2/buys/{id}/cancel` or `POST /v2/sells/{id}/cancel` — cancel while still pending.
+
+`Idempotency-Key` is **required** on buy and sell creates. Reuse the same key only when retrying the identical body.
+
+## Create a buy quote
+
+<CodeGroup>
+
+```bash cURL
+TIMESTAMP=$(date +%s)
+BODY='{"direction":"buy","pay":{"amount":"100.00","currency":"GHS"},"receive_currency":"USDC","rail":"mobile_money","country":"GH"}'
+# Set SIGNATURE = v1 HMAC per authentication guide for POST /v2/quotes
+curl -s -X POST "https://api.morapay.io/v2/quotes" \
+  -H "Content-Type: application/json" \
+  -H "Morapay-Key: pk_test_example" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d "$BODY"
+```
+
+```javascript Node.js
+import { createHash, createHmac } from "node:crypto";
+
+const BASE = "https://api.morapay.io";
+const pk = "pk_test_example";
+const sk = "sk_test_example";
+
+function sign(method, path, body = "") {
+  const ts = String(Math.floor(Date.now() / 1000));
+  const bodyHash = createHash("sha256").update(body, "utf8").digest("hex");
+  const payload = `${ts}.${method}.${path}.${bodyHash}`;
+  const key = createHash("sha256").update(sk, "utf8").digest();
+  const sig = createHmac("sha256", key).update(payload, "utf8").digest("hex");
+  return { ts, sig, headers: { "Morapay-Key": pk, "Morapay-Timestamp": ts, "Morapay-Signature": `v1=${sig}` } };
+}
+
+const body = JSON.stringify({
+  direction: "buy",
+  pay: { amount: "100.00", currency: "GHS" },
+  receive_currency: "USDC",
+  rail: "mobile_money",
+  country: "GH",
+});
+const { headers } = sign("POST", "/v2/quotes", body);
+const quote = await fetch(`${BASE}/v2/quotes`, { method: "POST", headers: { ...headers, "Content-Type": "application/json" }, body }).then((r) => r.json());
+```
+
+</CodeGroup>
+
+<ResponseExample>
+
+```json Quote response
+{
+  "data": {
+    "id": "qte_01hxyz",
+    "direction": "buy",
+    "status": "open",
+    "pay": { "amount": "100.00", "currency": "GHS" },
+    "receive": { "amount": "6.42", "currency": "USDC" }
+  },
+  "meta": { "request_id": "req_1731810000000_a" }
+}
+```
+
+</ResponseExample>
+
+## Start a buy
+
+<CodeGroup>
+
+```bash cURL
+curl -s -X POST "https://api.morapay.io/v2/buys" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: buy_2026-11-17_7f3a" \
+  -H "Morapay-Key: pk_test_example" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
+  -d '{"quote_id":"qte_01hxyz","destination_wallet":"0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0","payment_method":"mobile_money","phone_number":"+233201234567"}'
+```
+
+```javascript Node.js
+const buyBody = JSON.stringify({
+  quote_id: quote.data.id,
+  destination_wallet: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0",
+  payment_method: "mobile_money",
+  phone_number: "+233201234567",
+});
+const buyHeaders = sign("POST", "/v2/buys", buyBody).headers;
+await fetch(`${BASE}/v2/buys`, {
+  method: "POST",
+  headers: { ...buyHeaders, "Content-Type": "application/json", "Idempotency-Key": "buy_2026-11-17_7f3a" },
+  body: buyBody,
+});
+```
+
+</CodeGroup>
+
+## Live rates (no quote id)
+
+```bash
+curl -s "https://api.morapay.io/v2/rates?direction=buy&pay_currency=GHS&receive_currency=USDC&rail=mobile_money&country=GH" \
+  -H "Morapay-Key: pk_test_example" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
+```
+
+Sign the full query path above. Field definitions: the **API reference** tab.

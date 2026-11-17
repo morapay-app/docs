@@ -24,7 +24,7 @@ Morapay publishes supported rails as a **live catalog** in the Morapay API. Use 
     USDC on Base and Ethereum · test on Base Sepolia
   </Card>
   <Card title="Payout timing & limits" icon="clock" href="/reference/payout-timing">
-    Platform minimums · batch scheduling · MoMo vs bank SLAs
+    Platform minimums · scheduled payouts · MoMo vs bank SLAs
   </Card>
 </CardGroup>
 
@@ -36,16 +36,16 @@ REST endpoint documentation for each coverage area:
   <Card title="API overview" icon="server" href="/api-reference/overview">
     Base URL, auth, response envelope, route map.
   </Card>
-  <Card title="Catalog API" icon="database" href="/api-reference/catalog">
-    Countries, chains, tokens.
+  <Card title="Catalog routes" icon="database" href="/api-reference/overview">
+    `GET /v2/catalog/countries`, `chains`, `tokens` (OpenAPI).
   </Card>
-  <Card title="Payout rails API" icon="building-columns" href="/api-reference/payout-rails">
-    Banks, MoMo operators, account resolve.
+  <Card title="Payouts guide" icon="building-columns" href="/guides/payouts">
+    Payouts, recipients, schedules.
   </Card>
-  <Card title="Disbursement API" icon="coins" href="/api-reference/disbursement">
-    Treasury, batch quote, create, ledger.
+  <Card title="Checkouts guide" icon="credit-card" href="/guides/checkouts-and-payments">
+    Links, checkout sessions, payment confirm.
   </Card>
-  <Card title="Fiat checkout API" icon="credit-card" href="/api-reference/fiat-checkout">
-    MoMo, bank transfer, card config.
+  <Card title="Quotes & ramp" icon="coins" href="/guides/quotes-and-ramp">
+    Quotes, buys, sells, rates.
   </Card>
 </CardGroup>

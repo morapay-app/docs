@@ -1,181 +1,41 @@
 ---
 title: "Conventions"
-description: "HTTP methods, pagination, response envelope, and common errors for the Morapay API."
+description: "v2 path style, money fields, pagination, idempotency, and headers."
 ---
 
-All Merchant API paths are relative to `https://api.morapay.io/api/v1/merchant` unless noted. Public catalog and checkout paths use `/api/public/*`.
+## Paths
 
-## HTTP methods
+- Resources use **plural nouns**: `/v2/links`, `/v2/payouts`.
+- Actions on a resource use **`POST /v2/{resource}/{id}/{verb}`** — e.g. `/v2/buys/{id}/cancel`, `/v2/payouts/{payout_id}/cancel`.
+- Public customer flows live under **`/v2/public/...`**.
 
-| Method | Use |
-|--------|-----|
-| `GET` | Read a resource or list with query filters |
-| `POST` | Create a resource or run an action such as quote, deposit, or refund |
-| `PATCH` | Partial update on an existing resource |
-| `PUT` | Full replace where documented, for example business country |
-| `DELETE` | Remove or cancel where documented, for example webhook endpoint or scheduled batch |
+## Money
 
-Signed headers are required on every Merchant API call. See [Authentication](/getting-started/authentication).
+Amounts are **decimal strings** in major units (e.g. `"100.00"` GHS). BTC uses integer satoshis where noted in OpenAPI. Never send IEEE floats.
 
 ## Pagination
 
-List endpoints accept:
-
-| Query | Default | Max |
-|-------|---------|-----|
-| `page` | `1` | — |
-| `limit` | `20` | `100` |
-
-Paginated success responses include `meta`:
+List endpoints return:
 
 ```json
 {
-  "success": true,
-  "data": [],
-  "meta": { "page": 1, "limit": 20, "total": 42 }
+  "data": {
+    "items": [],
+    "meta": { "page": 1, "limit": 20, "total": 42 }
+  }
 }
 ```
 
-## Success envelope
+Query with `page` and `limit` unless the route documents cursor fields.
 
-```json
-{ "success": true, "data": { } }
-```
+## Idempotency
 
-Create endpoints return **201 Created** when a new row is inserted. Async actions such as refunds, withdrawals, and webhook retries may return **202 Accepted** while processing continues. Idempotent replays may return **200 OK** with the same body.
+When `Idempotency-Key` is required, send a unique key per logical operation. Reuse the key only when retrying the **identical** body after a network failure.
 
-## Error envelope
+## Request ID
 
-Every failed JSON response uses the same shape:
+Successful and failed responses may include `meta.request_id`. Quote it when contacting support.
 
-```json
-{
-  "success": false,
-  "error": "Human-readable diagnostic for developers",
-  "code": "links.amount.below_minimum",
-  "safeMessage": "Customer-safe copy",
-  "displayMessage": "UI-ready copy",
-  "why": "Why the API rejected the request",
-  "howToFix": "Actionable fix for integrators",
-  "docUrl": "https://docs.morapay.io/errors/codes/links-amount-below-minimum",
-  "requestId": "req_1717483920_abc",
-  "details": {}
-}
-```
+## Errors
 
-Always log `requestId` and include it when contacting support.
-
-## Common HTTP status codes
-
-| HTTP | Typical `code` | When you see it |
-|------|----------------|-----------------|
-| **200** | — | Successful read or update |
-| **201** | — | Resource created |
-| **202** | — | Accepted; processing continues async (refunds, withdrawals, webhook retry) |
-| **400** | `request.invalid` | Malformed JSON or failed Zod validation |
-| **401** | `auth.keys.invalid`, `auth.signature.mismatch`, `auth.signature.timestamp_expired` | Missing or wrong API key or signature |
-| **403** | `kyb.forbidden`, `FORBIDDEN_MERCHANT_ROLE` | LIVE action blocked by KYB tier or portal role |
-| **404** | `resource.not_found` | Unknown id or wrong tenant |
-| **409** | `links.slug.duplicate`, `resource.conflict` | Duplicate slug or stale optimistic update |
-| **422** | `request.validation_failed`, `links.amount.below_minimum` | Business rule or field validation failure |
-| **429** | `api.rate_limited` | Too many requests; back off and retry |
-| **503** | `api.service_unavailable` | Temporary outage or dependency down |
-
-<ResponseExample>
-
-<CodeGroup>
-
-```json 401 Unauthorized
-{
-  "success": false,
-  "error": "Invalid request signature.",
-  "code": "auth.signature.mismatch",
-  "safeMessage": "We could not verify this request. Please try again later.",
-  "displayMessage": "Payment could not be started. Please refresh and try again.",
-  "requestId": "req_abc123"
-}
-```
-
-```json 403 Forbidden
-{
-  "success": false,
-  "error": "Complete KYB before creating LIVE payment links.",
-  "code": "kyb.forbidden",
-  "requestId": "req_def456"
-}
-```
-
-```json 404 Not Found
-{
-  "success": false,
-  "error": "Payment link not found.",
-  "code": "resource.not_found",
-  "requestId": "req_ghi789"
-}
-```
-
-```json 422 Unprocessable Entity
-{
-  "success": false,
-  "error": "Amount is below the minimum for this corridor.",
-  "code": "links.amount.below_minimum",
-  "displayMessage": "The transaction amount must be at least 1.00 GHS.",
-  "docUrl": "https://docs.morapay.io/errors/codes/links-amount-below-minimum",
-  "requestId": "req_jkl012"
-}
-```
-
-```json 429 Too Many Requests
-{
-  "success": false,
-  "error": "Rate limit exceeded.",
-  "code": "api.rate_limited",
-  "requestId": "req_mno345"
-}
-```
-
-```json 503 Service Unavailable
-{
-  "success": false,
-  "error": "Service temporarily unavailable.",
-  "code": "api.service_unavailable",
-  "requestId": "req_pqr678"
-}
-```
-
-</CodeGroup>
-
-</ResponseExample>
-
-## Portal RBAC
-
-Some mutating routes require a **BusinessMember** role when using portal JWT auth. Merchant API keys skip role checks.
-
-| Capability | Allowed roles |
-|------------|---------------|
-| `PATCH /business` | `OWNER`, `ADMIN` |
-| `POST /keys`, revoke keys | `OWNER`, `ADMIN`, `DEVELOPER` |
-| `POST /methods`, withdrawals | `OWNER`, `ADMIN`, `FINANCE` |
-| Webhook endpoint mutations | `OWNER`, `ADMIN`, `DEVELOPER` |
-| `POST /transactions/:id/refunds` | `OWNER`, `ADMIN`, `FINANCE` |
-
-On denial: **403** with `FORBIDDEN_MERCHANT_ROLE`.
-
-## Legacy route aliases
-
-Older docs and integrations may reference retired paths. Use the current route.
-
-| Legacy | Current |
-|--------|---------|
-| `GET/POST /api/v1/merchant/payment-requests` | `GET/POST /api/v1/merchant/requests` |
-| `POST /api/v1/merchant/links/:id/settlement-quote` | `POST /api/v1/merchant/links/:id/quote` |
-| `POST /api/commerce/paystack-fiat-quote` | `POST /api/commerce/checkout-fiat` (public entry: `POST /api/public/commerce/fiat`) |
-| `POST /api/public/catalog/quotes/checkout` | `POST /api/public/quotes/checkout` |
-| `GET /api/public/payment-links/:slug` | `GET /api/public/links/:slug` (alias still works) |
-| `POST /api/public/payment-links/:slug/sessions` | `POST /api/public/links/:slug/sessions` (alias still works) |
-
-## Related
-
-- [Authentication](/getting-started/authentication)
-- [Error handling](/errors/error-handling)
-- [API overview](/api-reference/overview)
+Errors use stable `error.code` values (snake_case). See [Error handling](/errors/error-handling) and generated error code pages.
