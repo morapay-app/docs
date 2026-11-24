@@ -21,9 +21,9 @@ Morapay pricing is **quote-first**: every product exposes a quote or settlement 
 ```bash
 curl -s -X POST "https://api.morapay.io/v2/quotes" \
   -H "Content-Type: application/json" \
-  -H "Morapay-Key: pk_test_..." \
-  -H "Morapay-Timestamp: $TS" \
-  -H "Morapay-Signature: v1=$SIG" \
+  -H "Morapay-Key: pk_test_example" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE" \
   -d '{"direction":"buy","pay":{"amount":"100.00","currency":"GHS"},"receive_currency":"USDC","rail":"mobile_money","country":"GH"}'
 ```
 
@@ -31,18 +31,7 @@ curl -s -X POST "https://api.morapay.io/v2/quotes" \
 
 ### Payment links & checkout
 
-**Crypto checkout:** Morapay applies a platform fee on the transaction, percentage plus FX spread at settlement. Use ramp quotes when building custom checkout UI:
-
-```typescript
-const ramp = await morapay.quotes.ramp.create({
-  action: "buy",
-  sourceAsset: "USDC",
-  targetAsset: "ETH",
-  targetChain: "1",
-  amount: 100,
-  amountType: "source",
-});
-```
+**Crypto checkout:** Morapay applies a platform fee on the transaction, percentage plus FX spread at settlement. Price with `POST /v2/quotes` before checkout. Example: buy with **100.00 GHS** and receive **USDC** (settlement on Base, chain ID 8453 in production).
 
 **Fiat checkout:** MoMo, bank, and card processing fees depend on your business country and the payer payment method. Morapay supports two fee modes:
 
@@ -51,19 +40,7 @@ const ramp = await morapay.quotes.ramp.create({
 | **Pass to customer** | Payer sees `payerTotalMajor` (invoice + processing) |
 | **Absorb by merchant** | Payer pays invoice amount; fees deducted from your clearing |
 
-Request a payer total before rendering checkout:
-
-```bash
-curl -s -X POST "https://api.morapay.io/api/public/commerce/fiat" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "payment_link_id": "link_uuid",
-    "payer_currency": "GHS",
-    "quote_tier": "mobile_money"
-  }'
-```
-
-The response includes `spotPayerMajor`, `payerTotalMajor`, `feeMode`, and a processing-fee breakdown you can display in your UI.
+Create a checkout session with `POST /v2/checkouts` (or load a payment link via `GET /v2/public/links/{id}`) and read payer totals from the session or hosted checkout response before rendering UI. See [Checkouts and payments](/guides/checkouts-and-payments).
 
 Supported fiat checkout currencies: **GHS** and **NGN** for MoMo and bank transfer. Card checkout is available in select markets. See [Countries & fiat](/reference/countries-and-fiat).
 
@@ -115,7 +92,7 @@ For account-specific fee schedules or enterprise pricing, contact [support@morap
 
 <AccordionGroup>
   <Accordion title="How do I show fees to my customers at checkout?">
-    Call `POST /api/public/commerce/fiat` with the payment link ID, payer currency, and `quote_tier` (`card_local`, `card_international`, `mobile_money`, or `bank_transfer`). Display `payerTotalMajor` when fees are passed to the customer, or `spotPayerMajor` when your business absorbs them (`feeMode` in the response).
+    Create a checkout with `POST /v2/checkouts` or present a payment link, then read the payer total fields returned for the chosen rail (`card`, `mobile_money`, or `bank_transfer`). See [Checkouts and payments](/guides/checkouts-and-payments).
   </Accordion>
   <Accordion title="How are payout fees calculated?">
     Fiat payout fees depend on rail, country, and treasury funding path. Confirm totals in the `POST /v2/payouts` response and OpenAPI schemas before moving money.

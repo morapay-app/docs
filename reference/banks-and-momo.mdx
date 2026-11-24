@@ -38,18 +38,16 @@ Merchant **withdrawals** and **payout** recipients settle to local rails.
 
 Bank lists are synced per market. Run `pnpm sync:providers` in `core/` to refresh the catalog snapshot, then re-export docs coverage.
 
-Fetch live lists from the Morapay API:
+Resolve a bank or MoMo account for payouts (signed):
 
 ```bash
-# Unsigned institution helpers (when enabled on your deployment)
-curl -s "https://api.morapay.io/v2/catalog/countries"
-
-# Resolve a bank or MoMo account for payouts (signed)
 curl -s "https://api.morapay.io/v2/recipients/resolve?type=bank&country=GH" \
-  -H "Morapay-Key: pk_test_..." \
-  -H "Morapay-Timestamp: ..." \
-  -H "Morapay-Signature: v1=..."
+  -H "Morapay-Key: pk_test_example" \
+  -H "Morapay-Timestamp: $TIMESTAMP" \
+  -H "Morapay-Signature: v1=$SIGNATURE"
 ```
+
+Country and institution tables on this page come from the docs coverage export. There is no `GET /v2/catalog/*` route in the merchant OpenAPI.
 
 Payout field shapes are in the **API reference** (`/v2/recipients`, `/v2/payouts`).
 

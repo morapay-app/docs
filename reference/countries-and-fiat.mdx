@@ -3,7 +3,7 @@ title: "Countries & fiat"
 description: "Supported countries, settlement currencies, and fiat payment methods."
 ---
 
-Morapay supports international crypto checkout and regional fiat rails. Country availability is stored in the Morapay API catalog and exposed at `GET /api/public/catalog/countries`.
+Morapay supports international crypto checkout and regional fiat rails. The tables on this page are exported coverage snapshots for documentation; validate against your dashboard and quote responses before production.
 
 ## Supported countries
 
@@ -44,14 +44,6 @@ Card processing is available in these business countries:
 | Kenya | KE | KES |
 | South Africa | ZA | ZAR |
 | Côte d'Ivoire | CI | XOF |
-
-## API
-
-```bash
-curl -s "https://api.morapay.io/api/public/catalog/countries"
-```
-
-Returns enabled countries with `code`, `name`, `currency`, and `enabled`.
 
 ## Related
 
