@@ -91,13 +91,13 @@ curl -s -X POST "https://api.morapay.io/v2/buys" \
   -H "Morapay-Key: pk_test_example" \
   -H "Morapay-Timestamp: $TIMESTAMP" \
   -H "Morapay-Signature: v1=$SIGNATURE" \
-  -d '{"quote_id":"qte_01hxyz","destination_wallet":"0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb","payment_method":"mobile_money","phone_number":"+233201234567"}'
+  -d '{"quote_id":"qte_01hxyz","destination_wallet":"0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0","payment_method":"mobile_money","phone_number":"+233201234567"}'
 ```
 
 ```javascript Node.js
 const buyBody = JSON.stringify({
   quote_id: quote.data.id,
-  destination_wallet: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  destination_wallet: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0",
   payment_method: "mobile_money",
   phone_number: "+233201234567",
 });

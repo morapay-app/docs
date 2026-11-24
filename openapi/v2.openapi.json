@@ -18880,7 +18880,7 @@
                   "summary": "Create webhook endpoint",
                   "value": {
                     "displayName": "Production notifications",
-                    "url": "https://hooks.merchant.test/morapay",
+                    "url": "https://yourshop.com/webhooks/morapay",
                     "events": [
                       "payment_link.paid"
                     ],
