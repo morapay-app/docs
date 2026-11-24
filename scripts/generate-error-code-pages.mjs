@@ -34,7 +34,6 @@ const HTTP_STATUS = {
   "auth.signature.invalid_format": 401,
   "kyb.forbidden": 403,
   "kyb.blocked": 403,
-  "links.amount.below_minimum": 422,
   "links.slug.duplicate": 409,
   "payouts.momo.insufficient_balance": 400,
   "payouts.network.carrier_down": 503,

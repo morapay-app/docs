@@ -19,7 +19,7 @@ When you're stuck, we want you back to a **200 OK** as fast as possible. Format 
 2. **Environment**: TEST or LIVE (from your key prefix).
 3. **Endpoint**, for example `POST /v2/payouts` or `POST /v2/checkouts`.
 4. **Timestamp**: when the failure occurred.
-5. **Error `code`**, for example `links.amount.below_minimum`, not just HTTP 422.
+5. **Error `code`**, for example `request.validation_failed`, plus any `error.details` entries such as `{ "field": "amount", "code": "below_minimum" }`, not just HTTP 422.
 
 ### Good support request
 

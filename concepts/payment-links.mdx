@@ -16,6 +16,12 @@ A **payment link** is a stable slug or code that opens Morapay checkout for a co
 
 Attach catalog items with `product_id` when you maintain products via `GET/POST /v2/products` (OpenAPI).
 
+## Minimum amounts
+
+Fixed amount links must be worth at least $1 USD equivalent at creation, converted at the current rate. Open amount links with no `amount` have no minimum.
+
+When the amount is below the minimum, `POST /v2/links` returns HTTP `422` with top level code `request.validation_failed`. Inspect `error.details` for `{ "field": "amount", "code": "below_minimum" }`.
+
 ## Guide
 
 Step-by-step API calls: [Payment links guide](/guides/payment-links).
