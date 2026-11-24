@@ -318,7 +318,7 @@
         "type": "object"
       },
       "IdempotencyKey": {
-        "description": "Client-supplied idempotency key: 8–200 characters from A–Z, a–z, 0–9, underscore, dot, colon, and hyphen. The key is validated only; it is not stored by this layer.",
+        "description": "Client-supplied idempotency key: 8\u2013200 characters from A\u2013Z, a\u2013z, 0\u20139, underscore, dot, colon, and hyphen. The key is validated only; it is not stored by this layer.",
         "examples": [
           "payout_2026-11-17_7f3a"
         ],
@@ -406,7 +406,7 @@
         "type": "object"
       },
       "Phone": {
-        "description": "Phone number normalized to E.164 (`+` and 7–15 digits). Spaces, dashes, dots, parentheses, and a 00 prefix are accepted. National numbers without a country code are rejected.",
+        "description": "Phone number normalized to E.164 (`+` and 7\u201315 digits). Spaces, dashes, dots, parentheses, and a 00 prefix are accepted. National numbers without a country code are rejected.",
         "maxLength": 32,
         "minLength": 4,
         "pattern": "^[+0-9()\\s.-]+$",
@@ -530,6 +530,26 @@
           "meta"
         ],
         "type": "object"
+      },
+      "CheckoutSessionStatus": {
+        "description": "Checkout session lifecycle status. EXPIRED is not written automatically on v2 sessions; treat a past expires_at as expired when polling.",
+        "enum": [
+          "OPEN",
+          "AWAITING_PAYMENT",
+          "COMPLETED",
+          "CANCELLED",
+          "EXPIRED"
+        ],
+        "type": "string"
+      },
+      "CheckoutPaymentStatus": {
+        "description": "Provider payment state returned by pay and confirm.",
+        "enum": [
+          "pending",
+          "succeeded",
+          "failed"
+        ],
+        "type": "string"
       }
     }
   },
@@ -3591,7 +3611,7 @@
                     "$ref": "#/components/schemas/CountryCode"
                   },
                   "expires_in_seconds": {
-                    "maximum": 86400,
+                    "maximum": 7200,
                     "minimum": 60,
                     "type": "integer"
                   },
@@ -3674,7 +3694,7 @@
                           "type": "string"
                         },
                         "status": {
-                          "type": "string"
+                          "$ref": "#/components/schemas/CheckoutSessionStatus"
                         }
                       },
                       "required": [
@@ -3899,7 +3919,7 @@
                           "type": "string"
                         },
                         "status": {
-                          "type": "string"
+                          "$ref": "#/components/schemas/CheckoutSessionStatus"
                         }
                       },
                       "required": [
@@ -4094,7 +4114,7 @@
                           "type": "string"
                         },
                         "status": {
-                          "type": "string"
+                          "$ref": "#/components/schemas/CheckoutSessionStatus"
                         }
                       },
                       "required": [
@@ -8624,7 +8644,10 @@
                     "type": "string"
                   }
                 },
-                "type": "object"
+                "type": "object",
+                "required": [
+                  "session_secret"
+                ]
               }
             }
           },
@@ -8671,7 +8694,7 @@
                           "type": "string"
                         },
                         "status": {
-                          "type": "string"
+                          "$ref": "#/components/schemas/CheckoutPaymentStatus"
                         }
                       },
                       "required": [
@@ -10629,7 +10652,7 @@
                     "$ref": "#/components/schemas/CountryCode"
                   },
                   "expires_in_seconds": {
-                    "maximum": 86400,
+                    "maximum": 7200,
                     "minimum": 60,
                     "type": "integer"
                   },
@@ -10743,7 +10766,7 @@
                           "type": "string"
                         },
                         "status": {
-                          "type": "string"
+                          "$ref": "#/components/schemas/CheckoutSessionStatus"
                         }
                       },
                       "required": [
@@ -10961,7 +10984,7 @@
                           "type": "string"
                         },
                         "status": {
-                          "type": "string"
+                          "$ref": "#/components/schemas/CheckoutSessionStatus"
                         }
                       },
                       "required": [
@@ -11171,7 +11194,8 @@
                   }
                 },
                 "required": [
-                  "method"
+                  "method",
+                  "session_secret"
                 ],
                 "type": "object"
               }
@@ -11220,7 +11244,7 @@
                           "type": "string"
                         },
                         "status": {
-                          "type": "string"
+                          "$ref": "#/components/schemas/CheckoutPaymentStatus"
                         }
                       },
                       "required": [

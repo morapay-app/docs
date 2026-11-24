@@ -3,13 +3,13 @@ title: "Payment links"
 description: "Shareable checkout URLs backed by /v2/links."
 ---
 
-A **payment link** is a stable URL (or slug) that opens Morapay checkout for a configured amount and currency. Create and manage links with the merchant API at **`/v2/links`**.
+A **payment link** is a stable slug or code that opens Morapay checkout for a configured amount and currency. Create and manage links with the merchant API at **`/v2/links`**.
 
 ## Lifecycle
 
 1. `POST /v2/links` — define amount, currency, and presentation fields.
-2. Share the hosted URL with customers.
-3. Customer checkout uses **`POST /v2/checkouts`** and public pay routes (see [Checkouts and payments](/guides/checkouts-and-payments)).
+2. Share `https://checkout.morapay.io/{public_code}` with customers using the `public_code` from the link.
+3. Customer checkout uses **`POST /v2/checkouts`** or the hosted commerce flow (see [Checkouts and payments](/guides/checkouts-and-payments)).
 4. Listen for `payment_link.paid` (and related) on your [webhook](/developer-tools/webhooks) endpoint.
 
 ## Products

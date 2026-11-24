@@ -35,9 +35,19 @@ Deliveries are `POST` requests to your URL with JSON body and headers:
   "id": "evt_01",
   "type": "payment_link.paid",
   "created": "2026-11-17T20:00:00.000Z",
-  "data": {}
+  "data": {
+    "transactionId": "c4e5f6a7-8b9c-4d0e-1f2a-3b4c5d6e7f8a",
+    "status": "COMPLETED",
+    "previousStatus": "SETTLING",
+    "paymentLinkId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "merchantReference": "order_8842",
+    "environment": "TEST",
+    "checkoutSessionId": "d3e4f5a6-7b8c-4d9e-0f1a-2b3c4d5e6f7a"
+  }
 }
 ```
+
+The `payment_link.paid` payload does not include an amount or currency.
 
 ## Verify signatures
 
