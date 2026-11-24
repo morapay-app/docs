@@ -3,17 +3,23 @@ title: "Checkouts and payments"
 description: "Hosted checkout sessions, customer pay, and payment confirmation."
 ---
 
-Checkouts are time-bound payment sessions. Merchants create them on **`POST /v2/checkouts`**; customers pay on **`POST /v2/public/checkouts/{id}/pay`**; you confirm card or async flows on **`POST /v2/payments/{payment_id}/confirm`**.
+Checkouts are time-bound payment sessions. Merchants create them on **`POST /v2/checkouts`**; customers pay on **`POST /v2/public/checkouts/{session_id}/pay`**; you confirm async flows on **`POST /v2/payments/{payment_id}/confirm`**.
 
-Base URL: `https://api.morapay.io`. Merchant routes require `Morapay-Key`, `Morapay-Timestamp`, and `Morapay-Signature: v1=…` with paths like `/v2/checkouts` (not legacy `/api/v1/merchant` prefixes).
+Base URL: `https://api.morapay.io`. Merchant routes require `Morapay-Key`, `Morapay-Timestamp`, and `Morapay-Signature: v1=…` with paths like `/v2/checkouts`.
 
 ## Flow
 
-1. **`POST /v2/checkouts`** — amount, optional `reference`, `payment_link_id`, `expires_in_seconds`.
-2. **`GET /v2/checkouts/{id}`** — poll session status.
-3. **`POST /v2/public/checkouts/{id}/pay`** — customer selects `method` (`card`, `mobile_money`, `bank_transfer`). Requires **`Idempotency-Key`**.
-4. **`POST /v2/payments/{payment_id}/confirm`** — finalize when the API returns a payment id (e.g. pass `session_secret` if required).
-5. **`POST /v2/checkouts/{id}/cancel`** — cancel an open checkout.
+1. **`POST /v2/checkouts`** — amount, optional `reference`, `payment_link_id`, `expires_in_seconds` (60 to 7200; default lifetime is two hours).
+2. **`GET /v2/checkouts/{session_id}`** — poll session status. Treat a past `expires_at` as expired even if `status` is still `OPEN`.
+3. **`POST /v2/public/checkouts/{session_id}/pay`** — customer selects `method` (`card`, `mobile_money`, `bank_transfer`). Send `session_secret` from the create response in the JSON body or `X-Checkout-Session-Secret` header. Requires **`Idempotency-Key`**.
+4. **`POST /v2/payments/{payment_id}/confirm`** — required for async rails, including mobile money, until the payment reaches a terminal state. Send the same `session_secret`.
+5. **`POST /v2/checkouts/{session_id}/cancel`** — cancel an open checkout.
+
+## Session and payment status
+
+Checkout sessions use uppercase `status` values: `OPEN`, `AWAITING_PAYMENT`, `COMPLETED`, `CANCELLED`, `EXPIRED`. The API does not always set `EXPIRED` automatically; compare `expires_at` to the current time when you poll.
+
+Payments returned by pay and confirm use lowercase `status`: `pending`, `succeeded`, `failed`.
 
 Request and response fields: the **API reference** tab.
 
@@ -27,7 +33,7 @@ curl -s -X POST "https://api.morapay.io/v2/checkouts" \
   -H "Morapay-Key: pk_test_example" \
   -H "Morapay-Timestamp: $TIMESTAMP" \
   -H "Morapay-Signature: v1=$SIGNATURE" \
-  -d '{"amount":{"amount":"75.00","currency":"GHS"},"reference":"order_8842","expires_in_seconds":3600}'
+  -d '{"amount":{"amount":"75.00","currency":"GHS"},"reference":"order_8842","expires_in_seconds":7200}'
 ```
 
 ```javascript Node.js
@@ -44,7 +50,7 @@ const sign = (pk, sk, method, path, body = "") => {
 const body = JSON.stringify({
   amount: { amount: "75.00", currency: "GHS" },
   reference: "order_8842",
-  expires_in_seconds: 3600,
+  expires_in_seconds: 7200,
 });
 const res = await fetch("https://api.morapay.io/v2/checkouts", {
   method: "POST",
@@ -61,10 +67,11 @@ const { data: checkout } = await res.json();
 ```json Checkout created
 {
   "data": {
-    "id": "chk_550e8400-e29b-41d4-a716-446655440000",
-    "status": "open",
+    "session_id": "550e8400-e29b-41d4-a716-446655440000",
+    "session_secret": "cs_k7Hx9mP2vQw8nR4tL6jY3aB5cD1eF0gH",
+    "status": "OPEN",
     "amount": { "amount": "75.00", "currency": "GHS" },
-    "expires_at": "2026-11-17T22:00:00Z"
+    "expires_at": "2026-11-17T22:00:00.000Z"
   },
   "meta": { "request_id": "req_1731810000003_d" }
 }
@@ -72,25 +79,27 @@ const { data: checkout } = await res.json();
 
 </ResponseExample>
 
+Store `session_secret` from this response. It is only returned on create and is required for public pay and confirm.
+
 ## Customer pay (public)
 
 ```bash
-curl -s -X POST "https://api.morapay.io/v2/public/checkouts/chk_550e8400-e29b-41d4-a716-446655440000/pay" \
+curl -s -X POST "https://api.morapay.io/v2/public/checkouts/550e8400-e29b-41d4-a716-446655440000/pay" \
   -H "Content-Type: application/json" \
-  -H "Idempotency-Key: pay_chk_8842_once" \
-  -d '{"method":"mobile_money","email":"payer@example.com","phone":"+233201234567"}'
+  -H "Idempotency-Key: checkout_pay_8842_once" \
+  -d '{"method":"mobile_money","email":"payer@example.com","phone":"+233201234567","session_secret":"cs_k7Hx9mP2vQw8nR4tL6jY3aB5cD1eF0gH"}'
 ```
 
-## Confirm payment (merchant)
+## Confirm payment (merchant or server)
 
 ```bash
-curl -s -X POST "https://api.morapay.io/v2/payments/pay_a1b2c3d4-e5f6-7890-abcd-ef1234567890/confirm" \
+curl -s -X POST "https://api.morapay.io/v2/payments/7f3a9c2e-1b4d-4e8a-9f6c-2d5e8a1b4c3d/confirm" \
   -H "Content-Type: application/json" \
-  -H "Idempotency-Key: confirm_pay_8842" \
+  -H "Idempotency-Key: confirm_checkout_8842" \
   -H "Morapay-Key: pk_test_example" \
   -H "Morapay-Timestamp: $TIMESTAMP" \
   -H "Morapay-Signature: v1=$SIGNATURE" \
-  -d '{"session_secret":"sec_from_pay_response"}'
+  -d '{"session_secret":"cs_k7Hx9mP2vQw8nR4tL6jY3aB5cD1eF0gH"}'
 ```
 
 <Tip>
