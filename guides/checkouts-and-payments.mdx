@@ -9,11 +9,11 @@ Base URL: `https://api.morapay.io`. Merchant routes require `Morapay-Key`, `Mora
 
 ## Flow
 
-1. **`POST /v2/checkouts`** — amount, optional `reference`, `payment_link_id`, `expires_in_seconds` (60 to 7200; default lifetime is two hours).
-2. **`GET /v2/checkouts/{session_id}`** — poll session status. Treat a past `expires_at` as expired even if `status` is still `OPEN`.
-3. **`POST /v2/public/checkouts/{session_id}/pay`** — customer selects `method` (`card`, `mobile_money`, `bank_transfer`). Send `session_secret` from the create response in the JSON body or `X-Checkout-Session-Secret` header. Requires **`Idempotency-Key`**.
-4. **`POST /v2/payments/{payment_id}/confirm`** — required for async rails, including mobile money, until the payment reaches a terminal state. Send the same `session_secret`.
-5. **`POST /v2/checkouts/{session_id}/cancel`** — cancel an open checkout.
+1. **`POST /v2/checkouts`** creates the session with amount, optional `reference`, `payment_link_id`, and `expires_in_seconds` (60 to 7200; default lifetime is two hours).
+2. **`GET /v2/checkouts/{session_id}`** returns session status. Treat a past `expires_at` as expired even if `status` is still `OPEN`.
+3. **`POST /v2/public/checkouts/{session_id}/pay`** starts payment when the customer selects `method` (`card`, `mobile_money`, `bank_transfer`). Send `session_secret` from the create response in the JSON body or `X-Checkout-Session-Secret` header. Requires **`Idempotency-Key`**.
+4. **`POST /v2/payments/{payment_id}/confirm`** is required for async rails, including mobile money, until the payment reaches a terminal state. Send the same `session_secret`.
+5. **`POST /v2/checkouts/{session_id}/cancel`** cancels an open checkout.
 
 ## Session and payment status
 
