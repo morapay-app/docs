@@ -18848,6 +18848,64 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "createWebhookEndpoint": {
+                  "summary": "Create webhook endpoint",
+                  "value": {
+                    "displayName": "Production notifications",
+                    "url": "https://api.example.com/webhooks/morapay",
+                    "events": [
+                      "payment_link.paid"
+                    ],
+                    "isActive": true
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "displayName": {
+                    "description": "Human-readable label for this endpoint in the merchant dashboard.",
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "events": {
+                    "description": "Event names to deliver to this endpoint. At least one name is required.",
+                    "items": {
+                      "maxLength": 120,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "isActive": {
+                    "default": true,
+                    "description": "Whether the endpoint accepts new deliveries.",
+                    "type": "boolean"
+                  },
+                  "url": {
+                    "description": "HTTPS URL that receives webhook POST requests.",
+                    "format": "uri",
+                    "pattern": "^https://",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "displayName",
+                  "url",
+                  "events"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "201": {
             "content": {

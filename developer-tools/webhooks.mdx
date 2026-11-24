@@ -7,16 +7,18 @@ Morapay sends **outbound webhooks** when payments, payouts, and other resources 
 
 ## Manage endpoints (merchant API)
 
+Endpoints are created and deleted only in the merchant dashboard (business.morapay.io > Developers > Webhooks). API keys cannot create or delete endpoints. Test and Live endpoints are listed separately; use the Test/Live switch. Creating Live endpoints requires completed KYC.
+
+List and update endpoints with signed requests ([Authentication](/getting-started/authentication)):
+
 | Action | Route |
 |--------|--------|
 | List | `GET /v2/webhooks` |
-| Create | `POST /v2/webhooks` |
 | Update | `PATCH /v2/webhooks/{id}` |
-| Delete | `DELETE /v2/webhooks/{id}` |
 | List deliveries | `GET /v2/deliveries` |
 | Retry delivery | `POST /v2/deliveries/{id}/retry` |
 
-Create endpoints with signed requests ([Authentication](/getting-started/authentication)). Store the endpoint **secret** when shown; it is required to verify deliveries.
+When you create an endpoint in the dashboard, store the endpoint **secret** when shown; it is required to verify deliveries.
 
 ## Event payload
 
