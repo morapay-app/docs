@@ -33,7 +33,6 @@
     "crypto-slippage-exceeded",
     "kyb-blocked",
     "kyb-forbidden",
-    "links-amount-below-minimum",
     "links-slug-duplicate",
     "payouts-clearing-refund-failed",
     "payouts-momo-insufficient-balance",
@@ -79,7 +78,6 @@
     {
       "group": "Payment links",
       "pages": [
-        "links-amount-below-minimum",
         "links-slug-duplicate"
       ]
     },
