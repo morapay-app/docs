@@ -318,7 +318,7 @@
         "type": "object"
       },
       "IdempotencyKey": {
-        "description": "Client-supplied idempotency key: 8\u2013200 characters from A\u2013Z, a\u2013z, 0\u20139, underscore, dot, colon, and hyphen. The key is validated only; it is not stored by this layer.",
+        "description": "Client-supplied idempotency key: 8–200 characters from A–Z, a–z, 0–9, underscore, dot, colon, and hyphen. The key is validated only; it is not stored by this layer.",
         "examples": [
           "payout_2026-11-17_7f3a"
         ],
@@ -406,7 +406,7 @@
         "type": "object"
       },
       "Phone": {
-        "description": "Phone number normalized to E.164 (`+` and 7\u201315 digits). Spaces, dashes, dots, parentheses, and a 00 prefix are accepted. National numbers without a country code are rejected.",
+        "description": "Phone number normalized to E.164 (`+` and 7–15 digits). Spaces, dashes, dots, parentheses, and a 00 prefix are accepted. National numbers without a country code are rejected.",
         "maxLength": 32,
         "minLength": 4,
         "pattern": "^[+0-9()\\s.-]+$",
@@ -18880,7 +18880,7 @@
                   "summary": "Create webhook endpoint",
                   "value": {
                     "displayName": "Production notifications",
-                    "url": "https://api.example.com/webhooks/morapay",
+                    "url": "https://yourshop.com/webhooks/morapay",
                     "events": [
                       "payment_link.paid"
                     ],
@@ -19459,5 +19459,11 @@
         ]
       }
     }
-  }
+  },
+  "servers": [
+    {
+      "url": "https://api.morapay.io",
+      "description": "Production API"
+    }
+  ]
 }

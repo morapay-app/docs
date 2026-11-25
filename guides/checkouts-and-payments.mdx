@@ -87,7 +87,7 @@ Store `session_secret` from this response. It is only returned on create and is 
 curl -s -X POST "https://api.morapay.io/v2/public/checkouts/550e8400-e29b-41d4-a716-446655440000/pay" \
   -H "Content-Type: application/json" \
   -H "Idempotency-Key: checkout_pay_8842_once" \
-  -d '{"method":"mobile_money","email":"payer@example.com","phone":"+233201234567","session_secret":"cs_k7Hx9mP2vQw8nR4tL6jY3aB5cD1eF0gH"}'
+  -d '{"method":"mobile_money","email":"payer@checkout.demo","phone":"+233201234567","session_secret":"cs_k7Hx9mP2vQw8nR4tL6jY3aB5cD1eF0gH"}'
 ```
 
 ## Confirm payment (merchant or server)

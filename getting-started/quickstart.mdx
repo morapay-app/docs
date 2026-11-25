@@ -6,7 +6,7 @@ description: "Create a firm quote and collect a checkout payment on the Morapay 
 Morapay **v2** is a REST API at `https://api.morapay.io`. Authenticated routes use **HMAC-signed** requests ([Authentication](/getting-started/authentication)). This walkthrough prices a **GHS → USDC buy** quote, then shows the checkout pattern for accepting a payment.
 
 <Tip>
-  Create **TEST** API keys in [Dashboard → Developers → API keys](https://business.morapay.io/developers/api-keys). GHS on-ramp quotes require at least **50.00 GHS** in `pay.amount`.
+  Create **TEST** API keys in [Dashboard → Developers → API keys](https://business.morapay.io/developers/api-keys). GHS on-ramp quotes require at least **50.00 GHS** in `pay.amount`. Example buys settle USDC on **Base** (chain ID 8453) when `receive_currency` is `USDC`.
 </Tip>
 
 ## 1. Create a firm quote
@@ -80,14 +80,9 @@ For **payment links** and **hosted checkout**, create a link, open a checkout se
 
 Full sequence: [Checkouts and payments](/guides/checkouts-and-payments).
 
-## Catalog helpers
+## Coverage reference
 
-Unsigned catalog routes are useful while building UIs:
-
-- `GET /v2/catalog/countries`
-- `GET /v2/catalog/chains`
-- `GET /v2/catalog/tokens`
-- `GET /v2/health` and `GET /v2/ready`
+Supported countries, chains, and tokens are documented on the [Coverage](/reference/coverage) tab (exported snapshots, not live catalog routes in the merchant OpenAPI). For a live probe, call unsigned `GET /v2/health`.
 
 ## Next steps
 

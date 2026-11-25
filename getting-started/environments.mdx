@@ -13,16 +13,14 @@ https://api.morapay.io
 
 There is no separate sandbox host. **TEST** and **LIVE** behavior is selected by the API key prefix (`pk_test_*` / `pk_live_*`).
 
-## Readiness
+## Health check
 
 | Route | Auth | Purpose |
 |-------|------|---------|
 | `GET /v2/health` | None | Liveness |
-| `GET /v2/ready` | None | Dependency readiness |
 
 ```bash
 curl -s https://api.morapay.io/v2/health
-curl -s https://api.morapay.io/v2/ready
 ```
 
 ## Keys and data

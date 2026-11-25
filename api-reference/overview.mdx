@@ -37,13 +37,13 @@ Details: [Responses and errors](/concepts/responses-and-errors).
 
 | Area | Prefix | Guide |
 |------|--------|--------|
-| Catalog | `/v2/catalog/*` | — |
+| Coverage snapshots | [Coverage](/reference/coverage) tables (not separate catalog routes) | Countries, chains, tokens |
 | Quotes & rates | `/v2/quotes`, `/v2/rates` | [Quotes and ramp](/guides/quotes-and-ramp) |
 | Ramp | `/v2/buys`, `/v2/sells` | [Quotes and ramp](/guides/quotes-and-ramp) |
-| Links & checkout | `/v2/links`, `/v2/checkouts`, `/v2/payments` | [Payment links](/guides/payment-links), [Checkouts](/guides/checkouts-and-payments) |
+| Links & checkout | `/v2/links`, `/v2/checkouts`, `/v2/payments/{payment_id}/confirm` | [Payment links](/guides/payment-links), [Checkouts](/guides/checkouts-and-payments) |
 | Payouts | `/v2/payouts`, `/v2/schedules`, `/v2/recipients` | [Payouts](/guides/payouts) |
-| Bridge & swap | `/v2/bridges`, `/v2/swaps`, `/v2/quotes/bridge-handle` | API reference |
+| Bridge & swap | `/v2/bridges`, `/v2/swaps`, bridge quotes on `POST /v2/quotes` (`kind: bridge`) | API reference |
 | Merchant account | `/v2/keys`, `/v2/webhooks`, `/v2/transactions`, … | OpenAPI tags `merchant_*` |
-| Webhooks (inbound) | `POST /v2/webhooks/{provider}` | Provider ingress (unsigned) |
+| System | `GET /v2/health` | [Environments](/getting-started/environments) |
 
 Operation-level schemas are generated from the OpenAPI document bundled with this site (`openapi/v2.openapi.json`).

@@ -20,7 +20,7 @@ curl -s -X POST "https://api.morapay.io/v2/buys" \
   -H "Morapay-Key: pk_test_example" \
   -H "Morapay-Timestamp: $TIMESTAMP" \
   -H "Morapay-Signature: v1=$SIGNATURE" \
-  -d '{"quote_id":"qt_01","destination_wallet":"0xabc..."}'
+  -d '{"quote_id":"qt_01","destination_wallet":"0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0"}'
 ```
 
 Common required routes include `POST /v2/buys`, `POST /v2/sells`, `POST /v2/payouts`, and `POST /v2/settlements/withdraw`. See the API reference for the full list.

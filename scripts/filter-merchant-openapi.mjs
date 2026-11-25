@@ -42,5 +42,16 @@ if (Array.isArray(doc.tags)) {
   doc.tags = doc.tags.filter((t) => !HIDDEN_TAGS.has(t.name));
 }
 
-writeFileSync(target, `${JSON.stringify(doc, null, 2)}\n`);
+doc.servers = [
+  {
+    url: "https://api.morapay.io",
+    description: "Production API",
+  },
+];
+
+let serialized = JSON.stringify(doc, null, 2);
+serialized = serialized.replaceAll("https://api.example.com/webhooks/morapay", "https://yourshop.com/webhooks/morapay");
+serialized = serialized.replaceAll("https://hooks.merchant.test/morapay", "https://yourshop.com/webhooks/morapay");
+
+writeFileSync(target, `${serialized}\n`);
 console.log(`Filtered OpenAPI → ${Object.keys(paths).length} paths`);
